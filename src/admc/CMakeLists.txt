@@ -218,6 +218,9 @@ set(ADMC_SOURCES
     permission_control_widgets/extended_permissions_widget.cpp
     permission_control_widgets/delegation_permissions_widget.cpp
 
+    auth_dialogs/krb_auth_dialog.cpp
+    auth_dialogs/krb_auth_dialog.ui
+
     admc.qrc
 )
 

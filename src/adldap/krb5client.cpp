@@ -17,31 +17,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef AUTHDIALOGBASE_H
-#define AUTHDIALOGBASE_H
+#include "krb5client.h"
 
-#include <QDialog>
+#include <QDateTime>
 
-/**
- * Base class for authentication dialogs
- */
+Krb5Client::Krb5Client() {
 
-class AuthDialogBase : public QDialog {
-    Q_OBJECT
+}
 
-public:
-    using QDialog::QDialog;
-    virtual ~AuthDialogBase() = default;
+Krb5Client::~Krb5Client() {
 
-protected:
-    virtual void setupWidgets() = 0;
-    virtual void on_sign_in() = 0;
-    virtual void on_show_passwd(bool show) = 0;
-    virtual void show_error_message(const QString &error) = 0;
+}
 
-signals:
-    void authenticated();
-};
+void Krb5Client::authenticate(const QString &principal, const QString &password) {
+    //    krb5_error_code result;
+    //    krb5_context context;
+    //    krb5_ccache ccache;
 
+    //    result = krb5_init_context(&context);
+    //    if (result) {
+    //        show_error_message();
+    //        return;
+    //    }
 
-#endif // AUTHDIALOGBASE_H
+    //    result = krb5_cc_default(context, &ccache);
+    //    if (result == KRB5_CC_NOTFOUND) {
+    //        show_error_message();
+    //        return;
+    //    }
+}
+
+void Krb5Client::refresh_tgt() {
+
+}
+
+Krb5TicketData Krb5Client::tgt_data() const {
+    return tgt_contents;
+}
