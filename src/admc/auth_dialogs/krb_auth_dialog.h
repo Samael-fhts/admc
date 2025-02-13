@@ -17,31 +17,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef AUTHDIALOGBASE_H
-#define AUTHDIALOGBASE_H
 
-#include <QDialog>
+#ifndef KRB_AUTH_DIALOG_H
+#define KRB_AUTH_DIALOG_H
+
+#include "auth_dialog_base.h"
+#include <memory>
+#include "krb5client.h"
+
+namespace Ui {
+class KrbAuthDialog;
+}
+
+class Krb5Client;
 
 /**
- * Base class for authentication dialogs
+ * Kerberos authentication dialog
  */
 
-class AuthDialogBase : public QDialog {
+class KrbAuthDialog final : public AuthDialogBase {
     Q_OBJECT
 
 public:
-    using QDialog::QDialog;
-    virtual ~AuthDialogBase() = default;
+    explicit KrbAuthDialog(QWidget *parent = nullptr);
+    ~KrbAuthDialog();
 
-protected:
-    virtual void setupWidgets() = 0;
-    virtual void on_sign_in() = 0;
-    virtual void on_show_passwd(bool show) = 0;
-    virtual void show_error_message(const QString &error) = 0;
+private:
+    Ui::KrbAuthDialog *ui;
 
-signals:
-    void authenticated();
+    virtual void setupWidgets() override;
+    virtual void on_sign_in() override;
+    virtual void on_show_passwd(bool show) override;
+    virtual void show_error_message(const QString &error = QString()) override;
+    void on_use_default_cache(bool checked);
+
+    std::unique_ptr<Krb5Client> client = nullptr;
 };
 
-
-#endif // AUTHDIALOGBASE_H
+#endif // KRB_AUTH_DIALOG_H
