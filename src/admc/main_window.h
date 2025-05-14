@@ -25,6 +25,8 @@
 
 class AdInterface;
 class QLabel;
+class ObjectImpl;
+class DomainInfoImpl;
 
 namespace Ui {
 class MainWindow;
@@ -44,6 +46,7 @@ protected:
 
 private:
     QLabel *login_label;
+    bool inited = false;
 
     void on_log_searches_changed();
     void on_show_login_changed();
@@ -53,6 +56,18 @@ private:
     void open_about();
     void edit_fsmo_roles();
     void reload_console_tree();
+    void setup_themes();
+    void setup_languages();
+    void setup_simple_settings();
+    void setup_complex_settings(ObjectImpl *obj_impl);
+    void init_globals();
+    void setup_console_actions();
+    void setup_main_window_actions();
+    void restore_console_widget_state();
+    void restore_main_window_state();
+    void show_changelog_on_update();
+    void setup_status_bar(const AdInterface &ad);
+    void init_on_connect(AdInterface &ad);
 };
 
 #endif /* MAIN_WINDOW_H */

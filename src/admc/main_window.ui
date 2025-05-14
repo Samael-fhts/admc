@@ -421,6 +421,14 @@
     <string>Show middle name when creating</string>
    </property>
   </action>
+  <action name="action_change_user">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Change user</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
