@@ -45,6 +45,7 @@
 #include "fsmo/fsmo_utils.h"
 #include "managers/icon_manager.h"
 #include "console_impls/domain_info_impl.h"
+#include "managers/gplink_manager.h"
 
 #include <QDesktopServices>
 #include <QLabel>
@@ -475,6 +476,7 @@ void MainWindow::init_on_connect(AdInterface &ad) {
     console_policy_tree_init(ui->console);
     console_query_tree_init(ui->console);
     console_tree_add_password_settings(ui->console, ad);
+    g_gplink_manager->update();
     ui->console->expand_item(ui->console->domain_info_index());
 
     // Set current scope to object head to load it
