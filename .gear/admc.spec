@@ -11,7 +11,7 @@
 
 Name: admc
 Version: 0.20.0
-Release: alt2
+Release: alt2.c10f2.1
 
 Summary: Active Directory Management Center
 License: GPLv3+
@@ -42,7 +42,7 @@ BuildRequires: libgkdi-devel
 
 Requires: libsasl2
 Requires: libsasl2-plugin-gssapi
-Requires: ad-integration-themes
+Requires: ad-integration-themes >= 2.0
 
 Source0: %name-%version.tar
 
@@ -124,6 +124,26 @@ Tests for ADMC
 %_bindir/admc_test_find_policy_dialog
 
 %changelog
+* Mon Jul 14 2025 Semyon Knyazev <samael@altlinux.org> 0.20.0-alt2.c10f2.1
+- Fixed vulnerability with security descriptor applying (fixes: OVE-20250714-0002)
+- Added the name of the applied password settings object to the "Account" tab
+  in the user properties.
+- Fixed missing policy links in the "Group Policy" tab of organizational units
+  in the object tree. The redundant "Status" column has been removed.
+- The password settings container has been duplicated at the top level of the tree
+  for convenience.
+- Increased the size of the toolbar icons.
+- Removed the "Set Primary Group..." button from the "Groups" tab for group objects
+  (not applicable to groups).
+- Fixed an empty list of linked organizational units for newly created policies.
+- Removed the ad-integration-line/duotone/color icon themes (they did not cover
+  some objects).
+- Renamed the "AD-integration Kora" theme to "AD-integration".
+- Redesigned the AD-integration theme.
+- Fixed issues with displaying icons in the toolbar and the tree view.
+- If core icons are missing in the system theme at startup, the AD-integration theme
+  is selected by default.
+
 * Tue Apr 08 2025 Semyon Knyazev <samael@altlinux.org> 0.20.0-alt2
 - Update CMake version (thx to Vladimir Rubanov).
 
