@@ -255,6 +255,15 @@ enum SystemFlagsBit {
 #define CLASS_SERVERS_CONTAINER "serversContainer"
 #define CLASS_PSO_CONTAINER "msDS-PasswordSettingsContainer"
 #define CLASS_PSO "msDS-PasswordSettings"
+#define CLASS_SITES_CONTAINER "sitesContainer"
+#define CLASS_SUBNET_CONTAINER "subnetContainer"
+#define CLASS_INTER_SITE_TRANSPORT_CONTAINER "interSiteTransportContainer"
+#define CLASS_INTER_SITE_TRANSPORT "interSiteTransport"
+#define CLASS_SUBNET "subnet"
+#define CLASS_SITE_LINK "siteLink"
+#define CLASS_SITE_LINK_BRIDGE "siteLinkBridge"
+#define CLASS_NTDS_SITE_SETTINGS "nTDSSiteSettings"
+#define CLASS_MS_IMAGING_PSPS "msImaging-PSPs"
 // NOTE: for schema object
 #define CLASS_dMD "dMD"
 #define CLASS_CONTROL_ACCESS_RIGHT "controlAccessRight"
@@ -275,6 +284,16 @@ enum SystemFlagsBit {
 #define OBJECT_CATEGORY_SITE "Site"
 #define OBJECT_CATEGORY_PSO_CONTAINER "ms-DS-Password-Settings-Container"
 #define OBJECT_CATEGORY_PSO "ms-DS-Password-Settings"
+#define OBJECT_CATEGORY_SITES_CONTAINER "Sites-Container"
+#define OBJECT_CATEGORY_SUBNET_CONTAINER "Subnet-Container"
+#define OBJECT_CATEGORY_INTER_SITE_TRANSPORT_CONTAINER "Inter-Site-Transport-Container"
+#define OBJECT_CATEGORY_INTER_SITE_TRANSPORT "Inter-Site-Transport"
+#define OBJECT_CATEGORY_SUBNET "Subnet"
+#define OBJECT_CATEGORY_SITE_LINK "Site-Link"
+#define OBJECT_CATEGORY_SITE_LINK_BRIDGE "Site-Link-Bridge"
+#define OBJECT_CATEGORY_NTDS_SITE_SETTINGS "NTDS-Site-Settings"
+#define OBJECT_CATEGORY_SERVER "Server"
+#define OBJECT_CATEGORY_MS_IMAGING_PSPS "ms-Imaging-PSPs"
 
 // These categories are not AD object categories. They are used for project purposes
 // (for example, to setup icons)
