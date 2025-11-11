@@ -69,7 +69,7 @@ public:
 IconManager::IconManagerImpl::IconManagerImpl(IconManager *parent) : q(parent) {
     // NOTE: use a list of possible icons because
     // default icon themes for different DE's don't
-    // fully intersect
+    // fully intersect. In the custom themes object categories are used as names.
     category_icon_names_map = {
         {OBJECT_CATEGORY_DOMAIN_DNS, {"network-server", "network-server-symbolic"}},
         {OBJECT_CATEGORY_CONTAINER, {"folder", "folder-symbolic"}},
@@ -102,6 +102,17 @@ IconManager::IconManagerImpl::IconManagerImpl(IconManager *parent) : q(parent) {
         {OBJECT_CATEGORY_MSDS_QUOTA_CONTAINER, {"Container", "emblem-system", "emblem-system-symbolic"}},
         {OBJECT_CATEGORY_PSO, {"preferences-desktop-personal"}},
         {OBJECT_CATEGORY_PSO_CONTAINER, {"preferences-desktop"}},
+
+        // Site related objects icons
+        {OBJECT_CATEGORY_SUBNET, {"fallback", "preferences-system-network", "preferences-system-network-symbolic"}},
+        {OBJECT_CATEGORY_SITES_CONTAINER, {"Container", "folder", "folder-symbolic"}},
+        {OBJECT_CATEGORY_SUBNET_CONTAINER, {"Container", "folder", "folder-symbolic"}},
+        {OBJECT_CATEGORY_INTER_SITE_TRANSPORT_CONTAINER, {"Container", "folder", "folder-symbolic"}},
+        {OBJECT_CATEGORY_INTER_SITE_TRANSPORT, {"Container", "emblem-system", "emblem-system-symbolic"}},
+        {OBJECT_CATEGORY_SITE_LINK, {"fallback", "emblem-system", "emblem-system-symbolic"}},
+        {OBJECT_CATEGORY_SITE_LINK_BRIDGE, {"fallback", "emblem-shared","emblem-shared-symbolic"}},
+        {OBJECT_CATEGORY_NTDS_SITE_SETTINGS, {"fallback", "settings-configure", "settings-configure-symbolic"}},
+        {OBJECT_CATEGORY_SERVER, {OBJECT_CATEGORY_DOMAIN_DNS, "preferences-desktop"}},
 
         // Indicator icons (aren't AD object categories too)
         {inheritance_indicator, {"changes-prevent", "changes-prevent-symbolic"}},
@@ -202,6 +213,15 @@ void IconManager::IconManagerImpl::update_icons_array() {
     item_icons_array[ItemIcon_Group] = q->category_icon(OBJECT_CATEGORY_GROUP).pixmap(max_icon_size);
     item_icons_array[ItemIcon_Password_Settings_Object] = q->category_icon(OBJECT_CATEGORY_PSO);
     item_icons_array[ItemIcon_Password_Settings_Object] = q->category_icon(OBJECT_CATEGORY_PSO_CONTAINER);
+    item_icons_array[ItemIcon_InterSite_Transport] = q->category_icon(OBJECT_CATEGORY_INTER_SITE_TRANSPORT);
+    item_icons_array[ItemIcon_InterSite_Transport_Container] = q->category_icon(OBJECT_CATEGORY_INTER_SITE_TRANSPORT_CONTAINER);
+    item_icons_array[ItemIcon_Subnet] = q->category_icon(OBJECT_CATEGORY_SUBNET);
+    item_icons_array[ItemIcon_Subnet_Container] = q->category_icon(OBJECT_CATEGORY_SUBNET_CONTAINER);
+    item_icons_array[ItemIcon_Site_Link] = q->category_icon(OBJECT_CATEGORY_SITE_LINK);
+    item_icons_array[ItemIcon_Site_Link_Bridge] = q->category_icon(OBJECT_CATEGORY_SITE_LINK_BRIDGE);
+    item_icons_array[ItemIcon_Site_NTDS_Settings] = q->category_icon(OBJECT_CATEGORY_NTDS_SITE_SETTINGS);
+    item_icons_array[ItemIcon_Sites_Container] = q->category_icon(OBJECT_CATEGORY_SITES_CONTAINER);
+    item_icons_array[ItemIcon_Server] = q->category_icon(OBJECT_CATEGORY_DOMAIN_DNS); // Domain icon for site server (for now)
 }
 
 const QIcon IconManager::item_icon(ItemIcon icon_type) const {
