@@ -44,7 +44,8 @@ typedef void TALLOC_CTX;
 
 enum AdMessageType {
     AdMessageType_Success,
-    AdMessageType_Error
+    AdMessageType_Error,
+    AdMessageType_Info
 };
 
 // Some f-ns in this class reuse other f-ns and this

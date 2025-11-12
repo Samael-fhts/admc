@@ -62,6 +62,7 @@ void Status::add_message(const QString &msg, const StatusType &type) {
         switch (type) {
             case StatusType_Success: return Qt::darkGreen;
             case StatusType_Error: return Qt::red;
+            case StatusType_Info: return Qt::darkBlue;
         }
         return Qt::black;
     }();
@@ -116,8 +117,9 @@ void Status::log_messages(const QList<AdMessage> &messages) {
             switch (message.type()) {
                 case AdMessageType_Success: return StatusType_Success;
                 case AdMessageType_Error: return StatusType_Error;
+                case AdMessageType_Info: return StatusType_Info;
             }
-            return StatusType_Success;
+            return StatusType_Info;
         }();
 
         add_message(message.text(), status_type);
