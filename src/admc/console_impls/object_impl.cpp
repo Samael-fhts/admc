@@ -1964,15 +1964,15 @@ bool console_object_deletion_dialog(ConsoleWidget *console, const QList<QModelIn
 void console_tree_add_password_settings(ConsoleWidget *console, AdInterface &ad) {
     const QString filter = filter_CONDITION(Condition_Equals, ATTRIBUTE_OBJECT_CLASS, CLASS_PSO_CONTAINER);
     auto search_results = ad.search(g_adconfig->domain_dn(), SearchScope_All, filter, {});
-    const QString err = QObject::tr("Failed to find password settings container");
+    const QString err = QObject::tr("Password settings container is not available");
     if (search_results.isEmpty()) {
-        g_status->add_message(err, StatusType_Error);
+        g_status->add_message(err, StatusType_Info);
         return;
     }
 
     const AdObject pso_container_obj = search_results.values()[0];
     if (pso_container_obj.is_empty()) {
-        g_status->add_message(err, StatusType_Error);
+        g_status->add_message(err, StatusType_Info);
         return;
     }
 
