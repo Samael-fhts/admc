@@ -38,7 +38,8 @@ class QList;
 
 enum StatusType {
     StatusType_Success,
-    StatusType_Error
+    StatusType_Error,
+    StatusType_Info,
 };
 
 class Status {
