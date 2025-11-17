@@ -69,6 +69,7 @@ void DomainInfoImpl::refresh(const QList<QModelIndex> &index_list) {
         console_policy_tree_init(console);
         console_query_tree_init(console);
         ConsoleObjectTreeOperations::console_tree_add_password_settings(console, ad);
+        ConsoleObjectTreeOperations::console_tree_add_sites_container(console, ad);
         g_gplink_manager->update();
     }
     console->expand_item(console->domain_info_index());
