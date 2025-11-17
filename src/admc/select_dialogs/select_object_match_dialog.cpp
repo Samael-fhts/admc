@@ -21,7 +21,7 @@
 #include "select_object_match_dialog.h"
 #include "ui_select_object_match_dialog.h"
 
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 #include "select_object_dialog.h"
 #include "settings.h"
 #include "utils.h"

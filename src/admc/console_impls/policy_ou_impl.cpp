@@ -23,7 +23,7 @@
 #include "adldap.h"
 #include "console_impls/all_policies_folder_impl.h"
 #include "console_impls/item_type.h"
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 #include "console_impls/policy_impl.h"
 #include "create_dialogs/create_policy_dialog.h"
 #include "find_widgets/find_policy_dialog.h"

@@ -21,7 +21,7 @@
 #include "console_impls/find_policy_impl.h"
 
 #include "adldap.h"
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 #include "console_widget/results_view.h"
 #include "item_type.h"
 #include "utils.h"

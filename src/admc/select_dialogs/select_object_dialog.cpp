@@ -22,7 +22,7 @@
 #include "ui_select_object_dialog.h"
 
 #include "adldap.h"
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 #include "globals.h"
 #include "select_object_advanced_dialog.h"
 #include "select_object_match_dialog.h"

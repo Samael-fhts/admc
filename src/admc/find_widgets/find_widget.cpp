@@ -24,7 +24,7 @@
 #include "adldap.h"
 #include "console_impls/find_object_impl.h"
 #include "console_impls/item_type.h"
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 #include "globals.h"
 #include "search_thread.h"
 #include "settings.h"
