@@ -22,7 +22,7 @@
 
 #include "adldap.h"
 #include "console_impls/item_type.h"
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 #include "console_impls/query_folder_impl.h"
 #include "console_widget/results_view.h"
 #include "create_dialogs/create_query_item_dialog.h"

@@ -22,7 +22,7 @@
 #include "ui_properties_dialog.h"
 
 #include "adldap.h"
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 #include "globals.h"
 #include "config.h"
 #include "properties_warning_dialog.h"

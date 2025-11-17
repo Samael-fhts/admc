@@ -20,7 +20,7 @@
 
 #include "admc_test_select_base_widget.h"
 
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 #include "filter_widget/select_base_widget.h"
 #include "filter_widget/ui_select_base_widget.h"
 #include "globals.h"

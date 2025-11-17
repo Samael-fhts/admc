@@ -225,7 +225,7 @@ set(ADMC_SOURCES
     managers/icon_manager.cpp
     managers/gplink_manager.cpp
 
-    console_impls/object_impl.cpp
+    console_impls/object_impl/object_impl.cpp
     console_impls/policy_impl.cpp
     console_impls/query_item_impl.cpp
     console_impls/query_folder_impl.cpp
