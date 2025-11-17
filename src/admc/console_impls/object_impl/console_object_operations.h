@@ -51,6 +51,7 @@ namespace ConsoleObjectTreeOperations {
     void console_tree_add_root_child(ConsoleWidget *console, AdObject &obj, int sort_idx);
     // Adds password settings container to the root item childs
     void console_tree_add_password_settings(ConsoleWidget *console, AdInterface &ad);
+    void console_tree_add_sites_container(ConsoleWidget *console, AdInterface &ad);
 }
 
 #endif // OPERATIONS_H

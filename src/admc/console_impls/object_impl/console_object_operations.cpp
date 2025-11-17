@@ -938,3 +938,16 @@ void ConsoleObjectTreeOperations::console_tree_add_root_child(ConsoleWidget *con
     row[0]->setText(obj.get_string(ATTRIBUTE_NAME));
     console->set_item_sort_index(row[0]->index(), sort_idx);
 }
+
+void ConsoleObjectTreeOperations::console_tree_add_sites_container(ConsoleWidget *console, AdInterface &ad) {
+    const QString filter = filter_CONDITION(Condition_Equals, ATTRIBUTE_OBJECT_CLASS, CLASS_SITES_CONTAINER);
+    auto search_results = ad.search(g_adconfig->configuration_dn(), SearchScope_All, filter, {});
+    const QString err = QObject::tr("Sites container is not available");
+    if (search_results.isEmpty() || search_results.values()[0].is_empty()) {
+        g_status->add_message(err, StatusType_Info);
+        return;
+    }
+
+    const int sites_container_sort_idx = 4;
+    console_tree_add_root_child(console, search_results.values()[0], sites_container_sort_idx);
+}
