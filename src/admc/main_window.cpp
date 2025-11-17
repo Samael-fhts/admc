@@ -496,10 +496,10 @@ void MainWindow::init_on_connect(AdInterface &ad) {
 
     domain_info_impl->load_domain_info_item(ad);
     ui->console->set_current_scope(ui->console->domain_info_index());
-    console_object_tree_init(ui->console, ad);
+    ConsoleObjectTreeOperations::console_object_tree_init(ui->console, ad);
     console_policy_tree_init(ui->console);
     console_query_tree_init(ui->console);
-    console_tree_add_password_settings(ui->console, ad);
+    ConsoleObjectTreeOperations::console_tree_add_password_settings(ui->console, ad);
     g_gplink_manager->update();
     ui->console->expand_item(ui->console->domain_info_index());
 
@@ -510,7 +510,7 @@ void MainWindow::init_on_connect(AdInterface &ad) {
     ui->console->setup_menubar_action_menu(ui->menu_action);
 
     // Set current scope to object head to load it
-    const QModelIndex object_tree_root = get_object_tree_root(ui->console);
+    const QModelIndex object_tree_root = ConsoleObjectTreeOperations::get_object_tree_root(ui->console);
     if (object_tree_root.isValid()) {
         ui->console->set_current_scope(object_tree_root);
     }
