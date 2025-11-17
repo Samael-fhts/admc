@@ -501,6 +501,7 @@ void MainWindow::init_on_connect(AdInterface &ad) {
     console_policy_tree_init(ui->console);
     console_query_tree_init(ui->console);
     ConsoleObjectTreeOperations::console_tree_add_password_settings(ui->console, ad);
+    ConsoleObjectTreeOperations::console_tree_add_sites_container(ui->console, ad);
     g_gplink_manager->update();
     ui->console->expand_item(ui->console->domain_info_index());
 
