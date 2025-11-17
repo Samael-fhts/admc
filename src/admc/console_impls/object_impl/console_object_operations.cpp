@@ -594,21 +594,13 @@ void ConsoleObjectTreeOperations::console_tree_add_password_settings(ConsoleWidg
     const QString filter = filter_CONDITION(Condition_Equals, ATTRIBUTE_OBJECT_CLASS, CLASS_PSO_CONTAINER);
     auto search_results = ad.search(g_adconfig->domain_dn(), SearchScope_All, filter, {});
     const QString err = QObject::tr("Password settings container is not available");
-    if (search_results.isEmpty()) {
+    if (search_results.isEmpty() || search_results.values()[0].is_empty()) {
         g_status->add_message(err, StatusType_Info);
         return;
     }
 
-    const AdObject pso_container_obj = search_results.values()[0];
-    if (pso_container_obj.is_empty()) {
-        g_status->add_message(err, StatusType_Info);
-        return;
-    }
-
-    const QList<QStandardItem *> row = console->add_scope_item(ItemType_Object, console->domain_info_index());
-    console_object_item_data_load(row[0], pso_container_obj);
-    row[0]->setText(pso_container_obj.get_string(ATTRIBUTE_NAME));
-    console->set_item_sort_index(row[0]->index(), 3);
+    const int pso_container_sort_idx = 3;
+    console_tree_add_root_child(console, search_results.values()[0], pso_container_sort_idx);
 }
 
 QString ConsoleObjectTreeOperations::console_object_count_string(ConsoleWidget *console, const QModelIndex &index) {
@@ -938,4 +930,11 @@ void ConsoleObjectTreeOperations::console_object_properties(const QList<ConsoleW
             dialog, &PropertiesMultiDialog::applied,
             console_list[0], on_object_properties_applied);
     }
+}
+
+void ConsoleObjectTreeOperations::console_tree_add_root_child(ConsoleWidget *console, AdObject &obj, int sort_idx) {
+    const QList<QStandardItem *> row = console->add_scope_item(ItemType_Object, console->domain_info_index());
+    console_object_item_data_load(row[0], obj);
+    row[0]->setText(obj.get_string(ATTRIBUTE_NAME));
+    console->set_item_sort_index(row[0]->index(), sort_idx);
 }
