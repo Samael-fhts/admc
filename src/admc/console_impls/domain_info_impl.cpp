@@ -65,10 +65,10 @@ void DomainInfoImpl::refresh(const QList<QModelIndex> &index_list) {
 
     console->set_current_scope(console->domain_info_index());
     if (ad.is_connected()) {
-        console_object_tree_init(console, ad);
+        ConsoleObjectTreeOperations::console_object_tree_init(console, ad);
         console_policy_tree_init(console);
         console_query_tree_init(console);
-        console_tree_add_password_settings(console, ad);
+        ConsoleObjectTreeOperations::console_tree_add_password_settings(console, ad);
         g_gplink_manager->update();
     }
     console->expand_item(console->domain_info_index());

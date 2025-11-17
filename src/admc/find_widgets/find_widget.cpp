@@ -158,7 +158,7 @@ void FindWidget::find() {
     // Prepare search args
     const QString filter = ui->filter_widget->get_filter();
     const QString base = ui->select_base_widget->get_base();
-    const QList<QString> search_attributes = console_object_search_attributes();
+    const QList<QString> search_attributes = ConsoleObjectTreeOperations::console_object_search_attributes();
 
     auto find_thread = new SearchThread(base, SearchScope_All, filter, search_attributes);
 
@@ -205,7 +205,7 @@ void FindWidget::handle_find_thread_results(const QHash<QString, AdObject> &resu
     for (const AdObject &object : results) {
         const QList<QStandardItem *> row = ui->console->add_results_item(ItemType_Object, head_index);
 
-        console_object_load(row, object);
+        ConsoleObjectTreeOperations::console_object_load(row, object);
     }
 }
 

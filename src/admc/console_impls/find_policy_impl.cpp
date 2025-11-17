@@ -21,7 +21,7 @@
 #include "console_impls/find_policy_impl.h"
 
 #include "adldap.h"
-#include "console_impls/object_impl/object_impl.h"
+#include "console_impls/object_impl/console_object_operations.h"
 #include "console_widget/results_view.h"
 #include "item_type.h"
 #include "utils.h"
@@ -37,7 +37,7 @@ FindPolicyImpl::FindPolicyImpl(ConsoleWidget *console_arg)
 }
 
 QString FindPolicyImpl::get_description(const QModelIndex &index) const {
-    const QString object_count_text = console_object_count_string(console, index);
+    const QString object_count_text = ConsoleObjectTreeOperations::console_object_count_string(console, index);
 
     return object_count_text;
 }

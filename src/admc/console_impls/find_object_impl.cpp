@@ -21,7 +21,7 @@
 #include "console_impls/find_object_impl.h"
 
 #include "adldap.h"
-#include "console_impls/object_impl/object_impl.h"
+#include "console_impls/object_impl/console_object_operations.h"
 #include "console_widget/results_view.h"
 #include "item_type.h"
 
@@ -36,17 +36,17 @@ FindObjectImpl::FindObjectImpl(ConsoleWidget *console_arg)
 }
 
 QString FindObjectImpl::get_description(const QModelIndex &index) const {
-    const QString object_count_text = console_object_count_string(console, index);
+    const QString object_count_text = ConsoleObjectTreeOperations::console_object_count_string(console, index);
 
     return object_count_text;
 }
 
 QList<QString> FindObjectImpl::column_labels() const {
-    return object_impl_column_labels();
+    return ConsoleObjectTreeOperations::object_impl_column_labels();
 }
 
 QList<int> FindObjectImpl::default_columns() const {
-    return object_impl_default_columns();
+    return ConsoleObjectTreeOperations::object_impl_default_columns();
 }
 
 QModelIndex get_find_object_root(ConsoleWidget *console) {
