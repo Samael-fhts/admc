@@ -21,7 +21,7 @@
 #include "ui_pso_results_widget.h"
 #include "ad_interface.h"
 #include "utils.h"
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 
 #include <QModelIndex>
 // #include <QDebug>

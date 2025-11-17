@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 
 #include "adldap.h"
 #include "attribute_dialogs/list_attribute_dialog.h"

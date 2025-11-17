@@ -23,7 +23,7 @@
 #include "ad_interface.h"
 #include "settings.h"
 #include "ad_defines.h"
-#include "console_impls/object_impl.h"
+#include "console_impls/object_impl/object_impl.h"
 #include "console_impls/item_type.h"
 #include "globals.h"
 #include "ad_config.h"
