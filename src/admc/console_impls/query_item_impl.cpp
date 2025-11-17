@@ -74,7 +74,7 @@ void QueryItemImpl::fetch(const QModelIndex &index) {
 
     const QString filter = index.data(QueryItemRole_Filter).toString();
     const QString base = index.data(QueryItemRole_Base).toString();
-    const QList<QString> search_attributes = console_object_search_attributes();
+    const QList<QString> search_attributes = ConsoleObjectTreeOperations::console_object_search_attributes();
     const SearchScope scope = [&]() {
         const bool scope_is_children = index.data(QueryItemRole_ScopeIsChildren).toBool();
         if (scope_is_children) {
@@ -84,11 +84,11 @@ void QueryItemImpl::fetch(const QModelIndex &index) {
         }
     }();
 
-    console_object_search(console, index, base, scope, filter, search_attributes);
+    ConsoleObjectTreeOperations::console_object_search(console, index, base, scope, filter, search_attributes);
 }
 
 QString QueryItemImpl::get_description(const QModelIndex &index) const {
-    const QString object_count_text = console_object_count_string(console, index);
+    const QString object_count_text = ConsoleObjectTreeOperations::console_object_count_string(console, index);
 
     return object_count_text;
 }
@@ -157,11 +157,11 @@ void QueryItemImpl::copy(const QList<QModelIndex> &index_list) {
 }
 
 QList<QString> QueryItemImpl::column_labels() const {
-    return object_impl_column_labels();
+    return ConsoleObjectTreeOperations::object_impl_column_labels();
 }
 
 QList<int> QueryItemImpl::default_columns() const {
-    return object_impl_default_columns();
+    return ConsoleObjectTreeOperations::object_impl_default_columns();
 }
 
 void QueryItemImpl::on_export() {

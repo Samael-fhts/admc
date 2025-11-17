@@ -23,7 +23,7 @@
 #include "adldap.h"
 #include "console_impls/all_policies_folder_impl.h"
 #include "console_impls/item_type.h"
-#include "console_impls/object_impl/object_impl.h"
+#include "console_impls/object_impl/console_object_operations.h"
 #include "console_impls/policy_impl.h"
 #include "create_dialogs/create_policy_dialog.h"
 #include "find_widgets/find_policy_dialog.h"
@@ -98,7 +98,7 @@ void PolicyOUImpl::fetch(const QModelIndex &index) {
         const QString base = dn;
         const SearchScope scope = SearchScope_Children;
         const QString filter = filter_CONDITION(Condition_Equals, ATTRIBUTE_OBJECT_CLASS, CLASS_OU);
-        QList<QString> attributes = console_object_search_attributes();
+        QList<QString> attributes = ConsoleObjectTreeOperations::console_object_search_attributes();
 
         const QHash<QString, AdObject> results = ad.search(base, scope, filter, attributes);
 
@@ -251,7 +251,7 @@ QList<int> PolicyOUImpl::default_columns() const {
 
 void PolicyOUImpl::create_ou() {
     const QString parent_dn = get_selected_target_dn(console, ItemType_PolicyOU, PolicyOURole_DN);
-    console_object_create({console}, CLASS_OU, parent_dn);
+    ConsoleObjectTreeOperations::console_object_create({console}, CLASS_OU, parent_dn);
 }
 
 void PolicyOUImpl::create_and_link_gpo() {
@@ -332,15 +332,15 @@ void PolicyOUImpl::link_gpo() {
 }
 
 void PolicyOUImpl::properties(const QList<QModelIndex> &index_list) {
-    console_object_properties({console}, index_list, PolicyOURole_DN, {CLASS_OU});
+    ConsoleObjectTreeOperations::console_object_properties({console}, index_list, PolicyOURole_DN, {CLASS_OU});
 }
 
 void PolicyOUImpl::rename(const QList<QModelIndex> &index_list) {
-    console_object_rename({console}, index_list, PolicyOURole_DN, CLASS_OU);
+    ConsoleObjectTreeOperations::console_object_rename({console}, index_list, PolicyOURole_DN, CLASS_OU);
 }
 
 void PolicyOUImpl::delete_action(const QList<QModelIndex> &index_list) {
-    console_object_delete({console}, index_list, PolicyOURole_DN);
+    ConsoleObjectTreeOperations::console_object_delete({console}, index_list, PolicyOURole_DN);
 }
 
 void policy_ou_impl_add_objects_from_dns(ConsoleWidget *console, AdInterface &ad, const QList<QString> &dn_list, const QModelIndex &parent) {
