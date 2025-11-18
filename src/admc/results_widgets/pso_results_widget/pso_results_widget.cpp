@@ -33,7 +33,7 @@ PSOResultsWidget::PSOResultsWidget(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->apply_button, &QPushButton::clicked, this, &PSOResultsWidget::on_apply);
-    connect(ui->cancel_button, &QPushButton::clicked, this, &PSOResultsWidget::on_cancel);
+    connect(ui->cancel_button, &QPushButton::clicked, this, &PSOResultsWidget::on_cancel_edit);
     connect(ui->edit_button, &QPushButton::clicked, this, &PSOResultsWidget::on_edit);
 }
 
@@ -68,7 +68,7 @@ void PSOResultsWidget::on_apply() {
 
     AdInterface ad;
     if (ad_failed(ad, this)) {
-        on_cancel();
+        on_cancel_edit();
         return;
     }
 
@@ -88,7 +88,7 @@ void PSOResultsWidget::on_edit() {
     set_editable(true);
 }
 
-void PSOResultsWidget::on_cancel() {
+void PSOResultsWidget::on_cancel_edit() {
     ui->pso_edit_widget->update(saved_pso_object);
     set_editable(false);
 }
