@@ -29,7 +29,7 @@
 
 #include <chrono>
 
-#include <QDebug>
+// #include <QDebug>
 
 PSOEditWidget::PSOEditWidget(QWidget *parent) :
     QWidget(parent),
@@ -134,8 +134,12 @@ QHash<QString, QList<QByteArray>> PSOEditWidget::pso_settings_values() {
         LDAP_BOOL_FALSE).toUtf8()
     };
 
-    for (const QString &dn : dn_applied_list) {
-        settings[ATTRIBUTE_PSO_APPLIES_TO].append(dn.toUtf8());
+    if (dn_applied_list.isEmpty()) {
+        settings[ATTRIBUTE_PSO_APPLIES_TO] = QList<QByteArray>();
+    } else {
+        for (const QString &dn : dn_applied_list) {
+            settings[ATTRIBUTE_PSO_APPLIES_TO].append(dn.toUtf8());
+        }
     }
 
     return settings;
