@@ -88,7 +88,7 @@ QStringList PSOResultsWidget::changed_attrs() {
     QStringList attrs;
     auto new_values = pso_edit_widget->pso_settings_values();
     for (const QString &attribute : new_values.keys()) {
-        if (saved_object.get_values(attribute) != new_values[attribute]) {
+        if (saved_object.get_values(attribute) != new_values.value(attribute, QList<QByteArray>())) {
             attrs.append(attribute);
         }
     }
