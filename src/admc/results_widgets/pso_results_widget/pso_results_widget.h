@@ -20,34 +20,30 @@
 #ifndef PSO_RESULTS_WIDGET_H
 #define PSO_RESULTS_WIDGET_H
 
-#include <QWidget>
+#include "results_widgets/results_widget_base.h"
 
-#include "ad_object.h"
 
-namespace Ui {
-class PSOResultsWidget;
-}
+class PSOEditWidget;
 
-class PSOResultsWidget : public QWidget
-{
+class PSOResultsWidget final : public ResultsWidgetBase {
     Q_OBJECT
 
 public:
     explicit PSOResultsWidget(QWidget *parent = nullptr);
-    ~PSOResultsWidget();
+    virtual ~PSOResultsWidget() = default;
 
-    void update(const QModelIndex &index);
-    void update(const AdObject &pso);
+    virtual void update(const QModelIndex &index) override;
+    virtual void update(const AdObject &pso) override;
 
 private:
-    Ui::PSOResultsWidget *ui;
-    AdObject saved_pso_object;
+    PSOEditWidget *pso_edit_widget;
 
-    void on_apply();
-    void on_edit();
-    void on_cancel_edit();
-    QStringList changed_setting_attrs();
-    void set_editable(bool is_editable);
+    virtual void on_apply() override;
+    virtual void on_edit() override;
+    virtual void on_cancel_edit() override;
+    virtual void set_editable(bool is_editable) override;
+
+    virtual QStringList changed_attrs() override;
 };
 
 #endif // PSO_RESULTS_WIDGET_H
