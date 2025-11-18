@@ -45,7 +45,7 @@ private:
 
     void on_apply();
     void on_edit();
-    void on_cancel();
+    void on_cancel_edit();
     QStringList changed_setting_attrs();
     void set_editable(bool is_editable);
 };
