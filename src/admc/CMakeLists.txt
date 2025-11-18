@@ -78,6 +78,7 @@ set(ADMC_SOURCES
     results_widgets/domain_info_results_widget/fsmo_table_widget.cpp
     results_widgets/pso_results_widget/pso_edit_widget.cpp
     results_widgets/pso_results_widget/pso_results_widget.cpp
+    results_widgets/results_widget_base.cpp
 
     create_dialogs/create_user_dialog.cpp
     create_dialogs/create_group_dialog.cpp
