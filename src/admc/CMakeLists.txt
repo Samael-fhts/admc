@@ -80,6 +80,8 @@ set(ADMC_SOURCES
     results_widgets/pso_results_widget/pso_edit_widget.cpp
     results_widgets/pso_results_widget/pso_results_widget.cpp
     results_widgets/results_widget_base.cpp
+    results_widgets/subnet_results_widget/subnet_results_widget.cpp
+    results_widgets/subnet_results_widget/subnet_edit_widget.cpp
 
     create_dialogs/create_user_dialog.cpp
     create_dialogs/create_group_dialog.cpp
