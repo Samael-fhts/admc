@@ -225,6 +225,7 @@ enum SystemFlagsBit {
 #define ATTRIBUTE_MSDS_USER_ACCOUNT_CONTROL_COMPUTED "msDS-User-Account-Control-Computed"
 #define ATTRIBUTE_MIDDLE_NAME "middleName"
 #define ATTRIBUTE_PSO_APPLIED "msDS-PSOApplied"
+#define ATTRIBUTE_SITE_OBJECT "siteObject"
 
 
 #define CLASS_GROUP "group"
