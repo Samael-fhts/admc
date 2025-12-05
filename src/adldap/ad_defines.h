@@ -226,6 +226,11 @@ enum SystemFlagsBit {
 #define ATTRIBUTE_MIDDLE_NAME "middleName"
 #define ATTRIBUTE_PSO_APPLIED "msDS-PSOApplied"
 #define ATTRIBUTE_SITE_OBJECT "siteObject"
+#define ATTRIBUTE_SITE_LIST "siteList"
+#define ATTRIBUTE_SITE_LINK_LIST "siteLinkList"
+#define ATTRIBUTE_LINK_COST "cost"
+#define ATTRIBUTE_LINK_REPLICATION_INTERVAL "replInterval"
+#define ATTRIBUTE_LINK_SCHEDULE "schedule"
 
 
 #define CLASS_GROUP "group"
