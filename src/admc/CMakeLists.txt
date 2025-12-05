@@ -164,6 +164,7 @@ set(ADMC_SOURCES
     tabs/laps_tab.cpp
     tabs/error_tab.cpp
     tabs/group_policy_tab.cpp
+    tabs/sites_link_tab/sites_link_common_widget.cpp
 
     multi_tabs/general_user_multi_tab.cpp
     multi_tabs/general_other_multi_tab.cpp
