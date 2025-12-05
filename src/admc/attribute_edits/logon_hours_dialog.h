@@ -60,12 +60,12 @@ public:
     ~LogonHoursDialog();
 
     QByteArray get() const;
+    void load(const QByteArray &value);
 
 private:
     QStandardItemModel *model;
     QByteArray original_value;
 
-    void load(const QByteArray &value);
     void switch_to_local_time();
     void on_local_time_button_toggled(bool checked);
     int get_offset() const;
