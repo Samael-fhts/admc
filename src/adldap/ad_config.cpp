@@ -171,6 +171,10 @@ QString AdConfig::root_domain_dn() const {
     return d->root_domain_dn;
 }
 
+QString AdConfig::sites_container_dn() const {
+    return QString("CN=Sites,%1").arg(configuration_dn());
+}
+
 QString AdConfig::get_attribute_display_name(const Attribute &attribute, const ObjectClass &objectClass) const {
     if (d->attribute_display_names.contains(objectClass) && d->attribute_display_names[objectClass].contains(attribute)) {
         const QString display_name = d->attribute_display_names[objectClass][attribute];
