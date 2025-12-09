@@ -68,6 +68,7 @@ set(ADMC_SOURCES
     tab_widget.cpp
     create_object_helper.cpp
     rename_object_helper.cpp
+    main_window_connection_error.cpp
 
     results_widgets/policy_ou_results_widget/policy_ou_results_widget.cpp
     results_widgets/policy_ou_results_widget/inherited_policies_widget.cpp

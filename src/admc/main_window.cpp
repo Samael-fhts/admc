@@ -80,11 +80,10 @@ MainWindow::MainWindow(AdInterface &ad, Krb5Client &krb5_client_arg, QWidget *pa
         init_on_connect(ad);
     }
     else {
-        if (!krb5_client->current_principal().isEmpty()) {
-            krb5_client->logout(false);
-        }
         g_status->log_messages(ad.messages());
-        login_label->setText(tr("Authentication required"));
+        if (krb5_client->current_principal().isEmpty()) {
+            login_label->setText(tr("Authentication required"));
+        }
     }
 }
 

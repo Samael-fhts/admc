@@ -21,7 +21,6 @@
 
 #include "adldap.h"
 #include "config.h"
-#include "connection_options_dialog.h"
 #include "globals.h"
 #include "main_window.h"
 #include "main_window_connection_error.h"
@@ -113,6 +112,7 @@ int main(int argc, char **argv) {
     load_connection_options();
 
     MainWindow *main_window = nullptr;
+    MainWindowConnectionError *error_window = nullptr;
     {
         const bool show_login_window = settings_get_variant(SETTING_show_login_window_on_startup).toBool();
         if (show_login_window) {
@@ -127,7 +127,12 @@ int main(int argc, char **argv) {
             main_window->show_changelog_on_update();
         }
         else {
-            main_window->open_auth_dialog();
+            if (krb5_client->active_tgt_principals().isEmpty()) {
+                main_window->open_auth_dialog();
+            } else {
+                error_window = new MainWindowConnectionError(main_window);
+                error_window->show();
+            }
         }
     }
 

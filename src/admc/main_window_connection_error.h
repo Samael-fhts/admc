@@ -21,24 +21,28 @@
 #ifndef MAIN_WINDOW_PRE_H
 #define MAIN_WINDOW_PRE_H
 
-#include <QMainWindow>
+#include <QDialog>
 
 namespace Ui {
 class MainWindowConnectionError;
 }
 
-class MainWindowConnectionError final : public QMainWindow {
+class MainWindow;
+
+class MainWindowConnectionError final : public QDialog {
     Q_OBJECT
 
 public:
     Ui::MainWindowConnectionError *ui;
 
-    MainWindowConnectionError();
+    MainWindowConnectionError(MainWindow *main_window_arg);
     ~MainWindowConnectionError();
 
 private:
     void on_retry_button();
     void open_connection_options();
+
+    MainWindow *main_window;
 };
 
 #endif /* MAIN_WINDOW_PRE_H */
