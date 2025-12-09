@@ -82,6 +82,8 @@ private:
     void disable_actions_on_logout(bool disable);
     void init_krb5_client();
     void resize_status_message();
+
+    friend class MainWindowConnectionError;
 };
 
 #endif /* MAIN_WINDOW_H */

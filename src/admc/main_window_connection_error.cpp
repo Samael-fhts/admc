@@ -28,10 +28,12 @@
 #include "settings.h"
 #include "utils.h"
 
-MainWindowConnectionError::MainWindowConnectionError()
-: QMainWindow() {
+MainWindowConnectionError::MainWindowConnectionError(MainWindow *main_window_arg)
+: QDialog(main_window_arg), main_window(main_window_arg) {
     ui = new Ui::MainWindowConnectionError();
     ui->setupUi(this);
+
+    setAttribute(Qt::WA_DeleteOnClose);
 
     center_widget(this);
 
@@ -54,12 +56,10 @@ void MainWindowConnectionError::on_retry_button() {
     AdInterface ad;
 
     if (ad_connected(ad, this)) {
-        load_g_adconfig(ad);
+        main_window->init_on_connect(ad);
+        main_window->show();
 
-        MainWindow *real_main_window = new MainWindow(ad, this);
-        real_main_window->show();
-
-        QMainWindow::hide();
+        QDialog::close();
     }
 }
 
