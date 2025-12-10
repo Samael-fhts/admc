@@ -2687,7 +2687,8 @@
     <name>MainWindowConnectionError</name>
     <message>
         <location filename="main_window_connection_error.ui" line="14"/>
-        <source>Connection Error</source>
+        <source>Connection error</source>
+        <oldsource>Connection Error</oldsource>
         <translation>Ошибка соединения</translation>
     </message>
     <message>
