@@ -127,8 +127,8 @@ SecurityTab::SecurityTab(QList<AttributeEdit *> *edit_list, QWidget *parent)
         this, &SecurityTab::on_clear_all);
 
     QMenu *more_menu = new QMenu(this);
-    QAction *show_sddl_action = new QAction(tr("Show descriptor in SDDL"));
-    restore_sd_action = new QAction(tr("Rollback to the previous descriptor"));
+    QAction *show_sddl_action = new QAction(tr("Show descriptor in SDDL"), this);
+    restore_sd_action = new QAction(tr("Rollback to the previous descriptor"), this);
     more_menu->addActions({show_sddl_action, restore_sd_action});
     connect(show_sddl_action, &QAction::triggered, this, &SecurityTab::on_show_sddl_sd);
     connect(restore_sd_action, &QAction::triggered, this, &SecurityTab::on_restore_previous_sd);
