@@ -207,11 +207,7 @@ void security_descriptor_free(security_descriptor *sd) {
 }
 
 security_descriptor *security_descriptor_copy(security_descriptor *sd) {
-    security_descriptor *out = talloc(NULL, struct security_descriptor);
-
-    out = security_descriptor_copy(out, sd);
-
-    return out;
+    return security_descriptor_copy(NULL, sd);
 }
 
 QString ad_security_get_well_known_trustee_name(const QByteArray &trustee) {
