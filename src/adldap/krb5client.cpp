@@ -126,7 +126,7 @@ void Krb5Client::Krb5ClientImpl::kinit(const QString &principal, const QString &
     krb5_principal princ;
     res = krb5_parse_name(context, principal_name, &princ);
     if (res) {
-        throw_error(error, res);
+        cleanup_and_throw(error, res, nullptr, nullptr, princ, nullptr);
     }
 
     memset(&creds, 0, sizeof(creds));
@@ -172,6 +172,8 @@ void Krb5Client::Krb5ClientImpl::kinit(const QString &principal, const QString &
     }
 
     load_cache_data(ccache, cache_is_system(ccache));
+
+    cleanup(nullptr, &creds, princ, nullptr);
 
     curr_principal = principal;
 }

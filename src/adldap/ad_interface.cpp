@@ -480,17 +480,18 @@ bool AdInterface::search_paged(const QString &base, const SearchScope scope, con
     }
 
     const bool search_success = d->search_paged_internal(base_cstr, scope_int, filter_cstr, attributes_array, results, cookie, get_sacl);
-    if (!search_success) {
-        results->clear();
-
-        return false;
-    }
 
     if (attributes_array != NULL) {
         for (int i = 0; attributes_array[i] != NULL; i++) {
             free(attributes_array[i]);
         }
         free(attributes_array);
+    }
+
+    if (!search_success) {
+        results->clear();
+
+        return false;
     }
 
     return true;
