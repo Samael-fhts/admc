@@ -94,6 +94,7 @@ set(ADMC_SOURCES
     create_dialogs/create_query_folder_dialog.cpp
     create_dialogs/create_pso_dialog.cpp
     create_dialogs/create_subnet_dialog.cpp
+    create_dialogs/create_sites_link_dialog.cpp
 
     rename_dialogs/rename_other_dialog.cpp
     rename_dialogs/rename_policy_dialog.cpp
