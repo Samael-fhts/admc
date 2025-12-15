@@ -167,6 +167,7 @@ set(ADMC_SOURCES
     tabs/sites_link_tab/sites_link_common_widget.cpp
     tabs/sites_link_tab/sites_link_part_widget.cpp
     tabs/sites_link_tab/sites_link_widget.cpp
+    tabs/sites_link_tab/sites_link_general_tab.cpp
 
     multi_tabs/general_user_multi_tab.cpp
     multi_tabs/general_other_multi_tab.cpp
