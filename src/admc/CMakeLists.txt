@@ -210,6 +210,7 @@ set(ADMC_SOURCES
     attribute_edits/dn_edit.cpp
     attribute_edits/pso_applied_edit.cpp
     attribute_edits/sites_link_edit.cpp
+    attribute_edits/site_links_table_edit.cpp
 
     attribute_edits/upn_multi_edit.cpp
     attribute_edits/account_option_multi_edit.cpp
