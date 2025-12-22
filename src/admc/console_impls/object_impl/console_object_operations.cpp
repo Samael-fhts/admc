@@ -31,6 +31,9 @@
 #include "properties_widgets/properties_multi_dialog.h"
 #include "create_dialogs/create_pso_dialog.h"
 #include <QMessageBox>
+#include "create_dialogs/create_site_dialog.h"
+#include "create_dialogs/create_subnet_dialog.h"
+#include "create_dialogs/create_sites_link_dialog.h"
 
 void ConsoleObjectTreeOperations::console_object_move_and_rename(const QList<ConsoleWidget *> &console_list,
                                                       AdInterface &ad,
@@ -621,36 +624,7 @@ void ConsoleObjectTreeOperations::console_object_create(const QList<ConsoleWidge
     // necessary to avoid even more code duplication
     // due to having to pass "ad" and "parent_dn" args
     // to dialog ctors
-    CreateObjectDialog *dialog = [&]() -> CreateObjectDialog * {
-        const bool is_user = (object_class == CLASS_USER);
-        const bool is_group = (object_class == CLASS_GROUP);
-        const bool is_computer = (object_class == CLASS_COMPUTER);
-        const bool is_ou = (object_class == CLASS_OU);
-        const bool is_shared_folder = (object_class == CLASS_SHARED_FOLDER);
-        const bool is_inet_org_person = (object_class == CLASS_INET_ORG_PERSON);
-        const bool is_contact = (object_class == CLASS_CONTACT);
-        const bool is_pso = (object_class == CLASS_PSO);
-
-        if (is_user) {
-            return new CreateUserDialog(ad, parent_dn, CLASS_USER, console_list[0]);
-        } else if (is_group) {
-            return new CreateGroupDialog(parent_dn, console_list[0]);
-        } else if (is_computer) {
-            return new CreateComputerDialog(parent_dn, console_list[0]);
-        } else if (is_ou) {
-            return new CreateOUDialog(parent_dn, console_list[0]);
-        } else if (is_shared_folder) {
-            return new CreateSharedFolderDialog(parent_dn, console_list[0]);
-        } else if (is_inet_org_person) {
-            return new CreateUserDialog(ad, parent_dn, CLASS_INET_ORG_PERSON, console_list[0]);
-        } else if (is_contact) {
-            return new CreateContactDialog(parent_dn, console_list[0]);
-        } else if (is_pso) {
-            return new CreatePSODialog(parent_dn, console_list[0]);
-        } else {
-            return nullptr;
-        }
-    }();
+    CreateObjectDialog *dialog = create_dialog(object_class, ad, parent_dn, console_list[0]);
 
     if (dialog == nullptr) {
         return;
@@ -950,4 +924,33 @@ void ConsoleObjectTreeOperations::console_tree_add_sites_container(ConsoleWidget
 
     const int sites_container_sort_idx = 4;
     console_tree_add_root_child(console, search_results.values()[0], sites_container_sort_idx);
+}
+
+CreateObjectDialog *ConsoleObjectTreeOperations::create_dialog(const QString &object_class, AdInterface &ad, const QString &parent_dn, ConsoleWidget *parent) {
+    if (object_class == CLASS_USER)
+            return new CreateUserDialog(ad, parent_dn, CLASS_USER, parent);
+    if (object_class == CLASS_GROUP)
+        return new CreateGroupDialog(parent_dn, parent);
+    if (object_class == CLASS_COMPUTER)
+        return new CreateComputerDialog(parent_dn, parent);
+    if (object_class == CLASS_OU)
+        return new CreateOUDialog(parent_dn, parent);
+    if (object_class == CLASS_SHARED_FOLDER)
+        return new CreateSharedFolderDialog(parent_dn, parent);
+    if (object_class == CLASS_INET_ORG_PERSON)
+        return new CreateUserDialog(ad, parent_dn, CLASS_INET_ORG_PERSON, parent);
+    if (object_class == CLASS_CONTACT)
+        return new CreateContactDialog(parent_dn, parent);
+    if (object_class == CLASS_PSO)
+        return new CreatePSODialog(parent_dn, parent);
+    if (object_class == CLASS_SITE)
+        return new CreateSiteDialog(ad, parent);
+    if (object_class == CLASS_SUBNET)
+        return new CreateSubnetDialog(ad, parent_dn, parent);
+    if (object_class == CLASS_SITE_LINK)
+        return new CreateSitesLinkDialog(ad, SitesLinkType::Link, parent_dn, parent);
+    if (object_class == CLASS_SITE_LINK_BRIDGE)
+        return new CreateSitesLinkDialog(ad, SitesLinkType::Bridge, parent_dn, parent);
+
+    return nullptr;
 }
