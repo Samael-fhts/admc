@@ -11,6 +11,7 @@ class AdObject;
 class QStandardItem;
 template<typename T> class QList;
 template<typename K, typename V> class QHash;
+class CreateObjectDialog;
 
 
 namespace ConsoleObjectTreeOperations {
@@ -52,6 +53,8 @@ namespace ConsoleObjectTreeOperations {
     // Adds password settings container to the root item childs
     void console_tree_add_password_settings(ConsoleWidget *console, AdInterface &ad);
     void console_tree_add_sites_container(ConsoleWidget *console, AdInterface &ad);
+
+    CreateObjectDialog *create_dialog(const QString &object_class, AdInterface &ad, const QString &parent_dn, ConsoleWidget *parent);
 }
 
 #endif // OPERATIONS_H
