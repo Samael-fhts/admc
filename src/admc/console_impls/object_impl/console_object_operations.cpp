@@ -927,6 +927,7 @@ void ConsoleObjectTreeOperations::console_tree_add_sites_container(ConsoleWidget
 }
 
 CreateObjectDialog *ConsoleObjectTreeOperations::create_dialog(const QString &object_class, AdInterface &ad, const QString &parent_dn, ConsoleWidget *parent) {
+
     if (object_class == CLASS_USER)
             return new CreateUserDialog(ad, parent_dn, CLASS_USER, parent);
     if (object_class == CLASS_GROUP)

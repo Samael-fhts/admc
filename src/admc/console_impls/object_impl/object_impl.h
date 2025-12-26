@@ -112,9 +112,6 @@ private slots:
     void on_new_ou();
     void on_new_group();
     void on_new_shared_folder();
-    void on_new_inet_org_person();
-    void on_new_contact();
-    void on_create_pso();
     void on_move();
     void on_enable();
     void on_disable();
@@ -139,7 +136,12 @@ private:
     QAction *edit_upn_suffixes_action;
     QAction *new_action;
     QAction *create_pso_action;
-    QHash<QString, QAction *> new_action_map;
+    QAction *create_subnet_action;
+    QAction *create_site_action;
+    QAction *create_site_link_action;
+    QAction *create_site_link_bridge_action;
+    QHash<QString, QAction *> standard_create_action_map; // For containers that can contain children of
+                                                          // different classes;
 
     QAction *toolbar_create_user;
     QAction *toolbar_create_group;

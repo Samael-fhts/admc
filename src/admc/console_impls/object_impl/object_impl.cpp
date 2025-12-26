@@ -217,6 +217,10 @@ QList<QAction *> ObjectImpl::get_all_custom_actions() const {
         edit_upn_suffixes_action,
         move_action,
         create_pso_action,
+        create_subnet_action,
+        create_site_action,
+        create_site_link_action,
+        create_site_link_bridge_action
     };
 
     return out;
@@ -238,6 +242,10 @@ QSet<QAction *> ObjectImpl::get_custom_actions(const QModelIndex &index, const b
     const bool is_domain = (object_class == CLASS_DOMAIN);
     const bool is_computer = (object_class == CLASS_COMPUTER);
     const bool is_pso_container = (object_class == CLASS_PSO_CONTAINER);
+    const bool is_sites_container = (object_class == CLASS_SITES_CONTAINER);
+    const bool is_subnet_container = (object_class == CLASS_SUBNET_CONTAINER);
+    const bool is_site_links_container = (object_class == CLASS_INTER_SITE_TRANSPORT);
+
 
     const bool account_disabled = index.data(ObjectRole_AccountDisabled).toBool();
 
@@ -275,6 +283,19 @@ QSet<QAction *> ObjectImpl::get_custom_actions(const QModelIndex &index, const b
             out.insert(create_pso_action);
         }
 
+        if (is_sites_container) {
+            out.insert(create_site_action);
+        }
+
+        if (is_subnet_container) {
+            out.insert(create_subnet_action);
+        }
+
+        if (is_site_links_container) {
+            out.insert(create_site_link_action);
+            out.insert(create_site_link_bridge_action);
+        }
+
     } else {
         // Multi selection only
         if (is_user) {
@@ -297,8 +318,8 @@ QSet<QAction *> ObjectImpl::get_custom_actions(const QModelIndex &index, const b
     // NOTE: have to manually call setVisible here
     // because "New" actions are contained inside "New"
     // sub-menu, so console widget can't manage them
-    for (const QString &action_object_class : new_action_map.keys()) {
-        QAction *action = new_action_map[action_object_class];
+    for (const QString &action_object_class : standard_create_action_map.keys()) {
+        QAction *action = standard_create_action_map[action_object_class];
 
         const bool is_visible = can_create_class_at_parent(action_object_class, object_class);
         action->setVisible(is_visible);
@@ -568,17 +589,6 @@ void ObjectImpl::on_new_shared_folder() {
     new_object(CLASS_SHARED_FOLDER);
 }
 
-void ObjectImpl::on_new_inet_org_person() {
-    new_object(CLASS_INET_ORG_PERSON);
-}
-
-void ObjectImpl::on_new_contact() {
-    new_object(CLASS_CONTACT);
-}
-
-void ObjectImpl::on_create_pso() {
-    new_object(CLASS_PSO);
-}
 
 void ObjectImpl::on_move() {
     AdInterface ad;
@@ -934,13 +944,13 @@ void ObjectImpl::setup_actions() {
     toolbar_create_group = nullptr;
     toolbar_create_ou = nullptr;
 
-    new_action_map[CLASS_USER] = new QAction(tr("User"), this);
-    new_action_map[CLASS_COMPUTER] = new QAction(tr("Computer"), this);
-    new_action_map[CLASS_OU] = new QAction(tr("OU"), this);
-    new_action_map[CLASS_GROUP] = new QAction(tr("Group"), this);
-    new_action_map[CLASS_SHARED_FOLDER] = new QAction(tr("Shared Folder"), this);
-    new_action_map[CLASS_INET_ORG_PERSON] = new QAction(tr("inetOrgPerson"), this);
-    new_action_map[CLASS_CONTACT] = new QAction(tr("Contact"), this);
+    standard_create_action_map[CLASS_USER] = new QAction(tr("User"), this);
+    standard_create_action_map[CLASS_COMPUTER] = new QAction(tr("Computer"), this);
+    standard_create_action_map[CLASS_OU] = new QAction(tr("OU"), this);
+    standard_create_action_map[CLASS_GROUP] = new QAction(tr("Group"), this);
+    standard_create_action_map[CLASS_SHARED_FOLDER] = new QAction(tr("Shared Folder"), this);
+    standard_create_action_map[CLASS_INET_ORG_PERSON] = new QAction(tr("inetOrgPerson"), this);
+    standard_create_action_map[CLASS_CONTACT] = new QAction(tr("Contact"), this);
     find_action = new QAction(tr("Find..."), this);
     move_action = new QAction(tr("Move..."), this);
     add_to_group_action = new QAction(tr("Add to group..."), this);
@@ -949,43 +959,41 @@ void ObjectImpl::setup_actions() {
     reset_password_action = new QAction(tr("Reset password"), this);
     reset_account_action = new QAction(tr("Reset account"), this);
     edit_upn_suffixes_action = new QAction(tr("Edit UPN suffixes"), this);
-    create_pso_action = new QAction(tr("Create password setting object"), this);
 
     auto new_menu = new QMenu(tr("New"), console);
     new_action = new_menu->menuAction();
 
     const QList<QString> new_action_keys_sorted = [&]() {
-        QList<QString> out = new_action_map.keys();
+        QList<QString> out = standard_create_action_map.keys();
         std::sort(out.begin(), out.end());
 
         return out;
     }();
     for (const QString &key : new_action_keys_sorted) {
-        QAction *action = new_action_map[key];
+        QAction *action = standard_create_action_map[key];
         new_menu->addAction(action);
     }
 
-    connect(
-        new_action_map[CLASS_USER], &QAction::triggered,
-        this, &ObjectImpl::on_new_user);
-    connect(
-        new_action_map[CLASS_COMPUTER], &QAction::triggered,
-        this, &ObjectImpl::on_new_computer);
-    connect(
-        new_action_map[CLASS_OU], &QAction::triggered,
-        this, &ObjectImpl::on_new_ou);
-    connect(
-        new_action_map[CLASS_GROUP], &QAction::triggered,
-        this, &ObjectImpl::on_new_group);
-    connect(
-        new_action_map[CLASS_SHARED_FOLDER], &QAction::triggered,
-        this, &ObjectImpl::on_new_shared_folder);
-    connect(
-        new_action_map[CLASS_INET_ORG_PERSON], &QAction::triggered,
-        this, &ObjectImpl::on_new_inet_org_person);
-    connect(
-        new_action_map[CLASS_CONTACT], &QAction::triggered,
-        this, &ObjectImpl::on_new_contact);
+    create_pso_action = new QAction(tr("Create password setting object"), this);
+    create_subnet_action = new QAction(tr("Create subnet"), this);
+    create_site_action = new QAction(tr("Create site"), this);
+    create_site_link_action = new QAction(tr("Create site link"), this);
+    create_site_link_bridge_action = new QAction(tr("Create site link bridge"), this);
+
+    QHash<QString, QAction *> all_create_action_map {standard_create_action_map};
+    all_create_action_map[CLASS_PSO] = create_pso_action;
+    all_create_action_map[CLASS_SUBNET] = create_subnet_action;
+    all_create_action_map[CLASS_SITE] = create_site_action;
+    all_create_action_map[CLASS_SITE_LINK] = create_site_link_action;
+    all_create_action_map[CLASS_SITE_LINK_BRIDGE] = create_site_link_bridge_action;
+
+    for (const QString &obj_class : all_create_action_map.keys()) {
+        connect(
+            all_create_action_map[obj_class], &QAction::triggered,
+                    this, [this, obj_class]() {
+                                new_object(obj_class); });
+    }
+
     connect(
         move_action, &QAction::triggered,
         this, &ObjectImpl::on_move);
@@ -1013,7 +1021,4 @@ void ObjectImpl::setup_actions() {
     connect(
         console, &ConsoleWidget::selection_changed,
         this, &ObjectImpl::update_toolbar_actions);
-    connect(
-        create_pso_action, &QAction::triggered,
-        this, &ObjectImpl::on_create_pso);
 }
