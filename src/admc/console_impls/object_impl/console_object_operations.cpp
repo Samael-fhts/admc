@@ -94,7 +94,7 @@ void ConsoleObjectTreeOperations::console_object_move_and_rename(const QList<Con
         // happens is that due to new parent being selected,
         // it gets fetched and loads new object. End result
         // is that new object is duplicated.
-        const QModelIndex object_root = get_object_tree_root(target_console);
+        const QModelIndex object_root = get_domain_object_tree_root(target_console);
         if (object_root.isValid()) {
             const QModelIndex parent_object = target_console->search_item(object_root, ObjectRole_DN, new_parent_dn, {ItemType_Object});
 
@@ -264,7 +264,7 @@ void ConsoleObjectTreeOperations::add_objects_to_console(ConsoleWidget *console,
     }
 }
 
-void ConsoleObjectTreeOperations::object_impl_add_objects_to_console_from_dns(ConsoleWidget *console, AdInterface &ad, const QList<QString> &dn_list, const QModelIndex &parent) {
+void ConsoleObjectTreeOperations::add_objects_to_console_from_dn_list(ConsoleWidget *console, AdInterface &ad, const QList<QString> &dn_list, const QModelIndex &parent) {
     const QList<AdObject> object_list = [&]() {
         QList<AdObject> out;
 
@@ -539,27 +539,8 @@ void ConsoleObjectTreeOperations::console_object_tree_init(ConsoleWidget *consol
     console->set_item_sort_index(row[0]->index(), 0);
 }
 
-QModelIndex ConsoleObjectTreeOperations::get_object_tree_root(ConsoleWidget *console) {
-    const QString head_dn = g_adconfig->domain_dn();
-    const QModelIndex console_root = console->domain_info_index();
-    const QList<QModelIndex> search_results = console->search_items(console_root, ObjectRole_DN, head_dn, {ItemType_Object});
-
-    if (!search_results.isEmpty()) {
-        // NOTE: domain object may also appear in queries,
-        // so have to find the real head by finding the
-        // index with no parent
-        for (const QModelIndex &index : search_results) {
-            const QModelIndex parent = index.parent();
-
-            if (parent == console->domain_info_index()) {
-                return index;
-            }
-        }
-
-        return QModelIndex();
-    } else {
-        return QModelIndex();
-    }
+QModelIndex ConsoleObjectTreeOperations::get_domain_object_tree_root(ConsoleWidget *console) {
+    return get_object_tree_root(console, g_adconfig->domain_dn());
 }
 
 bool ConsoleObjectTreeOperations::console_object_deletion_dialog(ConsoleWidget *console, const QList<QModelIndex> &index_deleted_list) {
@@ -635,7 +616,7 @@ void ConsoleObjectTreeOperations::console_object_create(const QList<ConsoleWidge
     QObject::connect(
         dialog, &QDialog::accepted,
         console_list[0],
-        [console_list, dialog, parent_dn, object_class]() {
+        [console_list, dialog, parent_dn, object_class]() {   // TODO: Refactor that lambda madness
             AdInterface ad_inner;
             if (ad_failed(ad_inner, console_list[0])) {
                 return;
@@ -651,12 +632,12 @@ void ConsoleObjectTreeOperations::console_object_create(const QList<ConsoleWidge
             // need to search for index of parent object in domain
             // tree.
             auto apply_changes = [&](ConsoleWidget *target_console) {
-                const QModelIndex object_root = get_object_tree_root(target_console);
+                const QModelIndex object_root = get_domain_object_tree_root(target_console);
                 if (object_root.isValid()) {
                     const QModelIndex parent_object = target_console->search_item(object_root, ObjectRole_DN, parent_dn, {ItemType_Object});
 
                     if (parent_object.isValid()) {
-                        object_impl_add_objects_to_console_from_dns(target_console, ad_inner, {created_dn}, parent_object);
+                        add_objects_to_console_from_dn_list(target_console, ad_inner, {created_dn}, parent_object);
                     }
                 }
 
@@ -768,7 +749,9 @@ void ConsoleObjectTreeOperations::console_object_delete(const QList<ConsoleWidge
 
     auto apply_changes = [&deleted_list](ConsoleWidget *target_console) {
         const QList<QModelIndex> root_list = {
-            get_object_tree_root(target_console),
+            get_domain_object_tree_root(target_console),
+            get_pso_container_tree_root(target_console),
+            get_sites_container_tree_root(target_console),
             get_query_tree_root(target_console),
             get_find_object_root(target_console),
         };
@@ -849,7 +832,7 @@ void ConsoleObjectTreeOperations::console_object_properties(const QList<ConsoleW
                 }
             };
 
-            const QModelIndex object_root = get_object_tree_root(target_console);
+            const QModelIndex object_root = get_domain_object_tree_root(target_console);
             const QModelIndex query_root = get_query_tree_root(target_console);
             const QModelIndex policy_root = get_policy_tree_root(target_console);
             const QModelIndex find_object_root = get_find_object_root(target_console);
@@ -954,4 +937,32 @@ CreateObjectDialog *ConsoleObjectTreeOperations::create_dialog(const QString &ob
         return new CreateSitesLinkDialog(ad, SitesLinkType::Bridge, parent_dn, parent);
 
     return nullptr;
+}
+
+QModelIndex ConsoleObjectTreeOperations::get_object_tree_root(ConsoleWidget *console, const QString &root_obj_dn) {
+    const QModelIndex console_root = console->domain_info_index();
+    const QList<QModelIndex> search_results = console->search_items(console_root, ObjectRole_DN, root_obj_dn, {ItemType_Object});
+
+    if (!search_results.isEmpty()) {
+        for (const QModelIndex &index : search_results) {
+            const QModelIndex parent = index.parent();
+
+            // Match only with the tree root domain info parent item
+            if (parent == console->domain_info_index()) {
+                return index;
+            }
+        }
+
+        return QModelIndex();
+    } else {
+        return QModelIndex();
+    }
+}
+
+QModelIndex ConsoleObjectTreeOperations::get_sites_container_tree_root(ConsoleWidget *console) {
+    return get_object_tree_root(console, g_adconfig->sites_container_dn());
+}
+
+QModelIndex ConsoleObjectTreeOperations::get_pso_container_tree_root(ConsoleWidget *console) {
+    return get_object_tree_root(console, g_adconfig->pso_container_dn());
 }

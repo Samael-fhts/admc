@@ -17,10 +17,11 @@ class CreateObjectDialog;
 namespace ConsoleObjectTreeOperations {
     void console_object_delete_dn_list(ConsoleWidget *console, const QList<QString> &dn_list, const QModelIndex &tree_root, const int type, const int dn_role);
     void console_object_move_and_rename(const QList<ConsoleWidget *> &console_list, AdInterface &ad, const QHash<QString, QString> &old_to_new_dn_map_arg, const QString &new_parent_dn);
-    void add_objects_to_console(ConsoleWidget *console, const QList<AdObject> &object_list, const QModelIndex &parent);
 
+
+    void add_objects_to_console(ConsoleWidget *console, const QList<AdObject> &object_list, const QModelIndex &parent);
     // Helper f-n that searches for objects and then adds them
-    void object_impl_add_objects_to_console_from_dns(ConsoleWidget *console, AdInterface &ad, const QList<QString> &dn_list, const QModelIndex &parent);
+    void add_objects_to_console_from_dn_list(ConsoleWidget *console, AdInterface &ad, const QList<QString> &dn_list, const QModelIndex &parent);
 
     void console_object_load(const QList<QStandardItem *> row, const AdObject &object);
     void console_object_item_data_load(QStandardItem *item, const AdObject &object);
@@ -39,7 +40,10 @@ namespace ConsoleObjectTreeOperations {
 
     // NOTE: this may return an invalid index if there's no tree
     // of objects setup
-    QModelIndex get_object_tree_root(ConsoleWidget *console);
+    QModelIndex get_object_tree_root(ConsoleWidget *console, const QString &root_obj_dn);
+    QModelIndex get_domain_object_tree_root(ConsoleWidget *console);
+    QModelIndex get_sites_container_tree_root(ConsoleWidget *console);
+    QModelIndex get_pso_container_tree_root(ConsoleWidget *console);
 
     QString console_object_count_string(ConsoleWidget *console, const QModelIndex &index);
     void console_object_create(const QList<ConsoleWidget *> &console_list, const QString &object_class, const QString &parent_dn);

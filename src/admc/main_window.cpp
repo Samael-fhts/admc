@@ -511,7 +511,7 @@ void MainWindow::init_on_connect(AdInterface &ad) {
     ui->console->setup_menubar_action_menu(ui->menu_action);
 
     // Set current scope to object head to load it
-    const QModelIndex object_tree_root = ConsoleObjectTreeOperations::get_object_tree_root(ui->console);
+    const QModelIndex object_tree_root = ConsoleObjectTreeOperations::get_domain_object_tree_root(ui->console);
     if (object_tree_root.isValid()) {
         ui->console->set_current_scope(object_tree_root);
     }

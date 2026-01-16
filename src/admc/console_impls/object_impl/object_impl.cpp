@@ -533,7 +533,7 @@ QList<int> ObjectImpl::default_columns() const {
 }
 
 void ObjectImpl::refresh_tree() {
-    const QModelIndex object_tree_root = ConsoleObjectTreeOperations::get_object_tree_root(console);
+    const QModelIndex object_tree_root = ConsoleObjectTreeOperations::get_domain_object_tree_root(console);
     if (!object_tree_root.isValid()) {
         return;
     }
@@ -818,7 +818,7 @@ void ObjectImpl::set_disabled(const bool disabled) {
             }
         };
 
-        const QModelIndex object_root = ConsoleObjectTreeOperations::get_object_tree_root(target_console);
+        const QModelIndex object_root = ConsoleObjectTreeOperations::get_domain_object_tree_root(target_console);
         const QModelIndex find_object_root = get_find_object_root(target_console);
         const QModelIndex query_root = get_query_tree_root(target_console);
 
