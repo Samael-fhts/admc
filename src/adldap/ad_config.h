@@ -63,6 +63,7 @@ public:
     QString domain_sid() const;
     QString root_domain_dn() const;
     QString sites_container_dn() const;
+    QString pso_container_dn() const;
 
     QString get_attribute_display_name(const Attribute &attribute, const ObjectClass &objectClass) const;
 
