@@ -634,10 +634,10 @@ void ConsoleObjectTreeOperations::console_object_create(const QList<ConsoleWidge
             auto apply_changes = [&](ConsoleWidget *target_console) {
                 const QModelIndex object_root = get_domain_object_tree_root(target_console);
                 if (object_root.isValid()) {
-                    const QModelIndex parent_object = target_console->search_item(object_root, ObjectRole_DN, parent_dn, {ItemType_Object});
+                    const QModelIndex parent_index = target_console->search_item(object_root, ObjectRole_DN, parent_dn, {ItemType_Object});
 
-                    if (parent_object.isValid()) {
-                        add_objects_to_console_from_dn_list(target_console, ad_inner, {created_dn}, parent_object);
+                    if (parent_index.isValid()) {
+                        add_objects_to_console_from_dn_list(target_console, ad_inner, {created_dn}, parent_index);
                     }
                 }
 
@@ -653,10 +653,10 @@ void ConsoleObjectTreeOperations::console_object_create(const QList<ConsoleWidge
                 // Apply changes to policy tree
                 const QModelIndex policy_root = get_policy_tree_root(target_console);
                 if (policy_root.isValid() && object_class == CLASS_OU) {
-                    const QModelIndex parent_policy = target_console->search_item(policy_root, PolicyOURole_DN, parent_dn, {ItemType_PolicyOU});
+                    const QModelIndex parent_ou_index = target_console->search_item(policy_root, PolicyOURole_DN, parent_dn, {ItemType_PolicyOU});
 
-                    if (parent_policy.isValid()) {
-                        policy_ou_impl_add_objects_from_dns(target_console, ad_inner, {created_dn}, parent_policy);
+                    if (parent_ou_index.isValid()) {
+                        policy_ou_impl_add_objects_from_dns(target_console, ad_inner, {created_dn}, parent_ou_index);
                     }
                 }
             };
