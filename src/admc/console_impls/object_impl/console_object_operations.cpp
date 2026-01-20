@@ -632,6 +632,29 @@ void ConsoleObjectTreeOperations::console_object_create(const QList<ConsoleWidge
             // need to search for index of parent object in domain
             // tree.
             auto apply_changes = [&](ConsoleWidget *target_console) {
+                if (object_class == CLASS_SITE) {
+                    const QModelIndex site_root = get_sites_container_tree_root(target_console);
+                    add_objects_to_console_from_dn_list(target_console, ad_inner, {created_dn}, site_root);
+                    return;
+                }
+                else if (object_class == CLASS_SITE_LINK ||
+                           object_class == CLASS_SITE_LINK_BRIDGE || object_class == CLASS_SUBNET) {
+                    const QModelIndex site_root = get_sites_container_tree_root(target_console);
+                    const QModelIndex parent_index = target_console->search_item(site_root, ObjectRole_DN, parent_dn, {ItemType_Object});
+                    if (parent_index.isValid()) {
+                        add_objects_to_console_from_dn_list(target_console, ad_inner, {created_dn}, parent_index);
+                    }
+                    return;
+                }
+
+                if (object_class == CLASS_PSO) {
+                    const QModelIndex pso_root = get_pso_container_tree_root(target_console);
+                    add_objects_to_console_from_dn_list(target_console, ad_inner, {created_dn}, pso_root);
+                    if (console_item_get_was_fetched(pso_root)) {
+                        target_console->refresh_scope(pso_root);
+                    }
+                }
+
                 const QModelIndex object_root = get_domain_object_tree_root(target_console);
                 if (object_root.isValid()) {
                     const QModelIndex parent_index = target_console->search_item(object_root, ObjectRole_DN, parent_dn, {ItemType_Object});
