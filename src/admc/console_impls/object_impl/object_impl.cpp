@@ -335,8 +335,19 @@ QSet<QAction *> ObjectImpl::get_disabled_custom_actions(const QModelIndex &index
 
     const QString object_class = index.data(ObjectRole_ObjectClasses).toStringList().last();
     const bool cannot_move = index.data(ObjectRole_CannotMove).toBool();
+    const QList<QString> not_movable_obj_classes = {
+        CLASS_PSO,
+        CLASS_SITE,
+        CLASS_SUBNET,
+        CLASS_SITE_LINK,
+        CLASS_SITE_LINK_BRIDGE,
+        CLASS_SITES_CONTAINER,
+        CLASS_INTER_SITE_TRANSPORT,
+        CLASS_INTER_SITE_TRANSPORT_CONTAINER,
+        CLASS_SUBNET_CONTAINER
+    };
 
-    if (cannot_move || object_class == CLASS_PSO) {
+    if (cannot_move || not_movable_obj_classes.contains(object_class)) {
         out.insert(move_action);
     }
 
@@ -596,19 +607,19 @@ void ObjectImpl::on_move() {
         return;
     }
 
-    auto dialog = new SelectContainerDialog(ad, console);
+    const QList<QString> dn_list = get_selected_dn_list_object();
+
+    auto dialog = new SelectContainerDialog(ad, console, dn_list);
     dialog->open();
 
     connect(
         dialog, &QDialog::accepted,
         this,
-        [this, dialog]() {
+        [this, dialog, dn_list]() {
             AdInterface ad2;
             if (ad_failed(ad2, console)) {
                 return;
             }
-
-            const QList<QString> dn_list = get_selected_dn_list_object();
 
             show_busy_indicator();
 
