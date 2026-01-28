@@ -94,7 +94,9 @@ void ConsoleObjectTreeOperations::console_object_move_and_rename(const QList<Con
         // happens is that due to new parent being selected,
         // it gets fetched and loads new object. End result
         // is that new object is duplicated.
-        const QModelIndex object_root = get_domain_object_tree_root(target_console);
+        const QModelIndex object_root = new_parent_dn.contains(g_adconfig->sites_container_dn()) ?
+                    get_sites_container_tree_root(target_console) :
+                    get_domain_object_tree_root(target_console);
         if (object_root.isValid()) {
             const QModelIndex parent_object = target_console->search_item(object_root, ObjectRole_DN, new_parent_dn, {ItemType_Object});
 
