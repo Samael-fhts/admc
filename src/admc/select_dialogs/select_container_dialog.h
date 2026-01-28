@@ -39,16 +39,22 @@ class SelectContainerDialog;
 
 enum ContainerRole {
     ContainerRole_DN = Qt::UserRole + 1,
-    ContainerRole_Fetched = Qt::UserRole + 2,
+    ContainerRole_Fetched = Qt::UserRole + 2
 };
 
 class SelectContainerDialog : public QDialog {
     Q_OBJECT
 
+    enum ParentContainerType {
+        ParentContainerType_Default,
+        ParentContainerType_SiteServers, // For servers in the console site tree
+        ParentContainerType_Undefined
+    };
+
 public:
     Ui::SelectContainerDialog *ui;
 
-    SelectContainerDialog(AdInterface &ad, QWidget *parent);
+    SelectContainerDialog(AdInterface &ad, QWidget *parent, const QStringList &obj_dn_list = QStringList());
     ~SelectContainerDialog();
 
     QString get_selected() const;
@@ -59,6 +65,12 @@ private:
 
     void fetch_node(const QModelIndex &proxy_index);
     void on_item_expanded(const QModelIndex &index);
+
+    ParentContainerType parent_container_type(const QStringList &obj_dn_list);
+
+    void setup_default_container_tree(AdInterface &ad);
+    void setup_site_container_list(AdInterface &ad, const QStringList &obj_dn_list);
+    void setup_undefined_view_state();
 };
 
 #endif /* SELECT_CONTAINER_DIALOG_H */
