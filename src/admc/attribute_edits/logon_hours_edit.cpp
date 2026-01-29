@@ -21,7 +21,7 @@
 #include "attribute_edits/logon_hours_edit.h"
 
 #include "adldap.h"
-#include "attribute_edits/logon_hours_dialog.h"
+#include "attribute_edits/schedule_hours_dialog.h"
 #include "utils.h"
 
 #include <QPushButton>
@@ -48,7 +48,7 @@ bool LogonHoursEdit::apply(AdInterface &ad, const QString &dn) const {
 }
 
 void LogonHoursEdit::open_dialog() {
-    auto dialog = new LogonHoursDialog(current_value, button);
+    auto dialog = new ScheduleHoursDialog(current_value, button);
     dialog->open();
 
     connect(

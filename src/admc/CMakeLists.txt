@@ -204,7 +204,7 @@ set(ADMC_SOURCES
     attribute_edits/manager_widget.cpp
     attribute_edits/delegation_edit.cpp
     attribute_edits/logon_hours_edit.cpp
-    attribute_edits/logon_hours_dialog.cpp
+    attribute_edits/schedule_hours_dialog.cpp
     attribute_edits/logon_computers_edit.cpp
     attribute_edits/logon_computers_dialog.cpp
     attribute_edits/protect_deletion_edit.cpp

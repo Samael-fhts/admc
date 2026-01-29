@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>LogonHoursDialog</class>
- <widget class="QDialog" name="LogonHoursDialog">
+ <class>ScheduleHoursDialog</class>
+ <widget class="QDialog" name="ScheduleHoursDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Edit Logon Hours</string>
+   <string>Edit Schedule Hours</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -142,7 +142,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>accepted()</signal>
-   <receiver>LogonHoursDialog</receiver>
+   <receiver>ScheduleHoursDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -158,7 +158,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>LogonHoursDialog</receiver>
+   <receiver>ScheduleHoursDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
