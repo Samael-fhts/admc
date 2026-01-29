@@ -47,17 +47,17 @@ enum Weekday {
 #define LOGON_HOURS_SIZE (7 * 3)
 
 namespace Ui {
-class LogonHoursDialog;
+class ScheduleHoursDialog;
 }
 
-class LogonHoursDialog : public QDialog {
+class ScheduleHoursDialog : public QDialog {
     Q_OBJECT
 
 public:
-    Ui::LogonHoursDialog *ui;
+    Ui::ScheduleHoursDialog *ui;
 
-    LogonHoursDialog(const QByteArray &value, QWidget *parent);
-    ~LogonHoursDialog();
+    ScheduleHoursDialog(const QByteArray &value, QWidget *parent);
+    ~ScheduleHoursDialog();
 
     QByteArray get() const;
     void load(const QByteArray &value);
@@ -72,8 +72,8 @@ private:
     bool is_local_time;
 };
 
-QList<QList<bool>> logon_hours_to_bools(const QByteArray &byte_list, const int time_offset = 0);
-QByteArray logon_hours_to_bytes(const QList<QList<bool>> bool_list, const int time_offset = 0);
+QList<QList<bool>> hours_to_bools(const QByteArray &byte_list, const int time_offset = 0);
+QByteArray hours_to_bytes(const QList<QList<bool>> bool_list, const int time_offset = 0);
 int get_current_utc_offset();
 
 #endif /* LOGON_HOURS_DIALOG_H */

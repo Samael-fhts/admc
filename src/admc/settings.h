@@ -85,7 +85,7 @@ DEFINE_SETTING(SETTING_select_object_advanced_dialog_geometry);
 DEFINE_SETTING(SETTING_select_policy_dialog_geometry);
 DEFINE_SETTING(SETTING_filter_dialog_geometry);
 DEFINE_SETTING(SETTING_class_filter_dialog_geometry);
-DEFINE_SETTING(SETTING_logon_hours_dialog_geometry);
+DEFINE_SETTING(SETTING_schedule_hours_dialog_geometry);
 DEFINE_SETTING(SETTING_logon_computers_dialog_geometry);
 DEFINE_SETTING(SETTING_bool_attribute_dialog_geometry);
 DEFINE_SETTING(SETTING_datetime_attribute_dialog_geometry);

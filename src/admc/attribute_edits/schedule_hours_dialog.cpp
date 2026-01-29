@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "attribute_edits/logon_hours_dialog.h"
-#include "attribute_edits/ui_logon_hours_dialog.h"
+#include "attribute_edits/schedule_hours_dialog.h"
+#include "attribute_edits/ui_schedule_hours_dialog.h"
 
 #include "ad_utils.h"
 #include "settings.h"
@@ -30,9 +30,9 @@
 
 QList<bool> shift_list(const QList<bool> &list, const int shift_amount);
 
-LogonHoursDialog::LogonHoursDialog(const QByteArray &value, QWidget *parent)
+ScheduleHoursDialog::ScheduleHoursDialog(const QByteArray &value, QWidget *parent)
 : QDialog(parent) {
-    ui = new Ui::LogonHoursDialog();
+    ui = new Ui::ScheduleHoursDialog();
     ui->setupUi(this);
 
     setAttribute(Qt::WA_DeleteOnClose);
@@ -73,7 +73,7 @@ LogonHoursDialog::LogonHoursDialog(const QByteArray &value, QWidget *parent)
 
     load(value);
 
-    settings_setup_dialog_geometry(SETTING_logon_hours_dialog_geometry, this);
+    settings_setup_dialog_geometry(SETTING_schedule_hours_dialog_geometry, this);
 
     const QString allowed_style_sheet = [&]() {
         const QPalette palette = ui->view->palette();
@@ -95,19 +95,19 @@ LogonHoursDialog::LogonHoursDialog(const QByteArray &value, QWidget *parent)
 
     connect(
         ui->local_time_button, &QRadioButton::toggled,
-        this, &LogonHoursDialog::on_local_time_button_toggled);
+        this, &ScheduleHoursDialog::on_local_time_button_toggled);
 }
 
-LogonHoursDialog::~LogonHoursDialog() {
+ScheduleHoursDialog::~ScheduleHoursDialog() {
     delete ui;
 }
 
-void LogonHoursDialog::load(const QByteArray &value) {
+void ScheduleHoursDialog::load(const QByteArray &value) {
     ui->view->clearSelection();
 
     original_value = value;
 
-    const QList<QList<bool>> bools = logon_hours_to_bools(value, get_offset());
+    const QList<QList<bool>> bools = hours_to_bools(value, get_offset());
 
     for (int day = 0; day < DAYS_IN_WEEK; day++) {
         for (int h = 0; h < HOURS_IN_DAY; h++) {
@@ -123,9 +123,9 @@ void LogonHoursDialog::load(const QByteArray &value) {
     }
 }
 
-QByteArray LogonHoursDialog::get() const {
+QByteArray ScheduleHoursDialog::get() const {
     const QList<QList<bool>> bools = [&]() {
-        QList<QList<bool>> out = logon_hours_to_bools(QByteArray(LOGON_HOURS_SIZE, '\0'));
+        QList<QList<bool>> out = hours_to_bools(QByteArray(LOGON_HOURS_SIZE, '\0'));
 
         const QList<QModelIndex> selected = ui->view->selectionModel()->selectedIndexes();
 
@@ -139,7 +139,7 @@ QByteArray LogonHoursDialog::get() const {
         return out;
     }();
 
-    const QList<QList<bool>> original_bools = logon_hours_to_bools(original_value);
+    const QList<QList<bool>> original_bools = hours_to_bools(original_value);
 
     // NOTE: input has to always be equal to output.
     // Therefore, for the case where original value was
@@ -148,14 +148,14 @@ QByteArray LogonHoursDialog::get() const {
     if (bools == original_bools) {
         return original_value;
     } else {
-        const QByteArray out = logon_hours_to_bytes(bools, get_offset());
+        const QByteArray out = hours_to_bytes(bools, get_offset());
 
         return out;
     }
 }
 
 // Get current value, change time state and reload value
-void LogonHoursDialog::on_local_time_button_toggled(bool checked) {
+void ScheduleHoursDialog::on_local_time_button_toggled(bool checked) {
     const QByteArray current_value = get();
 
     // NOTE: important to change state after get() call so
@@ -173,7 +173,7 @@ int get_current_utc_offset() {
     return offset_h;
 }
 
-int LogonHoursDialog::get_offset() const {
+int ScheduleHoursDialog::get_offset() const {
     if (is_local_time) {
         return get_current_utc_offset();
     } else {
@@ -181,7 +181,7 @@ int LogonHoursDialog::get_offset() const {
     }
 }
 
-QList<QList<bool>> logon_hours_to_bools(const QByteArray &byte_list_arg, const int time_offset) {
+QList<QList<bool>> hours_to_bools(const QByteArray &byte_list_arg, const int time_offset) {
     // NOTE: value may be empty or malformed. In that
     // case treat both as values that "allow all logon
     // times" (all bits set). This also handles the
@@ -227,7 +227,7 @@ QList<QList<bool>> logon_hours_to_bools(const QByteArray &byte_list_arg, const i
     return out;
 }
 
-QByteArray logon_hours_to_bytes(const QList<QList<bool>> bool_list, const int time_offset) {
+QByteArray hours_to_bytes(const QList<QList<bool>> bool_list, const int time_offset) {
     const QList<bool> joined = [&]() {
         QList<bool> out;
 
