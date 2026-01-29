@@ -55,6 +55,8 @@
 #include "tabs/profile_tab.h"
 #include "tabs/security_tab.h"
 #include "tabs/telephones_tab.h"
+#include "tabs/sites_link_tab/sites_link_general_tab.h"
+#include "tabs/general_site_tab.h"
 #include "utils.h"
 
 #include <QAbstractItemView>
@@ -163,6 +165,12 @@ PropertiesDialog::PropertiesDialog(AdInterface &ad, const QString &target_arg, C
             return new GeneralPolicyTab(&edit_list, this);
         } else if (object.is_class(CLASS_SHARED_FOLDER)) {
             return new GeneralSharedFolderTab(&edit_list, this);
+        } else if (object.is_class(CLASS_SITE_LINK)) {
+            return new SitesLinkGeneralTab(&edit_list, SitesLinkType::Link, this);
+        } else if (object.is_class(CLASS_SITE_LINK_BRIDGE)) {
+            return new SitesLinkGeneralTab(&edit_list, SitesLinkType::Bridge, this);
+        } else if (object.is_class(CLASS_SITE)) {
+            return new GeneralSiteTab(&edit_list, this);
         } else if (!object.is_empty()) {
             return new GeneralOtherTab(&edit_list, this);
         } else {
