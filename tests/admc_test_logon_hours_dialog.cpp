@@ -20,15 +20,15 @@
 
 #include "admc_test_logon_hours_dialog.h"
 
-#include "attribute_edits/logon_hours_dialog.h"
-#include "attribute_edits/ui_logon_hours_dialog.h"
+#include "attribute_edits/schedule_hours_dialog.h"
+#include "attribute_edits/ui_schedule_hours_dialog.h"
 
 #include <QRadioButton>
 #include <QStandardItemModel>
 #include <QTableView>
 
 void ADMCTestLogonHoursDialog::open_dialog(const QByteArray &value) {
-    dialog = new LogonHoursDialog(value, parent_widget);
+    dialog = new ScheduleHoursDialog(value, parent_widget);
     dialog->open();
     QVERIFY(QTest::qWaitForWindowExposed(dialog, 1000));
 

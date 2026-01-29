@@ -23,7 +23,7 @@
 
 #include "admc_test.h"
 
-class LogonHoursDialog;
+class ScheduleHoursDialog;
 class QStandardItemModel;
 class QTableView;
 class QItemSelectionModel;
@@ -41,7 +41,7 @@ private slots:
     void handle_timezone();
 
 private:
-    LogonHoursDialog *dialog;
+    ScheduleHoursDialog *dialog;
     QStandardItemModel *model;
     QTableView *view;
     QItemSelectionModel *selection_model;
