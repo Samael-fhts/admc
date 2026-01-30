@@ -78,10 +78,10 @@ const QList<QList<bool>> test_bools = []() {
 }();
 
 void ADMCTestLogonHoursDialog::conversion_funs() {
-    const QList<QList<bool>> converted_bools = hours_to_bools(test_bytes);
+    const QList<QList<bool>> converted_bools = logon_hours_to_bools(test_bytes);
     QCOMPARE(converted_bools, test_bools);
 
-    const QByteArray converted_bytes = hours_to_bytes(test_bools);
+    const QByteArray converted_bytes = logon_hours_to_bytes(test_bools);
 
     QCOMPARE(converted_bytes, test_bytes);
 }

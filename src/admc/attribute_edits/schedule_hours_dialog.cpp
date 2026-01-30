@@ -30,8 +30,8 @@
 
 QList<bool> shift_list(const QList<bool> &list, const int shift_amount);
 
-ScheduleHoursDialog::ScheduleHoursDialog(const QByteArray &value, QWidget *parent)
-: QDialog(parent) {
+ScheduleHoursDialog::ScheduleHoursDialog(const QByteArray &value, QWidget *parent, ScheduleType type_arg)
+: QDialog(parent), type(type_arg) {
     ui = new Ui::ScheduleHoursDialog();
     ui->setupUi(this);
 
@@ -105,9 +105,25 @@ ScheduleHoursDialog::~ScheduleHoursDialog() {
 void ScheduleHoursDialog::load(const QByteArray &value) {
     ui->view->clearSelection();
 
-    original_value = value;
+    if (type == ScheduleType_SiteLink) {
+        if (value.isEmpty() || value.size() < SITE_LINK_SCHEDULE_TOTAL_SIZE) {
+            // Create default schedule structure
+            const QByteArray header = QByteArray((const char*)sitelink_schedule_header_bytes, 20);
+            original_value = header + QByteArray(SITE_LINK_SCHEDULE_DATA_SIZE, (char)0xFF);
+        } else {
+            original_value = value;
+        }
+    } else {
+        original_value = value;
+    }
 
-    const QList<QList<bool>> bools = hours_to_bools(value, get_offset());
+    QList<QList<bool>> bools;
+    if (type == ScheduleType_SiteLink) {
+        const QByteArray payload = original_value.mid(SITE_LINK_SCHEDULE_HEADER_SIZE, SITE_LINK_SCHEDULE_DATA_SIZE);
+        bools = site_schedule_bytes_to_bools(payload, get_offset());
+    } else {
+        bools = logon_hours_to_bools(original_value, get_offset());
+    }
 
     for (int day = 0; day < DAYS_IN_WEEK; day++) {
         for (int h = 0; h < HOURS_IN_DAY; h++) {
@@ -125,7 +141,11 @@ void ScheduleHoursDialog::load(const QByteArray &value) {
 
 QByteArray ScheduleHoursDialog::get() const {
     const QList<QList<bool>> bools = [&]() {
-        QList<QList<bool>> out = hours_to_bools(QByteArray(LOGON_HOURS_SIZE, '\0'));
+        // Initialize empty grid based on type
+        QList<QList<bool>> out = type == ScheduleType_SiteLink ?
+                    site_schedule_bytes_to_bools(QByteArray(SITE_LINK_SCHEDULE_DATA_SIZE, '\0'), 0) :
+                    logon_hours_to_bools(QByteArray(LOGON_HOURS_SIZE, '\0'));
+
 
         const QList<QModelIndex> selected = ui->view->selectionModel()->selectedIndexes();
 
@@ -139,7 +159,14 @@ QByteArray ScheduleHoursDialog::get() const {
         return out;
     }();
 
-    const QList<QList<bool>> original_bools = hours_to_bools(original_value);
+    // Get original bools for comparison
+    QList<QList<bool>> original_bools;
+    if (type == ScheduleType_SiteLink) {
+        const QByteArray payload = original_value.mid(SITE_LINK_SCHEDULE_HEADER_SIZE, SITE_LINK_SCHEDULE_DATA_SIZE);
+        original_bools = site_schedule_bytes_to_bools(payload, get_offset());
+    } else {
+        original_bools = logon_hours_to_bools(original_value, get_offset());
+    }
 
     // NOTE: input has to always be equal to output.
     // Therefore, for the case where original value was
@@ -148,9 +175,22 @@ QByteArray ScheduleHoursDialog::get() const {
     if (bools == original_bools) {
         return original_value;
     } else {
-        const QByteArray out = hours_to_bytes(bools, get_offset());
+        if (type == ScheduleType_SiteLink) {
+            // Convert to site schedule bytes
+            const QByteArray schedule_data = bools_to_site_schedule_bytes(bools, get_offset());
 
-        return out;
+            QByteArray result;
+            // Add header (20 bytes) - always the same
+            result.append(QByteArray((const char*)sitelink_schedule_header_bytes, 20));
+            // Add schedule data (168 bytes)
+            result.append(schedule_data);
+
+            return result;
+        } else {
+            // logonHours format
+            const QByteArray hours_bytes = logon_hours_to_bytes(bools, get_offset());
+            return hours_bytes;
+        }
     }
 }
 
@@ -181,7 +221,7 @@ int ScheduleHoursDialog::get_offset() const {
     }
 }
 
-QList<QList<bool>> hours_to_bools(const QByteArray &byte_list_arg, const int time_offset) {
+QList<QList<bool>> logon_hours_to_bools(const QByteArray &byte_list_arg, const int time_offset) {
     // NOTE: value may be empty or malformed. In that
     // case treat both as values that "allow all logon
     // times" (all bits set). This also handles the
@@ -189,8 +229,10 @@ QList<QList<bool>> hours_to_bools(const QByteArray &byte_list_arg, const int tim
     // it as "allow all logon times".
     const QByteArray byte_list = [&]() {
         if (byte_list_arg.size() == LOGON_HOURS_SIZE) {
+            // logonHours format (21 bytes)
             return byte_list_arg;
         } else {
+            // Invalid or empty - allow all
             return QByteArray(LOGON_HOURS_SIZE, (char) 0xFF);
         }
     }();
@@ -227,7 +269,7 @@ QList<QList<bool>> hours_to_bools(const QByteArray &byte_list_arg, const int tim
     return out;
 }
 
-QByteArray hours_to_bytes(const QList<QList<bool>> bool_list, const int time_offset) {
+QByteArray logon_hours_to_bytes(const QList<QList<bool>> bool_list, const int time_offset) {
     const QList<bool> joined = [&]() {
         QList<bool> out;
 
@@ -285,4 +327,48 @@ QList<bool> shift_list(const QList<bool> &list, const int shift_amount) {
     }
 
     return out;
+}
+
+// Convert schedule attribute (byte-per-hour format) to bool grid
+QList<QList<bool>> site_schedule_bytes_to_bools(const QByteArray &byte_list_arg, const int time_offset) {
+    // NOTE: value may be empty or malformed. In that case treat
+    // as "allow all" (all bytes set to 0xFF)
+    const QByteArray byte_list = byte_list_arg.size() == SITE_LINK_SCHEDULE_DATA_SIZE ?
+                byte_list_arg : QByteArray(SITE_LINK_SCHEDULE_DATA_SIZE, SITE_LINK_SCHEDULE_ALLOWED);
+
+    // Convert byte array to list of bools (each byte = 1 hour)
+    QList<bool> joined;
+    for (const char byte : byte_list) {
+        // Consider hour "allowed" if byte is 0xFF (or anything except denied marker)
+        const bool is_allowed = ((unsigned char)byte == (unsigned char)SITE_LINK_SCHEDULE_ALLOWED);
+        joined.append(is_allowed);
+    }
+
+    joined = shift_list(joined, time_offset);
+
+    // Split the list into sublists for each day
+    QList<QList<bool>> out;
+    for (int i = 0; i < joined.size(); i += HOURS_IN_DAY) {
+        const QList<bool> day_list = joined.mid(i, HOURS_IN_DAY);
+        out.append(day_list);
+    }
+
+    return out;
+}
+
+QByteArray bools_to_site_schedule_bytes(const QList<QList<bool> > bool_list, const int time_offset) {
+    QList<bool> joined;
+    for (const QList<bool> &sublist : bool_list) {
+        joined += sublist;
+    }
+
+    joined = shift_list(joined, -time_offset);
+
+    QByteArray bytes;
+    // Each bool becomes one byte (not one bit like in user logon schedule)
+    for (bool is_allowed : joined) {
+        bytes.append(is_allowed ? SITE_LINK_SCHEDULE_ALLOWED : SITE_LINK_SCHEDULE_DENIED);
+    }
+
+    return bytes;
 }
