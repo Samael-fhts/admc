@@ -25,10 +25,10 @@
 
 class QPushButton;
 
-class LogonHoursEdit final : public AttributeEdit {
+class ScheduleHoursEdit final : public AttributeEdit {
     Q_OBJECT
 public:
-    LogonHoursEdit(QPushButton *button, QObject *parent);
+    ScheduleHoursEdit(QPushButton *button, QObject *parent);
 
     void load(AdInterface &ad, const AdObject &object) override;
     bool apply(AdInterface &ad, const QString &dn) const override;
@@ -36,6 +36,7 @@ public:
 private:
     QPushButton *button;
     QByteArray current_value;
+    QString schedule_attribute;
 
     void open_dialog();
 };

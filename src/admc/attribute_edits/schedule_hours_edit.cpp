@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "attribute_edits/logon_hours_edit.h"
+#include "attribute_edits/schedule_hours_edit.h"
 
 #include "adldap.h"
 #include "attribute_edits/schedule_hours_dialog.h"
@@ -26,29 +26,46 @@
 
 #include <QPushButton>
 
-LogonHoursEdit::LogonHoursEdit(QPushButton *button_arg, QObject *parent)
+ScheduleHoursEdit::ScheduleHoursEdit(QPushButton *button_arg, QObject *parent)
 : AttributeEdit(parent) {
     button = button_arg;
 
     connect(
         button, &QPushButton::clicked,
-        this, &LogonHoursEdit::open_dialog);
+        this, &ScheduleHoursEdit::open_dialog);
 }
 
-void LogonHoursEdit::load(AdInterface &ad, const AdObject &object) {
+void ScheduleHoursEdit::load(AdInterface &ad, const AdObject &object) {
     UNUSED_ARG(ad);
 
-    current_value = object.get_value(ATTRIBUTE_LOGON_HOURS);
+    if (object.is_class(CLASS_USER) || object.is_class(CLASS_INET_ORG_PERSON)) {
+        schedule_attribute = ATTRIBUTE_LOGON_HOURS;
+    }
+    else if (object.is_class(CLASS_SITE_LINK)) {
+        schedule_attribute = ATTRIBUTE_LINK_SCHEDULE;
+    }
+    else {
+        schedule_attribute = QString();
+    }
+
+    current_value = object.get_value(schedule_attribute);
 }
 
-bool LogonHoursEdit::apply(AdInterface &ad, const QString &dn) const {
-    const bool success = ad.attribute_replace_value(dn, ATTRIBUTE_LOGON_HOURS, current_value);
+bool ScheduleHoursEdit::apply(AdInterface &ad, const QString &dn) const {
+    if (schedule_attribute.isEmpty()) {
+        return false;
+    }
+
+    const bool success = ad.attribute_replace_value(dn, schedule_attribute, current_value);
 
     return success;
 }
 
-void LogonHoursEdit::open_dialog() {
-    auto dialog = new ScheduleHoursDialog(current_value, button);
+void ScheduleHoursEdit::open_dialog() {
+    ScheduleHoursDialog::ScheduleType type = schedule_attribute == ATTRIBUTE_LINK_SCHEDULE ?
+                ScheduleHoursDialog::ScheduleType_SiteLink :
+                ScheduleHoursDialog::ScheduleType_UserLogon;
+    auto dialog = new ScheduleHoursDialog(current_value, button, type);
     dialog->open();
 
     connect(

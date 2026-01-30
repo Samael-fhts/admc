@@ -24,7 +24,7 @@
 #include "attribute_edits/account_option_edit.h"
 #include "attribute_edits/expiry_edit.h"
 #include "attribute_edits/logon_computers_edit.h"
-#include "attribute_edits/logon_hours_edit.h"
+#include "attribute_edits/schedule_hours_edit.h"
 #include "attribute_edits/string_edit.h"
 #include "attribute_edits/unlock_edit.h"
 #include "attribute_edits/upn_edit.h"
@@ -46,7 +46,7 @@ AccountTab::AccountTab(AdInterface &ad, QList<AttributeEdit *> *edit_list, QWidg
 
     auto unlock_edit = new UnlockEdit(ui->unlock_check, this);
     auto expiry_widget_edit = new ExpiryEdit(ui->expiry_widget, this);
-    auto logon_hours_edit = new LogonHoursEdit(ui->logon_hours_button, this);
+    auto logon_hours_edit = new ScheduleHoursEdit(ui->logon_hours_button, this);
     auto logon_computers_edit = new LogonComputersEdit(ui->logon_computers_button, this);
     auto pso_applied_edit = new PSOAppliedEdit(ui->pso_label, this);
 
