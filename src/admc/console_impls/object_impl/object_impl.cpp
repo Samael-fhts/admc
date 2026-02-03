@@ -42,6 +42,7 @@
 #include "tabs/general_group_tab.h"
 #include "managers/icon_manager.h"
 #include "results_widgets/pso_results_widget/pso_results_widget.h"
+#include "results_widgets/subnet_results_widget/subnet_results_widget.h"
 
 #include <QDebug>
 #include <QMenu>
@@ -471,17 +472,21 @@ void ObjectImpl::selected_as_scope(const QModelIndex &index)
         stacked_widget->setCurrentWidget(pso_results_widget);
         pso_results_widget->update(object);
     }
+    else if (object.is_class(CLASS_SUBNET)) {
+        stacked_widget->setCurrentWidget(subnet_results_widget);
+        subnet_results_widget->update(object);
+    }
     else {
         stacked_widget->setCurrentWidget(view());
     }
 }
 
-void ObjectImpl::update_results_widget(const QModelIndex &index) const
-{
+void ObjectImpl::update_results_widget(const QModelIndex &index) const {
     const QStringList index_data_classes = index.data(ObjectRole_ObjectClasses).toStringList();
+
     if (!(index_data_classes.contains(CLASS_GROUP) || index_data_classes.contains(CLASS_CONTACT) ||
           index_data_classes.contains(CLASS_USER) || index_data_classes.contains(CLASS_INET_ORG_PERSON) ||
-          index_data_classes.contains(CLASS_PSO))) {
+          index_data_classes.contains(CLASS_PSO) || index_data_classes.contains(CLASS_SUBNET))) {
             return;
     }
 
@@ -507,6 +512,11 @@ void ObjectImpl::update_results_widget(const QModelIndex &index) const
 
     if (object.is_class(CLASS_PSO)) {
         pso_results_widget->update(object);
+        return;
+    }
+
+    if (object.is_class(CLASS_SUBNET)) {
+        subnet_results_widget->update(object);
         return;
     }
 }
@@ -935,9 +945,11 @@ void ObjectImpl::setup_widgets() {
     group_results_widget = new GeneralGroupTab();
     user_results_widget = new GeneralUserTab();
     pso_results_widget = new PSOResultsWidget();
+    subnet_results_widget = new SubnetResultsWidget();
     stacked_widget->addWidget(group_results_widget);
     stacked_widget->addWidget(user_results_widget);
     stacked_widget->addWidget(pso_results_widget);
+    stacked_widget->addWidget(subnet_results_widget);
     stacked_widget->addWidget(view());
     set_results_widget(stacked_widget);
 }
