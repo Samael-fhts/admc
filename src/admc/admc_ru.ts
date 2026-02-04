@@ -17,7 +17,7 @@
         <location filename="about_dialog.ui" line="50"/>
         <source>Copyright (C) 2025 BaseALT Ltd.</source>
         <oldsource>Copyright (C) 2022 BaseALT Ltd.</oldsource>
-        <translation type="unfinished">Авторские права: ООО «Базальт СПО», 2025.</translation>
+        <translation>Авторские права: ООО «Базальт СПО», 2025.</translation>
     </message>
 </context>
 <context>
@@ -245,18 +245,18 @@
     <message>
         <location filename="attribute_dialogs/attribute_dialog.cpp" line="112"/>
         <source>View</source>
-        <translation type="unfinished">Просмотреть</translation>
+        <translation>Просмотреть</translation>
     </message>
     <message>
         <location filename="attribute_dialogs/attribute_dialog.cpp" line="114"/>
         <source>Edit</source>
-        <translation type="unfinished">Изменить</translation>
+        <translation>Изменить</translation>
     </message>
     <message>
         <location filename="attribute_dialogs/attribute_dialog.cpp" line="123"/>
         <source>%1 Multi-Valued %2</source>
         <comment>This is a dialog title for attribute editors. Example: &quot;Edit Multi-Valued String&quot;</comment>
-        <translation type="unfinished">%1 %2 (Многозначный)</translation>
+        <translation>%1 %2 (Многозначный)</translation>
     </message>
     <message>
         <location filename="attribute_dialogs/attribute_dialog.cpp" line="149"/>
@@ -856,6 +856,155 @@
     </message>
 </context>
 <context>
+    <name>CreateSiteDialog</name>
+    <message>
+        <location filename="create_dialogs/create_site_dialog.ui" line="14"/>
+        <source>Create site</source>
+        <translation>Создать сайт</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_site_dialog.ui" line="22"/>
+        <source>Name:</source>
+        <translation>Имя:</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_site_dialog.ui" line="47"/>
+        <source>Select the site link object for this site.</source>
+        <translation>Выберите объект связи сайтов.</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_site_dialog.cpp" line="21"/>
+        <source>Chain name</source>
+        <translation>Имя цепи</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_site_dialog.cpp" line="21"/>
+        <source>Transport</source>
+        <translation>Транспорт</translation>
+    </message>
+</context>
+<context>
+    <name>CreateSitesLinkDialog</name>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.ui" line="14"/>
+        <source>Create sites link</source>
+        <translation>Создать связь сайтов</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.ui" line="28"/>
+        <source>Name:</source>
+        <translation>Имя:</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.ui" line="43"/>
+        <source>PLACEHOLDER</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="30"/>
+        <source>Site link object must link two or more sites</source>
+        <translation>Связь сайтов должна связывать два или более сайтов</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="31"/>
+        <source>Create site link</source>
+        <translation>Создать связь сайтов</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="36"/>
+        <source>Link bridge object must link two or more site links</source>
+        <translation>Мост связей должен связывать две или более связи сайтов</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="37"/>
+        <source>Create site link bridge</source>
+        <translation>Создать мост связи сайтов</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="61"/>
+        <source>Site link object must link at least two sites</source>
+        <translation>Связь сайтов должна связывать минимум два сайта</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="62"/>
+        <source>Link bridge object must link at least two site links</source>
+        <translation>Мост связей доложен связывать минимум две связи сайтов</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="63"/>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="94"/>
+        <source>Failed to create site link object %1</source>
+        <translation>Не удалось создать объект связи сайтов %1</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="95"/>
+        <source>Failed to create site link bridge object %1</source>
+        <translation>Не удалось создать объект мост связи сайтов %1</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="101"/>
+        <source>Site link object %1 has been successfully created.</source>
+        <translation>Объект связи сайтов %1 успешно создан.</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_sites_link_dialog.cpp" line="102"/>
+        <source>Site link bridge object %1 has been successfully created.</source>
+        <translation>Объект мост связей %1 сайтов успешно создан.</translation>
+    </message>
+</context>
+<context>
+    <name>CreateSubnetDialog</name>
+    <message>
+        <location filename="create_dialogs/create_subnet_dialog.ui" line="14"/>
+        <source>Create subnet</source>
+        <translation>Создать подсеть</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_subnet_dialog.ui" line="26"/>
+        <source>Enter the prefix in network prefix notation (address/prefix length). Both IPv4 and IPv6 subnet prefixes are supported.</source>
+        <translation>Введите префикс в формате сетевого префикса (адрес/длина префикса). Поддерживаются префиксы подсетей как IPv4, так и IPv6.</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_subnet_dialog.ui" line="36"/>
+        <source>IPv4 example: 172.16.0.0/16  </source>
+        <translation>Пример IPv4: 172.16.0.0/16  </translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_subnet_dialog.ui" line="43"/>
+        <source>IPv6 example: 2001:db8:abcd:0001::/64 </source>
+        <translation>Пример IPv6: 2001:db8:abcd:0001::/64 </translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_subnet_dialog.ui" line="62"/>
+        <source>Prefix:</source>
+        <translation>Префикс:</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_subnet_dialog.ui" line="72"/>
+        <source>Active Directory prefix name:</source>
+        <translation>Имя префикса Active Directory:</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_subnet_dialog.ui" line="86"/>
+        <source>Site object:</source>
+        <translation>Сайт:</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_subnet_dialog.cpp" line="63"/>
+        <source>Failed to create subnet object %1</source>
+        <translation>Не удалось создать объект подсети %1</translation>
+    </message>
+    <message>
+        <location filename="create_dialogs/create_subnet_dialog.cpp" line="68"/>
+        <source>Subnet object %1 has been successfully created.</source>
+        <translation>Объект подсети %1 успешно создан.</translation>
+    </message>
+</context>
+<context>
     <name>CreateUserDialog</name>
     <message>
         <location filename="create_dialogs/create_user_dialog.ui" line="14"/>
@@ -1428,105 +1577,105 @@
     <message>
         <location filename="find_policy_dialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="find_policy_dialog.ui" line="41"/>
         <source>Search item:</source>
-        <translation type="unfinished"></translation>
+        <translation>Элемент поиска:</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.ui" line="51"/>
         <source>Condition:</source>
-        <translation type="unfinished">Состояние:</translation>
+        <translation>Состояние:</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.ui" line="61"/>
         <source>Value:</source>
-        <translation type="unfinished">Значение:</translation>
+        <translation>Значение:</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.ui" line="75"/>
         <source>Add</source>
-        <translation type="unfinished">Добавить</translation>
+        <translation>Добавить</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.ui" line="97"/>
         <source>Filters:</source>
-        <translation type="unfinished">Фильтры:</translation>
+        <translation>Фильтры:</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.ui" line="114"/>
         <source>Remove</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.ui" line="121"/>
         <location filename="find_policy_dialog.ui" line="164"/>
         <source>Clear</source>
-        <translation type="unfinished">Очистить</translation>
+        <translation>Очистить</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.ui" line="150"/>
         <source>Find</source>
-        <translation type="unfinished">Поиск</translation>
+        <translation>Поиск</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.ui" line="157"/>
         <source>Stop</source>
-        <translation type="unfinished">Остановить</translation>
+        <translation>Остановить</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.cpp" line="48"/>
         <source>&amp;Action</source>
-        <translation type="unfinished">&amp;Действие</translation>
+        <translation>&amp;Действие</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.cpp" line="50"/>
         <source>&amp;View</source>
-        <translation type="unfinished">&amp;Вид</translation>
+        <translation>&amp;Вид</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.cpp" line="63"/>
         <location filename="find_policy_dialog.cpp" line="192"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.cpp" line="64"/>
         <location filename="find_policy_dialog.cpp" line="193"/>
         <source>GUID</source>
-        <translation type="unfinished"></translation>
+        <translation>GUID</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.cpp" line="95"/>
         <source>&amp;Icons</source>
-        <translation type="unfinished">&amp;Значки</translation>
+        <translation>&amp;Значки</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.cpp" line="97"/>
         <source>&amp;List</source>
-        <translation type="unfinished">&amp;Список</translation>
+        <translation>&amp;Список</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.cpp" line="99"/>
         <source>&amp;Detail</source>
-        <translation type="unfinished">&amp;Подробно</translation>
+        <translation>&amp;Подробно</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.cpp" line="101"/>
         <source>&amp;Customize Columns</source>
-        <translation type="unfinished">&amp;Настроить колонки</translation>
+        <translation>&amp;Настроить колонки</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.cpp" line="102"/>
         <source>&amp;Description Bar</source>
-        <translation type="unfinished">&amp;Область описания</translation>
+        <translation>&amp;Область описания</translation>
     </message>
     <message>
         <location filename="find_policy_dialog.cpp" line="137"/>
         <source>Find results</source>
-        <translation type="unfinished">Результаты поиска</translation>
+        <translation>Результаты поиска</translation>
     </message>
 </context>
 <context>
@@ -1534,12 +1683,12 @@
     <message>
         <location filename="console_impls/find_policy_impl.cpp" line="47"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="console_impls/find_policy_impl.cpp" line="48"/>
         <source>GUID</source>
-        <translation type="unfinished"></translation>
+        <translation>GUID</translation>
     </message>
 </context>
 <context>
@@ -1605,12 +1754,12 @@
     <message>
         <location filename="console_impls/found_policy_impl.cpp" line="38"/>
         <source>Add link...</source>
-        <translation type="unfinished">Добавить связь...</translation>
+        <translation>Добавить связь...</translation>
     </message>
     <message>
         <location filename="console_impls/found_policy_impl.cpp" line="39"/>
         <source>Edit...</source>
-        <translation type="unfinished">Изменить...</translation>
+        <translation>Изменить...</translation>
     </message>
 </context>
 <context>
@@ -1833,6 +1982,29 @@
         <location filename="tabs/general_shared_folder_tab.ui" line="46"/>
         <source>Keywords</source>
         <translation>Ключевые слова</translation>
+    </message>
+</context>
+<context>
+    <name>GeneralSiteTab</name>
+    <message>
+        <location filename="tabs/general_site_tab.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="tabs/general_site_tab.ui" line="23"/>
+        <source>PLACEHOLDER</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="tabs/general_site_tab.ui" line="42"/>
+        <source>Description:</source>
+        <translation>Описание:</translation>
+    </message>
+    <message>
+        <location filename="tabs/general_site_tab.ui" line="52"/>
+        <source>Subnets:</source>
+        <translation>Подсети:</translation>
     </message>
 </context>
 <context>
@@ -2137,22 +2309,22 @@
     <message>
         <location filename="policy_ou_results_widget/linked_policies_widget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="policy_ou_results_widget/linked_policies_widget.cpp" line="36"/>
         <source>Remove link</source>
-        <translation type="unfinished">Удалить связь</translation>
+        <translation>Удалить связь</translation>
     </message>
     <message>
         <location filename="policy_ou_results_widget/linked_policies_widget.cpp" line="37"/>
         <source>Move up</source>
-        <translation type="unfinished">Переместить вверх</translation>
+        <translation>Переместить вверх</translation>
     </message>
     <message>
         <location filename="policy_ou_results_widget/linked_policies_widget.cpp" line="38"/>
         <source>Move down</source>
-        <translation type="unfinished">Переместить вниз</translation>
+        <translation>Переместить вниз</translation>
     </message>
     <message>
         <location filename="results_widgets/policy_ou_results_widget/linked_policies_widget.cpp" line="39"/>
@@ -2172,22 +2344,22 @@
     <message>
         <location filename="results_widgets/policy_ou_results_widget/linked_policies_widget.cpp" line="54"/>
         <source>Order</source>
-        <translation type="unfinished">Порядок</translation>
+        <translation>Порядок</translation>
     </message>
     <message>
         <location filename="policy_ou_results_widget/linked_policies_widget.cpp" line="49"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="policy_ou_results_widget/linked_policies_widget.cpp" line="50"/>
         <source>Enforced</source>
-        <translation type="unfinished">Принудительно</translation>
+        <translation>Принудительно</translation>
     </message>
     <message>
         <location filename="policy_ou_results_widget/linked_policies_widget.cpp" line="51"/>
         <source>Disabled</source>
-        <translation type="unfinished">Отключено</translation>
+        <translation>Отключено</translation>
     </message>
     <message>
         <location filename="policy_ou_results_widget/linked_policies_widget.cpp" line="111"/>
@@ -2202,12 +2374,12 @@
     <message>
         <location filename="policy_ou_results_widget/linked_policies_widget.cpp" line="354"/>
         <source>Not found</source>
-        <translation type="unfinished">Не найдено</translation>
+        <translation>Не найдено</translation>
     </message>
     <message>
         <location filename="policy_ou_results_widget/linked_policies_widget.cpp" line="384"/>
         <source>The GPO for this link could not be found. It maybe have been recently created and is being replicated or it could have been deleted.</source>
-        <translation type="unfinished">Не удалось найти объект групповой политики для этой связи. Возможно, он был недавно создан и реплицируется или был удалён.</translation>
+        <translation>Не удалось найти объект групповой политики для этой связи. Возможно, он был недавно создан и реплицируется или был удалён.</translation>
     </message>
 </context>
 <context>
@@ -2955,7 +3127,27 @@
         <translation>Создать объект парольных настроек</translation>
     </message>
     <message>
-        <location filename="console_impls/object_impl.cpp" line="126"/>
+        <location filename="console_impls/object_impl/object_impl.cpp" line="1001"/>
+        <source>Create subnet</source>
+        <translation>Создать подсеть</translation>
+    </message>
+    <message>
+        <location filename="console_impls/object_impl/object_impl.cpp" line="1002"/>
+        <source>Create site</source>
+        <translation>Создать сайт</translation>
+    </message>
+    <message>
+        <location filename="console_impls/object_impl/object_impl.cpp" line="1003"/>
+        <source>Create site link</source>
+        <translation>Создать связь сайтов</translation>
+    </message>
+    <message>
+        <location filename="console_impls/object_impl/object_impl.cpp" line="1004"/>
+        <source>Create site link bridge</source>
+        <translation>Создать мост связей сайтов</translation>
+    </message>
+    <message>
+        <location filename="console_impls/object_impl/object_impl.cpp" line="986"/>
         <source>New</source>
         <translation>Создать</translation>
     </message>
@@ -3412,12 +3604,12 @@
     <message>
         <location filename="console_impls/policy_impl.cpp" line="118"/>
         <source>Incorrect permissions detected</source>
-        <translation type="unfinished">Обнаружены неверные разрешения</translation>
+        <translation>Обнаружены неверные разрешения</translation>
     </message>
     <message>
         <location filename="console_impls/policy_impl.cpp" line="102"/>
         <source>Permissions for this policy&apos;s GPT don&apos;t match the permissions for it&apos;s GPC object. Would you like to update GPT permissions?</source>
-        <translation type="unfinished">Разрешения шаблона групповой политики у данной политики не совпадают с разрешениями её объекта контейнера групповой политики. Обновить разрешения шаблона групповой политики?</translation>
+        <translation>Разрешения шаблона групповой политики у данной политики не совпадают с разрешениями её объекта контейнера групповой политики. Обновить разрешения шаблона групповой политики?</translation>
     </message>
     <message>
         <location filename="console_impls/policy_impl.cpp" line="370"/>
@@ -4076,6 +4268,29 @@
     </message>
 </context>
 <context>
+    <name>ResultsWidgetBase</name>
+    <message>
+        <location filename="results_widgets/results_widget_base.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="results_widgets/results_widget_base.ui" line="40"/>
+        <source>Edit...</source>
+        <translation>Изменить...</translation>
+    </message>
+    <message>
+        <location filename="results_widgets/results_widget_base.ui" line="50"/>
+        <source>Cancel</source>
+        <translation>Отменить</translation>
+    </message>
+    <message>
+        <location filename="results_widgets/results_widget_base.ui" line="60"/>
+        <source>Apply</source>
+        <translation>Применить</translation>
+    </message>
+</context>
+<context>
     <name>SDDLViewDialog</name>
     <message>
         <location filename="permission_control_widgets/sddl_view_dialog.ui" line="14"/>
@@ -4119,6 +4334,69 @@
         <location filename="attribute_edits/sam_name_edit.cpp" line="80"/>
         <source>Error</source>
         <translation>Ошибка</translation>
+    </message>
+</context>
+<context>
+    <name>ScheduleHoursDialog</name>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.ui" line="14"/>
+        <source>Edit Schedule Hours</source>
+        <translation>Редактировать расписание</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.ui" line="40"/>
+        <source>UTC time</source>
+        <translation>Время UTC</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.ui" line="47"/>
+        <source>Local time</source>
+        <translation>Местное время</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.ui" line="79"/>
+        <source>Logon allowed:</source>
+        <translation>Вход разрешен:</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.ui" line="102"/>
+        <source>Logon denied:</source>
+        <translation>Вход запрещён:</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.cpp" line="42"/>
+        <source>Sunday</source>
+        <translation>Воскресенье</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.cpp" line="43"/>
+        <source>Monday</source>
+        <translation>Понедельник</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.cpp" line="44"/>
+        <source>Tuesday</source>
+        <translation>Вторник</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.cpp" line="45"/>
+        <source>Wednesday</source>
+        <translation>Среда</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.cpp" line="46"/>
+        <source>Thursday</source>
+        <translation>Четверг</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.cpp" line="47"/>
+        <source>Friday</source>
+        <translation>Пятница</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/schedule_hours_dialog.cpp" line="48"/>
+        <source>Saturday</source>
+        <translation>Суббота</translation>
     </message>
 </context>
 <context>
@@ -4324,6 +4602,11 @@
         <oldsource>Select a container</oldsource>
         <translation>Выбор контейнера</translation>
     </message>
+    <message>
+        <location filename="select_dialogs/select_container_dialog.cpp" line="232"/>
+        <source>Failed to define suitable containers</source>
+        <translation>Не удалось определить подходящие контейнеры</translation>
+    </message>
 </context>
 <context>
     <name>SelectObjectAdvancedDialog</name>
@@ -4454,6 +4737,122 @@
     </message>
 </context>
 <context>
+    <name>SitesLinkCommonWidget</name>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_common_widget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_common_widget.ui" line="37"/>
+        <source>Description:</source>
+        <translation>Описание:</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_common_widget.ui" line="63"/>
+        <location filename="tabs/sites_link_tab/sites_link_common_widget.ui" line="134"/>
+        <source>PLACEHOLDER</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_common_widget.ui" line="100"/>
+        <source>Add &gt;&gt;</source>
+        <translation>Добавить &gt;&gt;</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_common_widget.ui" line="107"/>
+        <source>&lt;&lt; Remove</source>
+        <translation>&lt;&lt; Убрать</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_common_widget.cpp" line="39"/>
+        <source>Sites not in this site link</source>
+        <translation>Сайты не в этой связи</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_common_widget.cpp" line="40"/>
+        <source>Sites in this site link</source>
+        <translation>Сайты в этой связи</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_common_widget.cpp" line="42"/>
+        <source>Site links not included in this bridge</source>
+        <translation>Связи сайтов не в этом мосте</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_common_widget.cpp" line="43"/>
+        <source>Site links included in this bridge</source>
+        <translation>Связи сайтов в этом мосте</translation>
+    </message>
+</context>
+<context>
+    <name>SitesLinkEdit</name>
+    <message>
+        <location filename="attribute_edits/sites_link_edit.cpp" line="121"/>
+        <source>Site link object must link at least two sites</source>
+        <translation>Связь должна связывать минимум два сайта</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/sites_link_edit.cpp" line="122"/>
+        <source>Link bridge object must link at least two site links</source>
+        <translation>Мост должен связывать минимум две связи сайтов</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/sites_link_edit.cpp" line="123"/>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+</context>
+<context>
+    <name>SitesLinkGeneralTab</name>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_general_tab.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_general_tab.ui" line="20"/>
+        <source>PLACEHOLDER</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>SitesLinkPartWidget</name>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_part_widget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_part_widget.ui" line="22"/>
+        <source>Cost:</source>
+        <translation>Стоимость:</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_part_widget.ui" line="53"/>
+        <source>Replicate every</source>
+        <translation>Реплицировать каждые</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_part_widget.ui" line="67"/>
+        <source>min</source>
+        <translation>мин</translation>
+    </message>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_part_widget.ui" line="91"/>
+        <source>Change the schedule ...</source>
+        <translation>Изменить расписание ...</translation>
+    </message>
+</context>
+<context>
+    <name>SitesLinkWidget</name>
+    <message>
+        <location filename="tabs/sites_link_tab/sites_link_widget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+</context>
+<context>
     <name>StringListEdit</name>
     <message>
         <location filename="attribute_edits/string_list_edit.cpp" line="54"/>
@@ -4467,6 +4866,34 @@
         <location filename="attribute_edits/string_other_edit.cpp" line="68"/>
         <source>Edit other values</source>
         <translation>Редактировать другие значения</translation>
+    </message>
+</context>
+<context>
+    <name>SubnetEditWidget</name>
+    <message>
+        <location filename="results_widgets/subnet_results_widget/subnet_edit_widget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="results_widgets/subnet_results_widget/subnet_edit_widget.ui" line="41"/>
+        <source>Sites:</source>
+        <translation>Сайты:</translation>
+    </message>
+    <message>
+        <location filename="results_widgets/subnet_results_widget/subnet_edit_widget.ui" line="48"/>
+        <source>Prefix:</source>
+        <translation>Префикс:</translation>
+    </message>
+    <message>
+        <location filename="results_widgets/subnet_results_widget/subnet_edit_widget.ui" line="58"/>
+        <source>Description:</source>
+        <translation>Описание:</translation>
+    </message>
+    <message>
+        <location filename="results_widgets/subnet_results_widget/subnet_edit_widget.ui" line="65"/>
+        <source>Location:</source>
+        <translation>Местонахождение:</translation>
     </message>
 </context>
 <context>
@@ -4682,64 +5109,6 @@
         <location filename="utils.cpp" line="443"/>
         <source>Error</source>
         <translation>Ошибка</translation>
-    </message>
-</context>
-<context>
-    <name>LAPSV2Tab</name>
-    <message>
-        <location filename="tabs/laps_v2_tab.ui" line="14"/>
-        <source>Form</source>
-        <translation>Form</translation>
-    </message>
-    <message>
-        <location filename="tabs/laps_v2_tab.ui" line="22"/>
-        <source>LAPS local admin account password:</source>
-        <translation>Пароль учетной записи локального администратора LAPS:</translation>
-    </message>
-    <message>
-        <location filename="tabs/laps_v2_tab.ui" line="29"/>
-        <source>Current LAPS password expiration:</source>
-        <translation>Время завершения действия пароля LAPS:</translation>
-    </message>
-    <message>
-        <location filename="tabs/laps_v2_tab.ui" line="36"/>
-        <source>Local Administrator Password Solution</source>
-        <translation>Решение для пароля локального администратора</translation>
-    </message>
-    <message>
-        <location filename="tabs/laps_v2_tab.ui" line="43"/>
-        <source>Set new LAPS password expiration:</source>
-        <translation>Установить новый срок истечения пароля LAPS:</translation>
-    </message>
-    <message>
-        <location filename="tabs/laps_v2_tab.ui" line="87"/>
-        <source>Show password</source>
-        <translation>Показать пароль</translation>
-    </message>
-    <message>
-        <location filename="tabs/laps_v2_tab.ui" line="106"/>
-        <source>Expire now</source>
-        <translation>Обновить сейчас</translation>
-    </message>
-    <message>
-        <location filename="tabs/laps_v2_tab.ui" line="126"/>
-        <source>Copy password</source>
-        <translation>Скопировать пароль</translation>
-    </message>
-    <message>
-        <location filename="tabs/laps_v2_tab.ui" line="133"/>
-        <source>LAPS local admin account name:</source>
-        <translation>Имя учетной записи локального администратора LAPS:</translation>
-    </message>
-    <message>
-        <location filename="tabs/laps_v2_tab.cpp" line="84"/>
-        <source>Failed to decode LAPS data.</source>
-        <translation>Не удалось декодировать данные LAPS.</translation>
-    </message>
-    <message>
-        <location filename="tabs/laps_v2_tab.cpp" line="84"/>
-        <source>Verify that you have the necessary permissions to access LAPS attributes!</source>
-        <translation>Проверьте, что у вас есть необходимые права доступа к атрибутам LAPS!</translation>
     </message>
 </context>
 </TS>
