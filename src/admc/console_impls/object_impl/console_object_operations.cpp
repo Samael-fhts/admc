@@ -262,6 +262,10 @@ void ConsoleObjectTreeOperations::add_objects_to_console(ConsoleWidget *console,
             }
         }();
 
+        if (object.get_string(ATTRIBUTE_OBJECT_CLASS) == CLASS_SITE) {
+            console->set_item_sort_index(row[0]->index(), 1);
+        }
+
         console_object_load(row, object);
     }
 }
