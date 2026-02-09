@@ -2,6 +2,24 @@ admc
 CHANGELOG
 
 -----------------------------------------------------------------------
+ VERSION 0.23.0
+-----------------------------------------------------------------------
+- The Sites container has been added to the console tree.
+- Added the ability to create/delete site objects, subnets, site links,
+  and site link bridges.
+- Added a "General" tab in the properties window for site objects, site
+  links, and site link bridges.
+- Added a replication schedule dialog to the "General" tab of site link
+  objects (button: "Change Schedule...").
+- Added the ability to move server objects between sites.
+- Added a results widget for subnets.
+- Fixed the issue where password settings objects did not appear in the
+  password settings container after creation.
+- Added an "Info" status for logs (blue color).
+- Restored the connection error dialog for failed connections. The dialog
+  appears if valid credentials (Kerberos) are present.
+
+-----------------------------------------------------------------------
  VERSION 0.22.3
 -----------------------------------------------------------------------
 - Changed lockoutTime attribute from datetime to integer format.

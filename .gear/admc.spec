@@ -10,8 +10,8 @@
 %endif
 
 Name: admc
-Version: 0.22.3
-Release: alt2
+Version: 0.23.0
+Release: alt1
 
 Summary: Active Directory Management Center
 License: GPLv3+
@@ -124,6 +124,22 @@ Tests for ADMC
 %_bindir/admc_test_find_policy_dialog
 
 %changelog
+* Tue Feb 24 2026 Semyon Knyazev <samael@altlinux.org> 0.23.0-alt1
+- The Sites container has been added to the console tree.
+- Added the ability to create/delete site objects, subnets, site links,
+  and site link bridges.
+- Added a "General" tab in the properties window for site objects, site
+  links, and site link bridges.
+- Added a replication schedule dialog to the "General" tab of site link
+  objects (button: "Change Schedule...").
+- Added the ability to move server objects between sites.
+- Added a results widget for subnets.
+- Fixed the issue where password settings objects did not appear in the
+  password settings container after creation.
+- Added an "Info" status for logs (blue color).
+- Restored the connection error dialog for failed connections. The dialog
+  appears if valid credentials (Kerberos) are present.
+
 * Sat Feb 21 2026 Evgeny Sinelnikov <sin@altlinux.org> 0.22.3-alt2
 - Samba 4.22 compatibility update.
 - Fixed project URL.
