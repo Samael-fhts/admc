@@ -242,6 +242,7 @@ set(ADMC_SOURCES
     console_impls/object_impl/object_impl.cpp
     console_impls/object_impl/drag_n_drop.cpp
     console_impls/object_impl/console_object_operations.cpp
+    console_impls/object_impl/site_dn_attrs_updater.cpp
     console_impls/policy_impl.cpp
     console_impls/query_item_impl.cpp
     console_impls/query_folder_impl.cpp

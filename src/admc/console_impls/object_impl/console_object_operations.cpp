@@ -34,6 +34,7 @@
 #include "create_dialogs/create_site_dialog.h"
 #include "create_dialogs/create_subnet_dialog.h"
 #include "create_dialogs/create_sites_link_dialog.h"
+#include "console_impls/object_impl/site_dn_attrs_updater.h"
 
 void ConsoleObjectTreeOperations::console_object_move_and_rename(const QList<ConsoleWidget *> &console_list,
                                                       AdInterface &ad,
@@ -760,21 +761,25 @@ void ConsoleObjectTreeOperations::console_object_delete(const QList<ConsoleWidge
 
     show_busy_indicator();
 
-    const QList<QString> deleted_list = [&]() {
-        QList<QString> out;
+    QList<QString> deleted_list;
 
-        const QList<QString> target_list = index_list_to_dn_list(index_list, dn_role);
+    for (const QModelIndex &idx : index_list) {
+        const QString target_dn = idx.data(dn_role).toString();
+        const QString obj_class = idx.data(ObjectRole_ObjectClasses).toStringList().last();
 
-        for (const QString &target : target_list) {
-            const bool success = ad.object_delete(target);
+        const bool success = ad.object_delete(target_dn);
+        if (success) {
+            if (obj_class == CLASS_SITE) {
+                SiteDnAttrsUpdater site_dn_updater = SiteDnAttrsUpdater(target_dn);
+                site_dn_updater.update(ad);
+            } else if (obj_class == CLASS_SERVER) {
 
-            if (success) {
-                out.append(target);
             }
-        }
 
-        return out;
-    }();
+            deleted_list.append(target_dn);
+        }
+    }
+
 
     auto apply_changes = [&deleted_list](ConsoleWidget *target_console) {
         const QList<QModelIndex> root_list = {

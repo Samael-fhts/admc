@@ -231,6 +231,7 @@ enum SystemFlagsBit {
 #define ATTRIBUTE_LINK_COST "cost"
 #define ATTRIBUTE_LINK_REPLICATION_INTERVAL "replInterval"
 #define ATTRIBUTE_LINK_SCHEDULE "schedule"
+#define ATTRIBUTE_DNS_RECORD_DC "dc"
 
 
 #define CLASS_GROUP "group"
@@ -270,6 +271,7 @@ enum SystemFlagsBit {
 #define CLASS_SITE_LINK_BRIDGE "siteLinkBridge"
 #define CLASS_NTDS_SITE_SETTINGS "nTDSSiteSettings"
 #define CLASS_MS_IMAGING_PSPS "msImaging-PSPs"
+#define CLASS_DNS_NODE "dnsNode"
 // NOTE: for schema object
 #define CLASS_dMD "dMD"
 #define CLASS_CONTROL_ACCESS_RIGHT "controlAccessRight"
