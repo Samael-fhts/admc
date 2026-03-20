@@ -50,6 +50,7 @@
 #include <QDesktopServices>
 #include <QLabel>
 #include <QModelIndex>
+#include <QActionGroup>
 
 MainWindow::MainWindow(AdInterface &ad, Krb5Client &krb5_client_arg, QWidget *parent)
 : QMainWindow(parent), krb5_client(&krb5_client_arg) {

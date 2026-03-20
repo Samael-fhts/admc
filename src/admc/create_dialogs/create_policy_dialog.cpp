@@ -30,6 +30,7 @@
 #include "utils.h"
 
 #include <QPushButton>
+#include <QRegularExpression>
 
 CreatePolicyDialog::CreatePolicyDialog(AdInterface &ad, QWidget *parent)
 : QDialog(parent) {
@@ -120,7 +121,7 @@ void CreatePolicyDialog::accept() {
 }
 
 void CreatePolicyDialog::on_edited() {
-    QRegExp reg_exp_spaces("^\\s*$");
+    QRegularExpression reg_exp_spaces("^\\s*$");
     if (ui->name_edit->text().isEmpty() || ui->name_edit->text().contains(reg_exp_spaces)) {
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     } else {

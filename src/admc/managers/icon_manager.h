@@ -2,6 +2,7 @@
 #define ICON_MANAGER_H
 
 #include <memory>
+#include <QStringList>
 
 // Can be supplemented if needed
 enum ItemIcon {
@@ -48,7 +49,6 @@ class QMap;
 class QLocale;
 class QIcon;
 class QString;
-class QStringList;
 
 class IconManager final {
 public:

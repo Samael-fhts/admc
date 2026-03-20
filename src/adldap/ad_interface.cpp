@@ -51,7 +51,7 @@
 #include <uuid/uuid.h>
 
 #include <QDebug>
-#include <QTextCodec>
+#include <QStringEncoder>
 
 // NOTE: LDAP library char* inputs are non-const in the API
 // but are const for practical purposes so we use forced
@@ -993,8 +993,8 @@ bool AdInterface::user_set_pass(const QString &dn, const QString &password, cons
     // 2. is encoded as UTF16-LE
     // 3. has no Byte Order Mark
     const QString quoted_password = QString("\"%1\"").arg(password);
-    const auto codec = QTextCodec::codecForName("UTF-16LE");
-    QByteArray password_bytes = codec->fromUnicode(quoted_password);
+    auto encoder = QStringEncoder(QStringEncoder::Utf16LE);
+    QByteArray password_bytes = encoder(quoted_password);
     // Remove BOM
     // NOTE: gotta be a way to tell codec not to add BOM
     // but couldn't find it, only QTextStream has
@@ -1492,7 +1492,7 @@ bool AdInterface::ldap_init() {
             out = "ldap://" + d->dc;
 
             if (AdInterfacePrivate::s_port > 0) {
-                out = out + ":" + AdInterfacePrivate::s_port;
+                out = out + ":" + QString::number(AdInterfacePrivate::s_port);
             }
         }
 

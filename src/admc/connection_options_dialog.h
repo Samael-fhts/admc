@@ -26,6 +26,7 @@
  */
 
 #include <QDialog>
+#include <QStringList>
 
 #define CERT_STRATEGY_NEVER_define "never"
 
@@ -33,7 +34,6 @@ namespace Ui {
 class ConnectionOptionsDialog;
 }
 
-class QStringList;
 class QString;
 class QVariant;
 

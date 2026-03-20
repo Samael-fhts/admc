@@ -31,6 +31,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <QRegularExpression>
 
 OctetDisplayFormat current_format(QComboBox *format_combo);
 int format_base(const OctetDisplayFormat format);
@@ -121,30 +122,30 @@ bool OctetAttributeDialog::check_input(const OctetDisplayFormat format) {
 
         const QList<QString> text_split = text.split(" ");
 
-        // Check that all elements of text (separated by
-        // space) match the format
         for (const QString &element : text_split) {
             switch (format) {
                 case OctetDisplayFormat_Hexadecimal: {
-                    const QRegExp rx("([0-9a-f]{2})");
+                    const QRegularExpression rx("^([0-9a-f]{2})$");
 
-                    if (!rx.exactMatch(element)) {
+                    if (!rx.match(element).hasMatch()) {
                         return false;
                     }
 
                     break;
                 }
                 case OctetDisplayFormat_Binary: {
-                    const QRegExp rx("([0-1]{8})");
-                    if (!rx.exactMatch(element)) {
+                    const QRegularExpression rx("^([0-1]{8})$");
+
+                    if (!rx.match(element).hasMatch()) {
                         return false;
                     }
 
                     break;
                 }
                 case OctetDisplayFormat_Decimal: {
-                    const QRegExp rx("([0-9]{3})");
-                    if (!rx.exactMatch(element)) {
+                    const QRegularExpression rx("^([0-9]{3})$");
+
+                    if (!rx.match(element).hasMatch()) {
                         return false;
                     }
 
@@ -156,14 +157,12 @@ bool OctetAttributeDialog::check_input(const OctetDisplayFormat format) {
                     break;
                 }
                 case OctetDisplayFormat_Octal: {
-                    const QRegExp rx("([0-7]{3})");
-                    if (!rx.exactMatch(element)) {
+                    const QRegularExpression rx("^([0-7]{3})$");
+
+                    if (!rx.match(element).hasMatch()) {
                         return false;
                     }
 
-                    // NOTE: technically forcing an octal
-                    // number into decimal here, but it
-                    // works out fine for range checking
                     const int number = element.toInt();
                     if (0 > number || number > 377) {
                         return false;

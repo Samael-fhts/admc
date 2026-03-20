@@ -35,9 +35,12 @@
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <QGuiApplication>
+#include <QScreen>
 
 int main(int argc, char **argv) {
     Q_INIT_RESOURCE(adldap);
+
+    qputenv("QT_SCALE_FACTOR", "1");
 
     QGuiApplication::setDesktopFileName("admc");
 
@@ -55,6 +58,14 @@ int main(int argc, char **argv) {
     app.setOrganizationDomain(ADMC_ORGANIZATION_DOMAIN);
     app.setWindowIcon(QIcon(":/admc/admc.ico"));
 
+    QScreen *screen = QGuiApplication::primaryScreen();
+    qreal dpi = screen->logicalDotsPerInch();
+    QFont font = app.font();
+    // 96 DPI = base size
+    int baseSize = 11;
+    int scaledSize = std::round(baseSize * dpi / 96.0);
+    font.setPointSize(scaledSize);
+    app.setFont(font);
 
     const QLocale saved_locale = settings_get_variant(SETTING_locale).toLocale();
     const QString locale_dot_UTF8 = saved_locale.name() + ".UTF-8";
@@ -81,7 +92,7 @@ int main(int argc, char **argv) {
 
     // NOTE: these translations are for qt-defined text, like standard dialog buttons
     QTranslator qt_translator;
-    const bool loaded_qt_translation = qt_translator.load(saved_locale, "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    const bool loaded_qt_translation = qt_translator.load(saved_locale, "qt", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath));
     app.installTranslator(&qt_translator);
 
     if (!loaded_qt_translation) {
@@ -89,7 +100,7 @@ int main(int argc, char **argv) {
     }
 
     QTranslator qtbase_translator;
-    const bool loaded_qtbase_translation = qtbase_translator.load(saved_locale, "qtbase", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    const bool loaded_qtbase_translation = qtbase_translator.load(saved_locale, "qtbase", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath));
     app.installTranslator(&qtbase_translator);
 
     if (!loaded_qtbase_translation) {

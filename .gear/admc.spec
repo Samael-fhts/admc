@@ -21,8 +21,8 @@ Url: https://github.com/altlinux/admc
 BuildRequires(pre): rpm-macros-cmake
 BuildRequires: cmake
 BuildRequires: gcc-c++
-BuildRequires: qt5-base-devel
-BuildRequires: qt5-tools-devel
+BuildRequires: qt6-base-devel
+BuildRequires: qt6-tools-devel
 #BuildRequires: catch2-devel
 BuildRequires: cmake-modules
 
@@ -30,7 +30,7 @@ BuildRequires: samba-devel
 BuildRequires: libldap-devel
 BuildRequires: libsasl2-devel
 BuildRequires: libsmbclient-devel
-BuildRequires: qt5-base-common
+BuildRequires: qt6-base-common
 BuildRequires: doxygen
 BuildRequires: libuuid-devel
 BuildRequires: libkrb5-devel
@@ -43,6 +43,7 @@ BuildRequires: libgkdi-devel
 Requires: libsasl2
 Requires: libsasl2-plugin-gssapi
 Requires: ad-integration-themes >= 3.0
+Requires: qt6-svg
 
 Source0: %name-%version.tar
 

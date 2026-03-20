@@ -1,4 +1,4 @@
-find_package(Qt5 REQUIRED
+find_package(Qt6 REQUIRED
     COMPONENTS
         Core
         LinguistTools
@@ -120,7 +120,7 @@ find_library(LIBSASL "libsasl2.so" HINTS "/usr/lib64" "/lib64")
 find_library(RESOLV_LIBRARY libresolv.so)
 
 target_link_libraries(adldap
-    Qt5::Core
+    Qt6::Core
     PkgConfig::Uuid
     PkgConfig::Smbclient
     PkgConfig::Krb5
@@ -144,7 +144,7 @@ set(TS_FILES
 # changes.
 add_custom_target(adldap_ts
     DEPENDS ${TS_FILES}
-    COMMAND ${Qt5_LUPDATE_EXECUTABLE} -recursive ${CMAKE_CURRENT_SOURCE_DIR} -ts ${TS_FILES} -noobsolete
+    COMMAND ${Qt6_LUPDATE_EXECUTABLE} -recursive ${CMAKE_CURRENT_SOURCE_DIR} -ts ${TS_FILES} -noobsolete
 )
 
 if(NOT ADMC_BUILD_DEB)
@@ -153,7 +153,7 @@ endif(NOT ADMC_BUILD_DEB)
 
 # Generate translation binaries (.qm) from sources (.ts)
 set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION ${CMAKE_CURRENT_SOURCE_DIR})
-qt5_add_translation(QM_FILES ${TS_FILES})
+qt6_add_translation(QM_FILES ${TS_FILES})
 
 install(TARGETS adldap DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)

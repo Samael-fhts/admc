@@ -27,7 +27,6 @@
 
 #include <QCheckBox>
 #include <QLineEdit>
-#include <QTextCodec>
 
 PasswordEdit::PasswordEdit(QLineEdit *edit_arg, QLineEdit *confirm_edit_arg, QCheckBox *show_password_check, QObject *parent)
 : AttributeEdit(parent) {
@@ -76,8 +75,7 @@ bool PasswordEdit::verify(AdInterface &ad, const QString &) const {
         return false;
     }
 
-    const auto codec = QTextCodec::codecForName("UTF-16LE");
-    const bool can_encode = codec->canEncode(pass);
+    const bool can_encode = pass.isValidUtf16();
     if (!can_encode) {
         const QString error_text = QString(tr("Password contains invalid characters"));
         message_box_warning(edit, tr("Error"), error_text);

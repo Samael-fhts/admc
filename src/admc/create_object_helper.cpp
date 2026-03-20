@@ -30,6 +30,7 @@
 #include <QDialogButtonBox>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QRegularExpression>
 
 // TODO: the logic of "enable/disable ok button
 // depending on whether all required edits contain
@@ -158,7 +159,7 @@ bool CreateObjectHelper::accept() const {
 // Enable/disable create button if all required edits filled
 void CreateObjectHelper::on_edited() {
     const bool all_required_filled = [this]() {
-        QRegExp reg_exp_spaces("^\\s*$");
+        QRegularExpression reg_exp_spaces("^\\s*$");
         for (QLineEdit *edit : m_required_list) {
             if (edit->text().isEmpty() || edit->text().contains(reg_exp_spaces)) {
                 return false;

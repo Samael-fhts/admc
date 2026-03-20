@@ -27,6 +27,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QStandardPaths>
+#include <QFile>
 
 ChangelogDialog::ChangelogDialog(QWidget *parent)
 : QDialog(parent) {

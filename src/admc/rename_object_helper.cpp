@@ -28,6 +28,7 @@
 
 #include <QDialog>
 #include <QLineEdit>
+#include <QRegularExpression>
 
 void RenameObjectHelper::success_msg(const QString &old_name) {
     const QString message = QString(tr("Object %1 was renamed.")).arg(old_name);
@@ -131,7 +132,7 @@ QString RenameObjectHelper::get_new_dn() const {
 
 void RenameObjectHelper::on_edited() {
     const bool all_required_filled = [this]() {
-        QRegExp reg_exp_spaces("^\\s*$");
+        QRegularExpression reg_exp_spaces("^\\s*$");
         for (QLineEdit *edit : required_list) {
             if (edit->text().isEmpty() || edit->text().contains(reg_exp_spaces)) {
                 return false;

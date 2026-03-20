@@ -22,6 +22,7 @@
 
 #include <QWidget>
 #include <QModelIndex>
+#include <QStringList>
 
 namespace Ui {
 class InheritedPoliciesWidget;
@@ -30,7 +31,6 @@ class InheritedPoliciesWidget;
 class QStandardItemModel;
 class ConsoleWidget;
 class QStandardItem;
-class QStringList;
 class AdInterface;
 
 class InheritedPoliciesWidget final : public QWidget

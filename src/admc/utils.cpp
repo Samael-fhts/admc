@@ -77,7 +77,7 @@ void set_horizontal_header_labels_from_map(QStandardItemModel *model, const QMap
 }
 
 void set_line_edit_to_decimal_numbers_only(QLineEdit *edit) {
-    edit->setValidator(new QRegExpValidator(QRegExp("[0-9]*"), edit));
+    edit->setValidator(new QRegularExpressionValidator(QRegularExpression("[0-9]*"), edit));
 }
 
 void enable_widget_on_selection(QWidget *widget, QAbstractItemView *view) {
@@ -457,12 +457,12 @@ int get_range_upper(const QString &attribute) {
 }
 
 void set_line_edit_to_hex_numbers_only(QLineEdit *edit) {
-    edit->setValidator(new QRegExpValidator(QRegExp("[0-9a-f]*"), edit));
+    edit->setValidator(new QRegularExpressionValidator(QRegularExpression("[0-9a-f]*"), edit));
 }
 
 void set_line_edit_to_time_span_format(QLineEdit *edit) {
-    QRegExp time_span_reg_exp("([0-9]{1,4}:[0-2][0-3]:[0-5][0-9]:[0-5][0-9])|^\\(never\\)&|^\\(none\\)&");
-    edit->setValidator(new QRegExpValidator(time_span_reg_exp));
+    QRegularExpression time_span_reg_exp("([0-9]{1,4}:[0-2][0-3]:[0-5][0-9]:[0-5][0-9])|^\\(never\\)&|^\\(none\\)&");
+    edit->setValidator(new QRegularExpressionValidator(time_span_reg_exp));
 }
 
 QString gpo_status_from_int(int status) {

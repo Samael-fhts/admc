@@ -27,6 +27,7 @@
 #include "settings.h"
 #include "status.h"
 #include "utils.h"
+#include <QRegularExpression>
 
 RenamePolicyDialog::RenamePolicyDialog(AdInterface &ad, const QString &target_dn_arg, QWidget *parent)
 : QDialog(parent) {
@@ -79,7 +80,7 @@ void RenamePolicyDialog::accept() {
 }
 
 void RenamePolicyDialog::on_edited() {
-    QRegExp reg_exp_spaces("^\\s*$");
+    QRegularExpression reg_exp_spaces("^\\s*$");
     if (ui->name_edit->text().isEmpty() || ui->name_edit->text().contains(reg_exp_spaces)) {
         ui->button_box->button(QDialogButtonBox::Ok)->setEnabled(false);
     } else {

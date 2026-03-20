@@ -1,5 +1,5 @@
 
-find_package(Qt5 REQUIRED
+find_package(Qt6 REQUIRED
     COMPONENTS
         Core
         Widgets
@@ -10,9 +10,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 link_libraries(
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Test
+    Qt6::Core
+    Qt6::Widgets
+    Qt6::Test
     adldap
     admctest
 )
