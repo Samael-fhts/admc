@@ -2102,15 +2102,11 @@ QList<QString> query_server_for_hosts(const char *dname) {
         unsigned char buf[NS_MAXMSG];
     } msg;
 
-    auto error = []() {
-        return QList<QString>();
-    };
-
     const long unsigned msg_len = res_search(dname, ns_c_in, ns_t_srv, msg.buf, sizeof(msg.buf));
 
     const bool message_error = (msg_len < sizeof(HEADER));
     if (message_error) {
-        error();
+        return QList<QString>();
     }
 
     const int packet_count = ntohs(msg.header.qdcount);
@@ -2125,7 +2121,7 @@ QList<QString> query_server_for_hosts(const char *dname) {
 
         const bool packet_error = (packet_len < 0);
         if (packet_error) {
-            error();
+            return QList<QString>();
         }
 
         curr = curr + packet_len + QFIXEDSZ;
@@ -2141,10 +2137,14 @@ QList<QString> query_server_for_hosts(const char *dname) {
 
         const bool server_error = (server_len < 0);
         if (server_error) {
-            error();
+            return QList<QString>();
         }
 
         curr = curr + server_len;
+
+        if (curr + RRFIXEDSZ > eom) {
+            return QList<QString>();
+        }
 
         int record_type;
         int UNUSED(record_class);
@@ -2157,7 +2157,7 @@ QList<QString> query_server_for_hosts(const char *dname) {
 
         unsigned char *record_end = curr + record_len;
         if (record_end > eom) {
-            error();
+            return QList<QString>();
         }
 
         // Skip non-server records
@@ -2179,7 +2179,7 @@ QList<QString> query_server_for_hosts(const char *dname) {
         const int host_len = dn_expand(msg.buf, eom, curr, host, sizeof(host));
         const bool host_error = (host_len < 0);
         if (host_error) {
-            error();
+            return QList<QString>();
         }
 
         hosts.append(QString(host));
