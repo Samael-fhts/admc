@@ -798,9 +798,45 @@ bool AdInterface::object_delete(const QString &dn, const DoStatusMsg do_msg) {
 
         return true;
     } else {
-        d->error_message(error_context, d->default_error(), do_msg);
+        server_controls[0] = NULL;
 
-        return false;
+        // Search results include parent too
+        QHash<QString, AdObject> children_obj_map = search(dn, SearchScope_All, "", {ATTRIBUTE_DN, ATTRIBUTE_SECURITY_DESCRIPTOR});
+
+        // Check protection against deletion here because it isn't checked on server without LDAP_CONTROL_X_TREE_DELETE
+        // for some reason
+        AdObject deletable_obj = children_obj_map[dn];
+        if (ad_security_get_protected_against_deletion(deletable_obj)) {
+            d->error_message(error_context, QString("Object ") + dn_get_name(dn) +
+                                                " is protected against deletion", do_msg);
+            return false;
+        }
+
+        // Try to delete without tree delete control (can require Delete subtree right)
+        result = ldap_delete_ext_s(d->ld, cstr(dn), server_controls, NULL);
+        if (result != LDAP_SUCCESS && result != LDAP_NOT_ALLOWED_ON_NONLEAF) {
+            d->error_message(error_context, d->default_error(), do_msg);
+            return false;
+        }
+
+        // Delete subtree for LDAP_NOT_ALLOWED_ON_NONLEAF error case
+        QStringList children_dn_list = children_obj_map.keys();
+        // Sort by DN depth (deepest first) to delete children before parents
+        std::sort(children_dn_list.begin(), children_dn_list.end(), [](const QString &a, const QString &b) {
+            return a.count(',') > b.count(',');
+        });
+
+        // Try to delete subtree without tree delete control (includes parent too)
+        for (auto child_dn : children_dn_list) {
+            result = ldap_delete_ext_s(d->ld, cstr(child_dn), server_controls, NULL);
+            if (result != LDAP_SUCCESS) {
+                d->error_message(error_context, d->default_error(), do_msg);
+                return false;
+            }
+            d->success_message(QString(tr("Object %1 was deleted.")).arg(dn_get_name(child_dn)), do_msg);
+        }
+
+        return true;
     }
 }
 
