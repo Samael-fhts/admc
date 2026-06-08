@@ -798,9 +798,31 @@ bool AdInterface::object_delete(const QString &dn, const DoStatusMsg do_msg) {
 
         return true;
     } else {
-        d->error_message(error_context, d->default_error(), do_msg);
+        server_controls[0] = NULL;
+        // Try to delete without tree delete control (can require Delete subtree right)
+        result = ldap_delete_ext_s(d->ld, cstr(dn), server_controls, NULL);
+        if (result != LDAP_SUCCESS && result != LDAP_NOT_ALLOWED_ON_NONLEAF) {
+            d->error_message(error_context, d->default_error(), do_msg);
+            return false;
+        }
 
-        return false;
+        QStringList children_dn_list = search(dn, SearchScope_All, "", {ATTRIBUTE_DN}).keys();
+        // Sort by DN depth (deepest first) to delete children before parents
+        std::sort(children_dn_list.begin(), children_dn_list.end(), [](const QString &a, const QString &b) {
+            return a.count(',') > b.count(',');
+        });
+
+        // Try to delete subtree without tree delete control
+        for (auto child_dn : children_dn_list) {
+            result = ldap_delete_ext_s(d->ld, cstr(child_dn), server_controls, NULL);
+            if (result != LDAP_SUCCESS) {
+                d->error_message(error_context, d->default_error(), do_msg);
+                return false;
+            }
+            d->success_message(QString(tr("Object %1 was deleted.")).arg(dn_get_name(child_dn)), do_msg);
+        }
+
+        return true;
     }
 }
 
