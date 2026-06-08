@@ -798,9 +798,23 @@ bool AdInterface::object_delete(const QString &dn, const DoStatusMsg do_msg) {
 
         return true;
     } else {
-        d->error_message(error_context, d->default_error(), do_msg);
+        QStringList children_dn_list = search(dn, SearchScope_All, "", {ATTRIBUTE_DN}).keys();
+        // Sort subtree from leaves
+        std::sort(children_dn_list.begin(), children_dn_list.end(), [](const QString &a, const QString &b) {
+            return a.count(',') > b.count(',');
+        });
 
-        return false;
+        server_controls[0] = NULL;
+        // Try to delete subtree without tree delete control (can require Delete subtree right)
+        for (auto child_dn : children_dn_list) {
+            result = ldap_delete_ext_s(d->ld, cstr(child_dn), server_controls, NULL);
+            if (result != LDAP_SUCCESS) {
+                d->error_message(error_context, d->default_error(), do_msg);
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 

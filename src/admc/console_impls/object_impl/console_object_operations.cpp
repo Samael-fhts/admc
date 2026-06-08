@@ -779,7 +779,8 @@ void ConsoleObjectTreeOperations::console_object_delete(const QList<ConsoleWidge
 
     for (const QModelIndex &idx : index_list) {
         const QString target_dn = idx.data(dn_role).toString();
-        const QString obj_class = idx.data(ObjectRole_ObjectClasses).toStringList().last();
+        const QStringList obj_classes = idx.data(ObjectRole_ObjectClasses).toStringList();
+        const QString obj_class = obj_classes.isEmpty() ? QString() : obj_classes.last();
 
         const bool success = ad.object_delete(target_dn);
         if (success) {
