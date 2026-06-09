@@ -2423,12 +2423,31 @@
         <translation>Компьютеры для входа в систему</translation>
     </message>
     <message>
-        <location filename="attribute_edits/logon_computers_dialog.ui" line="22"/>
         <source>New value:</source>
-        <translation>Новое значение:</translation>
+        <translation type="vanished">Новое значение:</translation>
     </message>
     <message>
-        <location filename="attribute_edits/logon_computers_dialog.ui" line="55"/>
+        <location filename="attribute_edits/logon_computers_dialog.ui" line="20"/>
+        <source>On all computers</source>
+        <translation>На все компьютеры</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/logon_computers_dialog.ui" line="37"/>
+        <source>Only on specified computers</source>
+        <translation>На указанные компьютеры</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/logon_computers_dialog.ui" line="65"/>
+        <source>In the &apos;Computer Name&apos; field, enter the NetBIOS name or domain name (DNS name) of the computer.</source>
+        <translation>В поле &quot;Имя компьютера введите имя NetBIOS или доменное имя (DNS-имя) комьютера.</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/logon_computers_dialog.ui" line="77"/>
+        <source>Computer name:</source>
+        <translation>Имя компьютера:</translation>
+    </message>
+    <message>
+        <location filename="attribute_edits/logon_computers_dialog.ui" line="128"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
@@ -2438,9 +2457,8 @@
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="attribute_edits/logon_computers_dialog.ui" line="34"/>
         <source>Values:</source>
-        <translation>Значения:</translation>
+        <translation type="vanished">Значения:</translation>
     </message>
 </context>
 <context>
