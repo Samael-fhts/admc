@@ -40,7 +40,16 @@ LogonComputersDialog::LogonComputersDialog(const QString &value, QWidget *parent
         for (const QString &subvalue : value_list) {
             ui->list->addItem(subvalue);
         }
+
+        ui->specified_radio_button->setChecked(true);
+        ui->specified_wget->setDisabled(false);
     }
+    else {
+        ui->all_radio_button->setChecked(true);
+        ui->specified_wget->setDisabled(true);
+    }
+
+    ui->list->setStyleSheet("QListWidget { border: 1px solid palette(mid); }");
 
     enable_widget_on_selection(ui->remove_button, ui->list);
 
@@ -52,6 +61,12 @@ LogonComputersDialog::LogonComputersDialog(const QString &value, QWidget *parent
     connect(
         ui->remove_button, &QPushButton::clicked,
         this, &LogonComputersDialog::on_remove_button);
+    connect(
+        ui->all_radio_button, &QRadioButton::clicked,
+        this, &LogonComputersDialog::on_all_radio_button);
+    connect(
+        ui->specified_radio_button, &QRadioButton::clicked,
+        this, &LogonComputersDialog::on_specified_radio_button);
 }
 
 LogonComputersDialog::~LogonComputersDialog() {
@@ -59,6 +74,10 @@ LogonComputersDialog::~LogonComputersDialog() {
 }
 
 QString LogonComputersDialog::get() const {
+    if (ui->all_radio_button->isChecked()) {
+        return QString();
+    }
+
     const QList<QString> value_list = [&]() {
         QList<QString> out;
 
@@ -95,4 +114,12 @@ void LogonComputersDialog::on_remove_button() {
         ui->list->takeItem(ui->list->row(item));
         delete item;
     }
+}
+
+void LogonComputersDialog::on_all_radio_button() {
+    ui->specified_wget->setDisabled(true);
+}
+
+void LogonComputersDialog::on_specified_radio_button() {
+    ui->specified_wget->setEnabled(true);
 }

@@ -154,7 +154,6 @@ DEFINE_SETTING(SETTING_remembered_principals)
 // enable it for a new version, set it manually in
 // main.cpp so that it overwrites default value as well
 // as any values defined in .conf file.
-DEFINE_SETTING(SETTING_feature_logon_computers);
 DEFINE_SETTING(SETTING_feature_profile_tab);
 DEFINE_SETTING(SETTING_feature_dev_mode);
 DEFINE_SETTING(SETTING_feature_current_locale_first);

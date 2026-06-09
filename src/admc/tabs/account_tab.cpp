@@ -79,11 +79,6 @@ AccountTab::AccountTab(AdInterface &ad, QList<AttributeEdit *> *edit_list, QWidg
         logon_computers_edit,
         pso_applied_edit
     });
-
-    const bool logon_computers_enabled = settings_get_variant(SETTING_feature_logon_computers).toBool();
-    if (!logon_computers_enabled) {
-        ui->logon_computers_button->hide();
-    }
 }
 
 AccountTab::~AccountTab() {

@@ -41,6 +41,8 @@ public:
 private:
     void on_add_button();
     void on_remove_button();
+    void on_all_radio_button();
+    void on_specified_radio_button();
 };
 
 #endif /* LOGON_COMPUTERS_DIALOG_H */
