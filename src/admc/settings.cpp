@@ -52,7 +52,6 @@ const QHash<QString, QVariant> setting_default_map = {
     {SETTING_cert_strategy, CERT_STRATEGY_NEVER_define},
     {SETTING_object_display_limit, 1000},
 
-    {SETTING_feature_logon_computers, false},
     {SETTING_feature_profile_tab, false},
     {SETTING_feature_dev_mode, false},
     {SETTING_feature_current_locale_first, false},
