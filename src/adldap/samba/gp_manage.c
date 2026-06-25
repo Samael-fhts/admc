@@ -70,7 +70,7 @@ NTSTATUS gp_create_gpt_security_descriptor(TALLOC_CTX *mem_ctx, struct security_
     NTSTATUS status;
     uint32_t i;
 
-    /* Allocate the file system security descriptor */
+    /* Allocate the file system security descriptor*/
     fs_sd = talloc(mem_ctx, struct security_descriptor);
     NT_STATUS_HAVE_NO_MEMORY(fs_sd);
 
@@ -81,10 +81,11 @@ NTSTATUS gp_create_gpt_security_descriptor(TALLOC_CTX *mem_ctx, struct security_
         return NT_STATUS_NO_MEMORY;
     }
 
-    // NOTE: group sid of domain object by default is NULL,
-    // so just copy the owner sid which is by default
-    // "Domain Admins"
-    fs_sd->group_sid = fs_sd->owner_sid;
+    fs_sd->group_sid = talloc_memdup(fs_sd, ds_sd->group_sid, sizeof(struct dom_sid));
+    if (fs_sd->group_sid == NULL) {
+        TALLOC_FREE(fs_sd);
+        return NT_STATUS_NO_MEMORY;
+    }
 
     fs_sd->type = ds_sd->type;
     fs_sd->revision = ds_sd->revision;
@@ -108,8 +109,9 @@ NTSTATUS gp_create_gpt_security_descriptor(TALLOC_CTX *mem_ctx, struct security_
         struct security_ace *ace;
 
         /* Don't add the allow for SID_BUILTIN_PREW2K */
-        if (!(ds_sd->dacl->aces[i].type & SEC_ACE_TYPE_ACCESS_ALLOWED_OBJECT) &&
-                strcmp(trustee, SID_BUILTIN_PREW2K) == 0) {
+        if ((ds_sd->dacl->aces[i].type == SEC_ACE_TYPE_ACCESS_ALLOWED_OBJECT ||
+                ds_sd->dacl->aces[i].type == SEC_ACE_TYPE_ACCESS_ALLOWED) &&
+            strcmp(trustee, SID_BUILTIN_PREW2K) == 0) {
             talloc_free(trustee);
             continue;
         }
@@ -130,19 +132,10 @@ NTSTATUS gp_create_gpt_security_descriptor(TALLOC_CTX *mem_ctx, struct security_
         /* Get a directory access mask from the assigned access mask on the LDAP object */
         ace->access_mask = gp_ads_to_dir_access_mask(ace->access_mask);
 
-        // NOTE: ACE may become empty when it's access mask
-        // is transformed for sysvol format. In that case,
-        // skip it.
-        const bool ace_is_empty = (ace->access_mask == 0x00000000);
-        if (ace_is_empty) {
-            talloc_free(trustee);
-            continue;
-        }
-
         /* Add the ace to the security descriptor DACL */
         status = security_descriptor_dacl_add(fs_sd, ace);
         if (!NT_STATUS_IS_OK(status)) {
-            // DEBUG(0, ("Failed to add a dacl to file system security descriptor\n"));
+            TALLOC_FREE(fs_sd);
             return status;
         }
 
