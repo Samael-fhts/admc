@@ -44,6 +44,6 @@ void ResultsWidgetBase::set_editable(bool is_editable) {
     ui->apply_button->setDisabled(!is_editable);
 }
 
-QStringList ResultsWidgetBase::changed_attrs() {
+QStringList ResultsWidgetBase::changed_attrs() const {
     return QStringList();
 }

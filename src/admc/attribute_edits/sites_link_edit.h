@@ -3,6 +3,9 @@
 
 #include "attribute_edit.h"
 #include "tabs/sites_link_tab/sites_link_type.h"
+#include <QHash>
+#include <QList>
+#include <QByteArray>
 
 class SitesLinkWidget;
 class SitesLinkCommonWidget;
@@ -21,6 +24,9 @@ public:
     void load(AdInterface &ad, const AdObject &object) override;
     bool apply(AdInterface &ad, const QString &dn) const override;
     bool verify(AdInterface &ad, const QString &dn) const;
+
+    QHash<QString, QList<QByteArray>> get_values() const;
+    void update(const AdObject &object);
 
 private:
     // TODO: Add current edit current values (cost, description, etc)

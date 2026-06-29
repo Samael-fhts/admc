@@ -84,7 +84,7 @@ void PSOResultsWidget::on_cancel_edit() {
     set_editable(false);
 }
 
-QStringList PSOResultsWidget::changed_attrs() {
+QStringList PSOResultsWidget::changed_attrs() const {
     QStringList attrs;
     auto new_values = pso_edit_widget->pso_settings_values();
     for (const QString &attribute : new_values.keys()) {

@@ -59,7 +59,8 @@ void SitesLinkEdit::load(AdInterface &ad, const AdObject &object) {
 
     const QString search_category = type == SitesLinkType::Link ? OBJECT_CATEGORY_SITE : OBJECT_CATEGORY_SITE_LINK;
     const QString filter = filter_CONDITION(Condition_Equals, ATTRIBUTE_OBJECT_CATEGORY, search_category);
-    auto search_res = ad.search(g_adconfig->sites_container_dn(), SearchScope_Children, filter, {ATTRIBUTE_DN});
+    SearchScope search_scope = type == SitesLinkType::Link ? SearchScope_Children : SearchScope_All;
+    auto search_res = ad.search(g_adconfig->sites_container_dn(), search_scope, filter, {ATTRIBUTE_DN});
 
     for (const QString dn : search_res.keys()) {
         if (!linked_dn_list.contains(dn)) {
@@ -83,27 +84,11 @@ bool SitesLinkEdit::apply(AdInterface &ad, const QString &dn) const {
         return false;
     }
 
-    QHash<QString, QList<QByteArray>> values = {};
-
     if (!description_edit->apply(ad, dn)) {
         return false;
     }
 
-    const QString link_attr = type == SitesLinkType::Link ? ATTRIBUTE_SITE_LIST : ATTRIBUTE_SITE_LINK_LIST;
-    for (int i = 0; i < sites_link_common_wget->right_list_wget()->count(); ++i) {
-        auto linked_dn = sites_link_common_wget->right_list_wget()->item(i)->data(Qt::UserRole).toString();
-        if (!linked_dn.isEmpty()) {
-            values[link_attr] << linked_dn.toUtf8();
-        }
-    }
-
-    if (type == SitesLinkType::Link && sites_link_part_wget) {
-        int cost = sites_link_part_wget->cost_spinbox()->value();
-        values[ATTRIBUTE_LINK_COST] << QByteArray::number(cost);
-
-        int repl_interval = sites_link_part_wget->replicate_spinbox()->value();
-        values[ATTRIBUTE_LINK_REPLICATION_INTERVAL] << QByteArray::number(repl_interval);
-    }
+    QHash<QString, QList<QByteArray>> values = get_values();
 
     for (auto attr : values.keys()) {
         if (!ad.attribute_replace_values(dn, attr, values[attr])) {
@@ -128,6 +113,56 @@ bool SitesLinkEdit::verify(AdInterface &ad, const QString &dn) const {
     }
 
     return true;
+}
+
+QHash<QString, QList<QByteArray>> SitesLinkEdit::get_values() const {
+    QHash<QString, QList<QByteArray>> values = {};
+
+    const QString link_attr = type == SitesLinkType::Link ? ATTRIBUTE_SITE_LIST : ATTRIBUTE_SITE_LINK_LIST;
+    for (int i = 0; i < sites_link_common_wget->right_list_wget()->count(); ++i) {
+        auto linked_dn = sites_link_common_wget->right_list_wget()->item(i)->data(Qt::UserRole).toString();
+        if (!linked_dn.isEmpty()) {
+            values[link_attr] << linked_dn.toUtf8();
+        }
+    }
+
+    if (type == SitesLinkType::Link && sites_link_part_wget) {
+        int cost = sites_link_part_wget->cost_spinbox()->value();
+        values[ATTRIBUTE_LINK_COST] << QByteArray::number(cost);
+
+        int repl_interval = sites_link_part_wget->replicate_spinbox()->value();
+        values[ATTRIBUTE_LINK_REPLICATION_INTERVAL] << QByteArray::number(repl_interval);
+    }
+
+    return values;
+}
+
+void SitesLinkEdit::update(const AdObject &object) {
+    if (sites_link_common_wget) {
+        return;
+    }
+
+    sites_link_common_wget->description_line_edit()->setText(object.get_string(ATTRIBUTE_DESCRIPTION));
+
+    const QStringList linked_dn_list = type == SitesLinkType::Link ? object.get_strings(ATTRIBUTE_SITE_LIST) :
+                                                                     object.get_strings(ATTRIBUTE_SITE_LINK_LIST);
+
+    // Move items (with unlinked DNs) to unlinked list
+    for (int idx = 0; idx < sites_link_common_wget->right_list_wget()->count(); ++idx) {
+        auto linked_dn = sites_link_common_wget->right_list_wget()->item(idx)->data(Qt::UserRole).toString();
+        if (!linked_dn_list.contains(linked_dn)) {
+            auto item = sites_link_common_wget->right_list_wget()->takeItem(idx);
+            sites_link_common_wget->left_list_wget()->addItem(item);
+        }
+    }
+
+    if (type == SitesLinkType::Link && sites_link_part_wget) {
+        int cost = object.get_int(ATTRIBUTE_LINK_COST);
+        sites_link_part_wget->cost_spinbox()->setValue(cost);
+
+        int repl_interval = object.get_int(ATTRIBUTE_LINK_REPLICATION_INTERVAL);
+        sites_link_part_wget->replicate_spinbox()->setValue(repl_interval);
+    }
 }
 
 void SitesLinkEdit::setup_widgets() {

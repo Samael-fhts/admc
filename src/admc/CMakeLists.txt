@@ -82,6 +82,7 @@ set(ADMC_SOURCES
     results_widgets/results_widget_base.cpp
     results_widgets/subnet_results_widget/subnet_results_widget.cpp
     results_widgets/subnet_results_widget/subnet_edit_widget.cpp
+    results_widgets/site_link_results_widget.cpp
 
     create_dialogs/create_user_dialog.cpp
     create_dialogs/create_group_dialog.cpp

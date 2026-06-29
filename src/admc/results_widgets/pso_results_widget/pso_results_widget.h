@@ -43,7 +43,7 @@ private:
     virtual void on_cancel_edit() override;
     virtual void set_editable(bool is_editable) override;
 
-    virtual QStringList changed_attrs() override;
+    virtual QStringList changed_attrs() const override;
 };
 
 #endif // PSO_RESULTS_WIDGET_H

@@ -26,7 +26,7 @@ protected:
     virtual void on_edit();
     virtual void on_cancel_edit();
     virtual void set_editable(bool is_editable);
-    virtual QStringList changed_attrs();
+    virtual QStringList changed_attrs() const;
 };
 
 #endif // RESULTS_WIDGET_BASE_H

@@ -46,6 +46,7 @@ class GeneralGroupTab;
 class QStackedWidget;
 class PSOResultsWidget;
 class SubnetResultsWidget;
+class SiteLinkResultsWidget;
 
 enum ObjectRole {
     ObjectRole_DN = MyConsoleRole_LAST + 1,
@@ -153,7 +154,8 @@ private:
     GeneralUserTab *user_results_widget;
     PSOResultsWidget *pso_results_widget;
     SubnetResultsWidget *subnet_results_widget;
-
+    SiteLinkResultsWidget *site_link_results_widget;
+    SiteLinkResultsWidget *site_link_bridge_results_widget;
 
     bool find_action_enabled;
     bool refresh_action_enabled;

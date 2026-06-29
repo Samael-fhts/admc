@@ -43,6 +43,8 @@
 #include "managers/icon_manager.h"
 #include "results_widgets/pso_results_widget/pso_results_widget.h"
 #include "results_widgets/subnet_results_widget/subnet_results_widget.h"
+#include "results_widgets/site_link_results_widget.h"
+#include "tabs/sites_link_tab/sites_link_type.h"
 
 #include <QDebug>
 #include <QMenu>
@@ -480,6 +482,14 @@ void ObjectImpl::selected_as_scope(const QModelIndex &index)
     }
     else if (object.is_class(CLASS_SUBNET)) {
         stacked_widget->setCurrentWidget(subnet_results_widget);
+        subnet_results_widget->update(object);
+    }
+    else if (object.is_class(CLASS_SITE_LINK)) {
+        stacked_widget->setCurrentWidget(site_link_results_widget);
+        subnet_results_widget->update(object);
+    }
+    else if (object.is_class(CLASS_SITE_LINK_BRIDGE)) {
+        stacked_widget->setCurrentWidget(site_link_bridge_results_widget);
         subnet_results_widget->update(object);
     }
     else {
@@ -952,10 +962,15 @@ void ObjectImpl::setup_widgets() {
     user_results_widget = new GeneralUserTab();
     pso_results_widget = new PSOResultsWidget();
     subnet_results_widget = new SubnetResultsWidget();
+    site_link_results_widget = new SiteLinkResultsWidget(nullptr, SitesLinkType::Link);
+    site_link_bridge_results_widget = new SiteLinkResultsWidget(nullptr, SitesLinkType::Bridge);
+
     stacked_widget->addWidget(group_results_widget);
     stacked_widget->addWidget(user_results_widget);
     stacked_widget->addWidget(pso_results_widget);
     stacked_widget->addWidget(subnet_results_widget);
+    stacked_widget->addWidget(site_link_results_widget);
+    stacked_widget->addWidget(site_link_bridge_results_widget);
     stacked_widget->addWidget(view());
     set_results_widget(stacked_widget);
 }
