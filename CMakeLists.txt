@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+find_package(Doxygen)
+
 # NOTE: need largefile options to prevent problems with
 # smbclient on 32bit systems
 add_compile_options(-Wall -Wextra -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64)
@@ -72,3 +74,13 @@ if (ADMC_BUILD_DEB)
     set(CPACK_STRIP_FILES TRUE)
     INCLUDE(CPack)
 endif(ADMC_BUILD_DEB)
+
+option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
+
+if(BUILD_DOCUMENTATION)
+    add_custom_target(doc
+                      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                      COMMENT "Generating API documentation with Doxygen"
+                      VERBATIM)
+endif()
