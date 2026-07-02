@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,15 +63,17 @@ QList<QStandardItem *> make_item_row(const int count) {
     return row;
 }
 
-void set_horizontal_header_labels_from_map(QStandardItemModel *model, const QMap<int, QString> &labels_map) {
+void set_horizontal_header_labels_from_map(
+    QStandardItemModel *model,
+    const QMap<int, QString> &labels_map)
+{
     for (int col = 0; col < model->columnCount(); col++) {
-        const QString label = [=]() {
-            if (labels_map.contains(col)) {
-                return labels_map[col];
-            } else {
-                return QString();
-            }
-        }();
+        QString label;
+        if (labels_map.contains(col)) {
+            label = labels_map[col];
+        } else {
+            label = QString();
+        }
 
         model->setHorizontalHeaderItem(col, new QStandardItem(label));
     }
