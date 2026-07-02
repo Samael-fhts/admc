@@ -368,20 +368,25 @@ bool string_contains_bad_chars(const QString &string, const QString &bad_chars) 
 }
 
 bool verify_object_name(const QString &name, QWidget *parent) {
-    const bool contains_bad_chars = [&]() {
-        const bool some_bad_chars = string_contains_bad_chars(name, NAME_BAD_CHARS);
-        const bool starts_with_space = name.startsWith(" ");
-        const bool ends_with_space = name.endsWith(" ");
-        const bool starts_with_question_mark = name.startsWith("?");
+    const bool some_bad_chars = string_contains_bad_chars(name, NAME_BAD_CHARS);
+    const bool starts_with_space = name.startsWith(" ");
+    const bool ends_with_space = name.endsWith(" ");
+    const bool starts_with_question_mark = name.startsWith("?");
 
-        const bool out = (some_bad_chars || starts_with_space || ends_with_space || starts_with_question_mark);
-
-        return out;
-    }();
+    const bool contains_bad_chars =
+        (some_bad_chars || starts_with_space
+         || ends_with_space || starts_with_question_mark);
 
     if (contains_bad_chars) {
-        const QString error_text = QString(QCoreApplication::translate("utils.cpp", "Input field for Name contains one or more of the following illegal characters: # , + \" \\ < > ; = (leading space) (trailing space) (leading question mark)"));
-        message_box_warning(parent, QCoreApplication::translate("utils.cpp", "Error"), error_text);
+        const QString error_text = QCoreApplication::translate(
+            "utils.cpp",
+            "Input field for Name contains one or more of the following"
+            " illegal characters: # , + \" \\ < > ; = (leading space)"
+            " (trailing space) (leading question mark)");
+        message_box_warning(
+            parent,
+            QCoreApplication::translate("utils.cpp", "Error"),
+            error_text);
 
         return false;
     }
