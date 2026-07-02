@@ -106,19 +106,18 @@ void hide_busy_indicator() {
 }
 
 bool confirmation_dialog(const QString &text, QWidget *parent) {
-    const bool confirm_actions = settings_get_variant(SETTING_confirm_actions).toBool();
-    if (!confirm_actions) {
+    const bool confirm_actions =
+        settings_get_variant(SETTING_confirm_actions).toBool();
+    if (! confirm_actions) {
         return true;
     }
 
     const QString title = QObject::tr("Confirm action");
-    const QMessageBox::StandardButton reply = QMessageBox::question(parent, title, text, QMessageBox::Yes | QMessageBox::No);
+    const QMessageBox::StandardButton reply =
+        QMessageBox::question(parent, title, text,
+                              QMessageBox::Yes | QMessageBox::No);
 
-    if (reply == QMessageBox::Yes) {
-        return true;
-    } else {
-        return false;
-    }
+    return reply == QMessageBox::Yes;
 }
 
 void set_data_for_row(const QList<QStandardItem *> &row, const QVariant &data, const int role) {
