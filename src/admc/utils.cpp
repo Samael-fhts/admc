@@ -403,24 +403,28 @@ void setup_lineedit_autofill(QLineEdit *src, QLineEdit *dest) {
         });
 }
 
-void setup_full_name_autofill(QLineEdit *first_name_edit, QLineEdit *last_name_edit, QLineEdit *middle_name_edit, QLineEdit *full_name_edit) {
+void setup_full_name_autofill(
+    QLineEdit *first_name_edit,
+    QLineEdit *last_name_edit,
+    QLineEdit *middle_name_edit,
+    QLineEdit *full_name_edit)
+{
     auto autofill_full_name = [=]() {
-        const QString full_name_value = [=]() {
-            const QString first_name = first_name_edit->text().trimmed();
-            const QString last_name = last_name_edit->text().trimmed();
-            const QString middle_name = middle_name_edit->text().trimmed();
+        const QString first_name = first_name_edit->text().trimmed();
+        const QString last_name = last_name_edit->text().trimmed();
+        const QString middle_name = middle_name_edit->text().trimmed();
+        const bool last_name_first =
+            settings_get_variant(SETTING_last_name_before_first_name).toBool();
 
-            const bool last_name_first = settings_get_variant(SETTING_last_name_before_first_name).toBool();
-
-            QStringList names{first_name, middle_name};
-            if (last_name_first) {
-                names.push_front(last_name);
-            } else {
-                names.push_back(last_name);
-            }
-            names.removeAll(QString(""));
-            return QStringList(names.begin(), names.end()).join(" ");
-        }();
+        QStringList names{first_name, middle_name};
+        if (last_name_first) {
+            names.push_front(last_name);
+        } else {
+            names.push_back(last_name);
+        }
+        names.removeAll(QString(""));
+        const QString full_name_value =
+            QStringList(names.begin(), names.end()).join(" ");
 
         full_name_edit->setText(full_name_value);
     };
