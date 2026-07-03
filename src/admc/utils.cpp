@@ -442,16 +442,15 @@ void setup_full_name_autofill(
 
 int get_range_upper(const QString &attribute) {
     if (attribute == ATTRIBUTE_UPN_SUFFIXES) {
+        const int upn_max_length =
+            g_adconfig->get_attribute_range_upper(
+                ATTRIBUTE_USER_PRINCIPAL_NAME);
+
         // NOTE: schema doesn't define a max length for
         // "upn suffixes", but we do need a limit. Use
         // half of total max length of upn as a good
         // estimate.
-        const int upn_suffix_max_length = [&]() {
-            const int upn_max_length = g_adconfig->get_attribute_range_upper(ATTRIBUTE_USER_PRINCIPAL_NAME);
-            const int out = upn_max_length / 2;
-
-            return out;
-        }();
+        const int upn_suffix_max_length = upn_max_length / 2;
 
         return upn_suffix_max_length;
     } else {
