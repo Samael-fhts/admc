@@ -58,6 +58,7 @@ else()
 endif()
 
 set(ADMC_SOURCES
+    admc_translator.cpp
     core/ad.cpp
     core/attribute.cpp
     core/changelog.cpp

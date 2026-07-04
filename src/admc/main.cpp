@@ -22,12 +22,12 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QGuiApplication>
 #include <QLibraryInfo>
+#include <QGuiApplication>
 #include <QScreen>
-#include <QTranslator>
 
 #include "adldap.h"
+#include "admc_translator.h"
 #include "ui/dialog/connection_options.h"
 #include "core/config.h"
 #include "core/globals.h"
@@ -68,45 +68,7 @@ int main(int argc, char **argv) {
     font.setPointSize(scaledSize);
     app.setFont(font);
 
-    const QLocale saved_locale = settings_get_current_locale();
-    const QString locale_dot_UTF8 = saved_locale.name() + ".UTF-8";
-    const char* locale_for_c = std::setlocale(LC_ALL, locale_dot_UTF8.toLocal8Bit().data());
-    if (!locale_for_c) {
-        qDebug() << "Failed to set locale for C libs";
-    }
-
-    QTranslator translator;
-    const bool loaded_admc_translation = translator.load(saved_locale, "admc", "_", ":/admc");
-    app.installTranslator(&translator);
-
-    if (!loaded_admc_translation) {
-        qDebug() << "Failed to load admc translation";
-    }
-
-    QTranslator adldap_translator;
-    const bool loaded_adldap_translation = load_adldap_translation(adldap_translator, saved_locale);
-    app.installTranslator(&adldap_translator);
-
-    if (!loaded_adldap_translation) {
-        qDebug() << "Failed to load adldap translation";
-    }
-
-    // NOTE: these translations are for qt-defined text, like standard dialog buttons
-    QTranslator qt_translator;
-    const bool loaded_qt_translation = qt_translator.load(saved_locale, "qt", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath));
-    app.installTranslator(&qt_translator);
-
-    if (!loaded_qt_translation) {
-        qDebug() << "Failed to load qt translation";
-    }
-
-    QTranslator qtbase_translator;
-    const bool loaded_qtbase_translation = qtbase_translator.load(saved_locale, "qtbase", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath));
-    app.installTranslator(&qtbase_translator);
-
-    if (!loaded_qtbase_translation) {
-        qDebug() << "Failed to load qt base translation";
-    }
+    AdmcTranslator::get_instance().load_saved_locale();
 
     std::unique_ptr<Krb5Client> krb5_client = nullptr;
     try {

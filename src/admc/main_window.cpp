@@ -26,6 +26,7 @@
 
 #include "ui/dialog/about.h"
 #include "adldap.h"
+#include "admc_translator.h"
 #include "attribute_edits/country_combo.h"
 #include "ui/dialog/auth/krb_auth.h"
 #include "ui/dialog/changelog.h"
@@ -237,15 +238,26 @@ void MainWindow::setup_languages() {
             this,
             [this, language](bool checked) {
                 if (checked) {
-                    settings_set_variant(SETTING_locale, QLocale(language));
-
-                    message_box_information(
-                        this,
-                        tr("Info"),
-                        tr("Restart the app to switch to the selected language."));
+                    QLocale locale(language);
+                    AdmcTranslator::get_instance().load_locale(locale);
+                    ui->retranslateUi(this);
                 }
             });
     }
+}
+
+void MainWindow::changeEvent(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        ui->retranslateUi(this);
+
+        const QObjectList widgets = this->children();
+        for (auto* widget : widgets) {
+            QEvent languageEvent(QEvent::LanguageChange);
+            QCoreApplication::sendEvent(widget, &languageEvent);
+        }
+    }
+
+    QMainWindow::changeEvent(event);
 }
 
 void MainWindow::setup_simple_settings() {

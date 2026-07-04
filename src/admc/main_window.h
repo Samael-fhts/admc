@@ -50,6 +50,7 @@ public:
 protected:
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);
+    void changeEvent(QEvent *event);
 
 private:
     QLabel *login_label;
