@@ -181,3 +181,16 @@ void all_policies_folder_impl_add_objects(ConsoleWidget *console, const QList<Ad
         console_policy_load(row, object);
     }
 }
+
+void AllPoliciesFolderImpl::retranslate_ui() {
+    if (create_policy_action != nullptr) {
+        create_policy_action->setText(tr("Create policy"));
+    }
+}
+
+bool AllPoliciesFolderImpl::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}

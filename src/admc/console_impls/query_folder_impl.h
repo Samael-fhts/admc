@@ -49,10 +49,16 @@ public:
     QList<QString> column_labels() const override;
     QList<int> default_columns() const override;
 
+    void retranslate_ui() override;
+    bool event(QEvent *event) override;
+
 private:
     QAction *new_action;
     QAction *edit_action;
     QAction *import_action;
+    QAction *create_query_folder_action;
+    QAction *create_query_item_action;
+    QMenu *new_menu;
     bool copied_is_cut;
     QList<QPersistentModelIndex> copied_list;
 

@@ -74,6 +74,9 @@ public:
     QList<QString> column_labels() const override;
     QList<int> default_columns() const override;
 
+    void retranslate_ui() override;
+    bool event(QEvent *event) override;
+
 private slots:
     void on_export();
 

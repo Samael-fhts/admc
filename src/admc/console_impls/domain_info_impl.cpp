@@ -129,3 +129,19 @@ void DomainInfoImpl::open_connection_options() {
         g_status->add_message(tr("Connected to host ") + host, StatusType_Success);
     });
 }
+
+void DomainInfoImpl::retranslate_ui() {
+    if (edit_fsmo_action != nullptr) {
+        edit_fsmo_action->setText(tr("Edit FSMO roles"));
+    }
+    if (connection_options_action != nullptr) {
+        connection_options_action->setText(tr("Open connection options"));
+    }
+}
+
+bool DomainInfoImpl::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}

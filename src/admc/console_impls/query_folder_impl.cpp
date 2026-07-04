@@ -52,10 +52,10 @@ QueryFolderImpl::QueryFolderImpl(ConsoleWidget *console_arg)
 
     set_results_view(new ResultsView(console_arg));
 
-    auto create_query_folder_action = new QAction(tr("Query folder"), this);
-    auto create_query_item_action = new QAction(tr("Query item"), this);
+    create_query_folder_action = new QAction(tr("Query folder"), this);
+    create_query_item_action = new QAction(tr("Query item"), this);
 
-    auto new_menu = new QMenu(tr("New"), console_arg);
+    new_menu = new QMenu(tr("New"), console_arg);
     new_action = new_menu->menuAction();
 
     new_menu->addAction(create_query_folder_action);
@@ -340,6 +340,21 @@ void QueryFolderImpl::on_import() {
     }
 
     console_query_tree_save(console);
+}
+
+void QueryFolderImpl::retranslate_ui() {
+    create_query_folder_action->setText(tr("Query folder"));
+    create_query_item_action->setText(tr("Query item"));
+    new_menu->setTitle(tr("New"));
+    edit_action->setText(tr("Edit"));
+    import_action->setText(tr("&Import query..."));
+}
+
+bool QueryFolderImpl::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
 }
 
 void console_query_tree_init(ConsoleWidget *console) {

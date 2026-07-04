@@ -478,6 +478,21 @@ void PolicyOUImpl::update_gp_options_check_state() const {
         change_gp_options_action->setDisabled(true);
 }
 
+void PolicyOUImpl::retranslate_ui() {
+    create_ou_action->setText(tr("Create OU"));
+    create_and_link_gpo_action->setText(tr("Create a GPO and link to this OU"));
+    link_gpo_action->setText(tr("Link existing GPO"));
+    find_gpo_action->setText(tr("Find GPO"));
+    change_gp_options_action->setText(tr("Block inheritance"));
+}
+
+bool PolicyOUImpl::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}
+
 void policy_ou_impl_load_item_data(QStandardItem *item, const AdObject &object) {
     const QString dn = object.get_dn();
     item->setData(dn, PolicyOURole_DN);

@@ -68,6 +68,9 @@ public:
     void refresh(const QList<QModelIndex> &index_list) override;
     void properties(const QList<QModelIndex> &index_list) override;
 
+    void retranslate_ui() override;
+    bool event(QEvent *event) override;
+
 private slots:
     void on_add_link();
     void on_edit();

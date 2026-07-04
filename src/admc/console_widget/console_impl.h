@@ -144,6 +144,8 @@ public:
 
     virtual void update_results_widget(const QModelIndex &index) const;
 
+    virtual void retranslate_ui();
+
     QVariant save_state() const;
     void restore_state(const QVariant &state);
 

@@ -199,6 +199,9 @@ signals:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    void changeEvent(QEvent *event) override;
+
+    void translate_ui();
 private:
     ConsoleWidgetPrivate *d;
 

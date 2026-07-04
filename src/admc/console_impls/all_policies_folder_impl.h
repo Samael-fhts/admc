@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,9 @@ public:
 
     QList<QString> column_labels() const override;
     QList<int> default_columns() const override;
+
+    void retranslate_ui() override;
+    bool event(QEvent *event) override;
 
 private:
     QAction *create_policy_action;

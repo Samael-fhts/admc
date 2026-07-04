@@ -135,3 +135,16 @@ void found_policy_impl_load(const QList<QStandardItem *> &row, const AdObject &o
     const QString cn = object.get_string(ATTRIBUTE_CN);
     row[FindPolicyColumn_GUID]->setText(cn);
 }
+
+void FoundPolicyImpl::retranslate_ui() {
+    add_link_action->setText(tr("Add link..."));
+    edit_action->setText(tr("Edit..."));
+}
+
+bool FoundPolicyImpl::event(QEvent *event) {
+    qInfo() << "FoundPolicyImpl::event";
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}

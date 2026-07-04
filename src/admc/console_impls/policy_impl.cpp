@@ -313,6 +313,20 @@ void PolicyImpl::set_policy_item_icon(const QModelIndex &policy_index, bool is_c
     }
 }
 
+void PolicyImpl::retranslate_ui() {
+    add_link_action->setText(tr("Add link..."));
+    edit_action->setText(tr("Edit..."));
+    enforce_action->setText(tr("Enforced"));
+    disable_action->setText(tr("Disabled"));
+}
+
+bool PolicyImpl::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}
+
 void set_policy_link_icon(QStandardItem *policy_item, bool is_enforced, bool is_disabled) {
     if (is_enforced) {
         if (!is_disabled)

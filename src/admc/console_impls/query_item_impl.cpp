@@ -292,6 +292,18 @@ void QueryItemImpl::on_edit_query_item() {
         });
 }
 
+void QueryItemImpl::retranslate_ui() {
+    edit_action->setText(tr("Edit..."));
+    export_action->setText(tr("&Import query..."));
+}
+
+bool QueryItemImpl::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}
+
 void get_query_item_data(const QModelIndex &index, QString *name, QString *description, bool *scope_is_children, QByteArray *filter_state, QString *filter) {
     *name = index.data(Qt::DisplayRole).toString();
     *description = index.data(QueryItemRole_Description).toString();

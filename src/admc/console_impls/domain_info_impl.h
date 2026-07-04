@@ -2,6 +2,9 @@
  * ADMC - AD Management Center
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2023-2025 Semyon Knyazev
+ * Copyright (C) 2024 Gleb Popov
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,9 +53,12 @@ public:
 
     void load_domain_info_item(const AdInterface &ad);
 
+    void retranslate_ui() override;
+    bool event(QEvent *event) override;
+
 private:
-    QAction *edit_fsmo_action;
-    QAction *connection_options_action;
+    QAction *edit_fsmo_action = nullptr;
+    QAction *connection_options_action = nullptr;
 
     DomainInfoResultsWidget *domain_info_results_widget;
 

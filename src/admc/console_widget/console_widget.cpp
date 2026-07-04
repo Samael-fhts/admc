@@ -629,6 +629,23 @@ void ConsoleWidget::resizeEvent(QResizeEvent *event) {
     QWidget::resizeEvent(event);
 }
 
+void ConsoleWidget::translate_ui() {
+    d->standard_action_map[StandardAction_Copy]->setText(tr("Copy"));
+    d->standard_action_map[StandardAction_Cut]->setText(tr("Cut"));
+    d->standard_action_map[StandardAction_Rename]->setText(tr("Rename"));
+    d->standard_action_map[StandardAction_Delete]->setText(tr("Delete"));
+    d->standard_action_map[StandardAction_Paste]->setText(tr("Paste"));
+    d->standard_action_map[StandardAction_Print]->setText(tr("Print"));
+    d->standard_action_map[StandardAction_Refresh]->setText(tr("Refresh"));
+    d->standard_action_map[StandardAction_Properties]->setText(tr("Properties"));
+}
+
+void ConsoleWidget::changeEvent(QEvent *event) {
+    translate_ui();
+    QWidget::changeEvent(event);
+}
+
+
 void ConsoleWidgetPrivate::add_actions(QMenu *menu) {
     // Add custom actions
     const QList<QAction *> custom_action_list = get_custom_action_list();

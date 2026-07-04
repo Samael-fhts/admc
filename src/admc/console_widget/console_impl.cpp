@@ -180,3 +180,7 @@ void ConsoleImpl::set_results_view(ResultsView *results_view_arg) {
 void ConsoleImpl::set_results_widget(QWidget *results_widget_arg) {
     results_widget = results_widget_arg;
 }
+
+void ConsoleImpl::retranslate_ui() {
+    // Do nothing.
+}
