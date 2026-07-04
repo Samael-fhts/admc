@@ -51,6 +51,8 @@ private:
     QList<QLineEdit *> required_list;
 
     void on_edited();
+
+    bool event(QEvent *event) override;
 };
 
 #endif /* PASSWORD_DIALOG_H */

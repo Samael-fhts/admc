@@ -134,3 +134,10 @@ void PasswordDialog::on_edited() {
     auto ok_button = ui->button_box->button(QDialogButtonBox::Ok);
     ok_button->setEnabled(all_required_filled);
 }
+
+bool PasswordDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        ui->retranslateUi(this);
+    }
+    return QDialog::event(event);
+}
