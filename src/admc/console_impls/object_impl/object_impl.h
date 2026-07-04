@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,6 +148,7 @@ private:
     QAction *toolbar_create_user;
     QAction *toolbar_create_group;
     QAction *toolbar_create_ou;
+    QMenu *new_menu;
 
     QStackedWidget *stacked_widget;
     GeneralGroupTab *group_results_widget;
@@ -169,6 +171,9 @@ private:
     void setup_widgets();
     void setup_filters();
     void setup_actions();
+
+    void retranslate_ui() override;
+    bool event(QEvent *event) override;
 };
 
 

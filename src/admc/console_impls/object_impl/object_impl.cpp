@@ -955,7 +955,7 @@ void ObjectImpl::setup_actions() {
     reset_account_action = new QAction(tr("Reset account"), this);
     edit_upn_suffixes_action = new QAction(tr("Edit UPN suffixes"), this);
 
-    auto new_menu = new QMenu(tr("New"), console);
+    new_menu = new QMenu(tr("New"), console);
     new_action = new_menu->menuAction();
 
     QList<QString> new_action_keys_sorted = standard_create_action_map.keys();
@@ -1013,4 +1013,36 @@ void ObjectImpl::setup_actions() {
     connect(
         console, &ConsoleWidget::selection_changed,
         this, &ObjectImpl::update_toolbar_actions);
+}
+
+void ObjectImpl::retranslate_ui() {
+    standard_create_action_map[CLASS_USER]->setText(tr("User"));
+    standard_create_action_map[CLASS_COMPUTER]->setText(tr("Computer"));
+    standard_create_action_map[CLASS_OU]->setText(tr("OU"));
+    standard_create_action_map[CLASS_GROUP]->setText(tr("Group"));
+    standard_create_action_map[CLASS_SHARED_FOLDER]->setText(tr("Shared Folder"));
+    standard_create_action_map[CLASS_INET_ORG_PERSON]->setText(tr("inetOrgPerson"));
+    standard_create_action_map[CLASS_CONTACT]->setText(tr("Contact"));
+
+    find_action->setText(tr("Find..."));
+    move_action->setText(tr("Move..."));
+    add_to_group_action->setText(tr("Add to group..."));
+    enable_action->setText(tr("Enable"));
+    disable_action->setText(tr("Disable"));
+    reset_password_action->setText(tr("Reset password"));
+    reset_account_action->setText(tr("Reset account"));
+    edit_upn_suffixes_action->setText(tr("Edit UPN suffixes"));
+    new_menu->setTitle(tr("New"));
+    create_pso_action->setText(tr("Create password setting object"));
+    create_subnet_action->setText(tr("Create subnet"));
+    create_site_action->setText(tr("Create site"));
+    create_site_link_action->setText(tr("Create site link"));
+    create_site_link_bridge_action->setText(tr("Create site link bridge"));
+}
+
+bool ObjectImpl::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
 }
