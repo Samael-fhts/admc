@@ -37,7 +37,7 @@ SelectObjectAdvancedDialog::SelectObjectAdvancedDialog(const QList<QString> clas
 
     auto menubar = new QMenuBar();
     layout()->setMenuBar(menubar);
-    auto view_menu = menubar->addMenu(tr("&View"));
+    view_menu = menubar->addMenu(tr("&View"));
 
     ui->find_widget->set_classes(classes, classes);
     ui->find_widget->setup_view_menu(view_menu);
@@ -57,4 +57,16 @@ SelectObjectAdvancedDialog::~SelectObjectAdvancedDialog() {
 
 QList<QString> SelectObjectAdvancedDialog::get_selected_dns() const {
     return ui->find_widget->get_selected_dns();
+}
+
+void SelectObjectAdvancedDialog::retranslate_ui() {
+    view_menu->setTitle(tr("&View"));
+    ui->retranslateUi(this);
+}
+
+bool SelectObjectAdvancedDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
 }

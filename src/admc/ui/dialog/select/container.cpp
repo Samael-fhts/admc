@@ -225,6 +225,17 @@ void SelectContainerDialog::setup_undefined_view_state() {
     model->appendRow(item);
 }
 
+void SelectContainerDialog::retranslate_ui() {
+    ui->retranslateUi(this);
+}
+
+bool SelectContainerDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
+}
+
 QStandardItem *make_container_node(const AdObject &object) {
     auto item = new QStandardItem();
     item->setData(false, ContainerRole_Fetched);

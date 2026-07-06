@@ -73,3 +73,14 @@ QList<QString> SelectObjectMatchDialog::get_selected() const {
 
     return out;
 }
+
+void SelectObjectMatchDialog::retranslate_ui() {
+    ui->retranslateUi(this);
+}
+
+bool SelectObjectMatchDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
+}

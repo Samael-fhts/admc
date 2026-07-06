@@ -258,6 +258,17 @@ void SelectObjectDialog::add_objects_to_list(const QList<QString> &dn_list, AdIn
     ui->name_edit->clear();
 }
 
+void SelectObjectDialog::retranslate_ui() {
+    ui->retranslateUi(this);
+}
+
+bool SelectObjectDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
+}
+
 void add_select_object_to_model(QStandardItemModel *model, const AdObject &object) {
     const QList<QStandardItem *> row = make_item_row(SelectColumn_COUNT);
 

@@ -79,3 +79,14 @@ QList<QString> SelectPolicyDialog::get_selected_dns() const {
 
     return dns;
 }
+
+void SelectPolicyDialog::retranslate_ui() {
+    ui->retranslateUi(this);
+}
+
+bool SelectPolicyDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
+}
