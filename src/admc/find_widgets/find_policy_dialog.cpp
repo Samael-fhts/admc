@@ -46,9 +46,9 @@ FindPolicyDialog::FindPolicyDialog(ConsoleWidget *buddy_console, QWidget *parent
 
     auto menubar = new QMenuBar();
     layout()->setMenuBar(menubar);
-    auto action_menu = menubar->addMenu(tr("&Action"));
+    action_menu = menubar->addMenu(tr("&Action"));
     menubar->setContextMenuPolicy(Qt::PreventContextMenu);
-    auto view_menu = menubar->addMenu(tr("&View"));
+    view_menu = menubar->addMenu(tr("&View"));
 
     ui->find_button->setDefault(true);
 
@@ -93,14 +93,14 @@ FindPolicyDialog::FindPolicyDialog(ConsoleWidget *buddy_console, QWidget *parent
     ui->console->register_impl(ItemType_FoundPolicy, found_policy_impl);
     found_policy_impl->set_buddy_console(buddy_console);
 
-    auto action_view_icons = new QAction(tr("&Icons"), this);
+    action_view_icons = new QAction(tr("&Icons"), this);
     action_view_icons->setCheckable(true);
-    auto action_view_list = new QAction(tr("&List"), this);
+    action_view_list = new QAction(tr("&List"), this);
     action_view_list->setCheckable(true);
-    auto action_view_detail = new QAction(tr("&Detail"), this);
+    action_view_detail = new QAction(tr("&Detail"), this);
     action_view_detail->setCheckable(true);
-    auto action_customize_columns = new QAction(tr("&Customize Columns"), this);
-    auto action_toggle_description_bar = new QAction(tr("&Description Bar"), this);
+    action_customize_columns = new QAction(tr("&Customize Columns"), this);
+    action_toggle_description_bar = new QAction(tr("&Description Bar"), this);
     action_toggle_description_bar->setCheckable(true);
 
     ConsoleWidgetActions console_actions;
@@ -265,4 +265,20 @@ void FindPolicyDialog::handle_search_thread_results(const QHash<QString, AdObjec
 void FindPolicyDialog::clear_results() {
     const QModelIndex head_index = head_item->index();
     ui->console->delete_children(head_index);
+}
+
+void FindPolicyDialog::retranslate_ui() {
+    action_view_icons->setText(tr("&Icons"));
+    action_view_list->setText(tr("&List"));
+    action_view_detail->setText(tr("&Detail"));
+    action_customize_columns->setText(tr("&Customize Columns"));
+    action_toggle_description_bar->setText(tr("&Description Bar"));
+    head_item->setText(tr("Find results"));
+}
+
+bool FindPolicyDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
 }

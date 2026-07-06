@@ -82,6 +82,9 @@ private:
 
     void on_clear_button();
     void clear_results();
+
+    void retranslate_ui();
+    bool event(QEvent *event) override;
 };
 
 #endif /* FIND_WIDGET_H */

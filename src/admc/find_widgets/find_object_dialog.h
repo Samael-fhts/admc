@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,13 @@ public:
 
     FindObjectDialog(ConsoleWidget *buddy_console, const QString &default_base, QWidget *parent);
     ~FindObjectDialog();
+
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
+private:
+    QMenu *action_menu = nullptr;
+    QMenu *view_menu = nullptr;
 };
 
 #endif /* FIND_OBJECT_DIALOG_H */

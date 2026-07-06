@@ -216,3 +216,18 @@ void FindWidget::on_clear_button() {
     ui->filter_widget->clear();
     clear_results();
 }
+
+void FindWidget::retranslate_ui() {
+    action_view_icons->setText(tr("&Icons"));
+    action_view_list->setText(tr("&List"));
+    action_view_detail->setText(tr("&Detail"));
+    action_customize_columns->setText(tr("&Customize Columns"));
+    action_toggle_description_bar->setText(tr("&Description Bar"));
+}
+
+bool FindWidget::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}

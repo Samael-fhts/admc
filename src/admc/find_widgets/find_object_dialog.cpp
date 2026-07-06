@@ -39,9 +39,9 @@ FindObjectDialog::FindObjectDialog(ConsoleWidget *buddy_console, const QString &
 
     auto menubar = new QMenuBar();
     layout()->setMenuBar(menubar);
-    auto action_menu = menubar->addMenu(tr("&Action"));
+    action_menu = menubar->addMenu(tr("&Action"));
     menubar->setContextMenuPolicy(Qt::PreventContextMenu);
-    auto view_menu = menubar->addMenu(tr("&View"));
+    view_menu = menubar->addMenu(tr("&View"));
 
     const QList<QString> class_list = filter_classes;
     const QList<QString> selected_list = {
@@ -68,4 +68,16 @@ FindObjectDialog::~FindObjectDialog() {
     settings_set_variant(SETTING_find_object_dialog_console_state, console_state);
 
     delete ui;
+}
+
+void FindObjectDialog::retranslate_ui() {
+    action_menu->setTitle(tr("&Action"));
+    view_menu->setTitle(tr("&View"));
+}
+
+bool FindObjectDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
 }

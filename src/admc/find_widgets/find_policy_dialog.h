@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +45,18 @@ public:
     FindPolicyDialog(ConsoleWidget *console_widget, QWidget *parent);
     ~FindPolicyDialog();
 
+    void retranslate_ui();
+    bool event(QEvent *event);
+
 private:
     QStandardItem *head_item;
+    QMenu *action_menu = nullptr;
+    QMenu *view_menu = nullptr;
+    QAction *action_view_icons = nullptr;
+    QAction *action_view_list = nullptr;
+    QAction *action_view_detail = nullptr;
+    QAction *action_customize_columns = nullptr;
+    QAction *action_toggle_description_bar = nullptr;
 
     void add_filter();
     void find();
