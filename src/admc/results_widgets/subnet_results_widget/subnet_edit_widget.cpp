@@ -67,3 +67,15 @@ QHash<QString, QString> SubnetEditWidget::attr_string_values() {
 
     return attr_value_map;
 }
+
+void SubnetEditWidget::retranslate_ui() {
+    qInfo() << "SubnetEditWidget::retranslate_ui";
+    ui->retranslateUi(this);
+}
+
+bool SubnetEditWidget::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}

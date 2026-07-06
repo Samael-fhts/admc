@@ -33,6 +33,9 @@ public:
     void update(AdInterface &ad, const QList<AdObject> &hosts_list);
     void update_role_owner(const QString &new_master_dn, const QString &fsmo_role_dn);
 
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
 private:
     Ui::FsmoTableWidget *ui;
     QString current_dc_dns_name;

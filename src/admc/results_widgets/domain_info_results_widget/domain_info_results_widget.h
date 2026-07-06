@@ -2,6 +2,8 @@
  * ADMC - AD Management Center
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2023-2025 Semyon Knyazev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +78,9 @@ public:
     ~DomainInfoResultsWidget();
 
     void update();
+
+    void retranslate_ui();
+    bool event(QEvent *event);
 
 public slots:
     void  update_fsmo_table_role(const QString &new_master_dn, const QString &fsmo_role_string);

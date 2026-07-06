@@ -47,3 +47,15 @@ void ResultsWidgetBase::set_editable(bool is_editable) {
 QStringList ResultsWidgetBase::changed_attrs() {
     return QStringList();
 }
+
+void ResultsWidgetBase::retranslate_ui() {
+    ui->retranslateUi(this);
+}
+
+bool ResultsWidgetBase::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}
+

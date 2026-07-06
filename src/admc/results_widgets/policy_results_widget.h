@@ -57,6 +57,9 @@ public:
 
     QString get_current_gpo() const;
 
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
 signals:
     void ou_gplink_changed(const QString &ou_dn, const Gplink &gplink, const QString &policy_dn, GplinkOption option = GplinkOption_NoOption);
 
@@ -64,6 +67,7 @@ private:
     QStandardItemModel *model;
     QString gpo;
     QMenu *context_menu;
+    QAction *delete_link_action = nullptr;
 
     void on_item_changed(QStandardItem *item);
     void open_context_menu(const QPoint &pos);

@@ -18,6 +18,9 @@ public:
     virtual void update(const QModelIndex &index);
     virtual void update(const AdObject &obj);
 
+    void retranslate_ui();
+    bool event(QEvent *event);
+
 protected:
     Ui::ResultsWidgetBase *ui;
     AdObject saved_object;

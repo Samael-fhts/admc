@@ -23,6 +23,9 @@ public:
     QComboBox *subnet_sites_cmbbox();
     QHash<QString, QString> attr_string_values();
 
+    void retranslate_ui();
+    bool event(QEvent *event);
+
 private:
     Ui::SubnetEditWidget *ui;
 };

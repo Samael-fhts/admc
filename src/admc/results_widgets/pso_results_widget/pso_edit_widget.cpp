@@ -2,6 +2,8 @@
  * ADMC - AD Management Center
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2024-2025 Semyon Knyazev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -263,4 +265,16 @@ int PSOEditWidget::spinbox_timespan_units(const AdObject &obj, const QString &at
     }
 
     return 0;
+}
+
+void PSOEditWidget::retranslate_ui() {
+    qInfo() << "PSOEditWidget::retranslate_ui";
+    ui->retranslateUi(this);
+}
+
+bool PSOEditWidget::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
 }

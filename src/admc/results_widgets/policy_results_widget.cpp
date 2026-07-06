@@ -74,7 +74,7 @@ PolicyResultsWidget::PolicyResultsWidget(QWidget *parent)
     ui = new Ui::PolicyResultsWidget();
     ui->setupUi(this);
 
-    auto delete_link_action = new QAction(tr("Delete link"), this);
+    delete_link_action = new QAction(tr("Delete link"), this);
 
     context_menu = new QMenu(this);
     context_menu->addAction(delete_link_action);
@@ -287,4 +287,18 @@ void PolicyResultsWidget::delete_link() {
     g_status->display_ad_messages(ad, this);
 
     hide_busy_indicator();
+}
+
+void PolicyResultsWidget::retranslate_ui() {
+    if (delete_link_action != nullptr) {
+        delete_link_action->setText(tr("Delete link"));
+    }
+    ui->retranslateUi(this);
+}
+
+bool PolicyResultsWidget::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
 }

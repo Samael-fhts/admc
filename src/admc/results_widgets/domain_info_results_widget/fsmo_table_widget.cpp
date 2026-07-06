@@ -132,3 +132,16 @@ void FsmoTableWidget::on_fsmo_capture() {
         }
     }
 }
+
+void FsmoTableWidget::retranslate_ui() {
+    ui->fsmo_table->setHorizontalHeaderLabels(
+        {tr("FSMO role"), tr("Host"), tr("Role capture")});
+    ui->retranslateUi(this);
+}
+
+bool FsmoTableWidget::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}

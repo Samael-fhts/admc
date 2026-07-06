@@ -2,6 +2,8 @@
  * ADMC - AD Management Center
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2024-2025 Semyon Knyazev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +58,9 @@ public:
      * Returns true if at least one is not default.
      */
     bool settings_are_default();
+
+    void retranslate_ui();
+    bool event(QEvent *event);
 
 private:
     Ui::PSOEditWidget *ui;

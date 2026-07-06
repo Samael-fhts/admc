@@ -2,6 +2,8 @@
  * ADMC - AD Management Center
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2023-2025 Semyon Knyazev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,4 +272,19 @@ QString DomainInfoResultsWidget::functionality_level_to_string(int level) {
         default:
             return QString();
     }
+}
+
+void DomainInfoResultsWidget::retranslate_ui() {
+    ui->retranslateUi(this);
+    for (auto* widget : this->children()) {
+        QEvent languageEvent(QEvent::LanguageChange);
+        QCoreApplication::sendEvent(widget, &languageEvent);
+    }
+}
+
+bool DomainInfoResultsWidget::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
 }
