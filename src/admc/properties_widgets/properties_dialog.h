@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +62,9 @@ public:
     static void open_when_view_item_activated(QAbstractItemView *view, const int dn_role);
 
     ~PropertiesDialog();
+
+    void retranslate_ui();
+    bool event(QEvent *event) override;
 
 signals:
     // Emitted when changes are applide via apply or ok

@@ -148,3 +148,19 @@ bool PropertiesMultiDialog::apply() {
 void PropertiesMultiDialog::on_edited() {
     apply_button->setEnabled(true);
 }
+
+void PropertiesMultiDialog::retranslate_ui() {
+    ui->retranslateUi(this);
+    for (auto* widget : children()) {
+        QEvent languageEvent(QEvent::LanguageChange);
+        QCoreApplication::sendEvent(widget, &languageEvent);
+    }
+}
+
+bool PropertiesMultiDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
+}
+

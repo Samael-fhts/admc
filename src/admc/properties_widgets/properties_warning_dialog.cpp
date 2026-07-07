@@ -73,3 +73,19 @@ void PropertiesWarningDialog::on_discard_button() {
 
     QDialog::accept();
 }
+
+void PropertiesWarningDialog::retranslate_ui() {
+    ui->retranslateUi(this);
+    for (auto* widget : children()) {
+        QEvent languageEvent(QEvent::LanguageChange);
+        QCoreApplication::sendEvent(widget, &languageEvent);
+    }
+}
+
+bool PropertiesWarningDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
+}
+

@@ -520,3 +520,18 @@ void PropertiesDialog::reset_internal(AdInterface &ad, const AdObject &object) {
 
     g_status->display_ad_messages(ad, this);
 }
+
+void PropertiesDialog::retranslate_ui() {
+    ui->retranslateUi(this);
+    for (auto* widget : children()) {
+        QEvent languageEvent(QEvent::LanguageChange);
+        QCoreApplication::sendEvent(widget, &languageEvent);
+    }
+}
+
+bool PropertiesDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
+}
