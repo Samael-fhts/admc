@@ -65,6 +65,21 @@ OrganizationTab::OrganizationTab(QList<AttributeEdit *> *edit_list, QWidget *par
     });
 }
 
+void OrganizationTab::retranslate_ui() {
+    ui->retranslateUi(this);
+    for (auto* widget : children()) {
+        QEvent languageEvent(QEvent::LanguageChange);
+        QCoreApplication::sendEvent(widget, &languageEvent);
+    }
+}
+
+bool OrganizationTab::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}
+
 OrganizationTabEdit::OrganizationTabEdit(Ui::OrganizationTab *ui_arg, QObject *parent)
 : AttributeEdit(parent) {
     ui = ui_arg;

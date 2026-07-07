@@ -69,3 +69,18 @@ QList<QByteArray> SelectWellKnownTrusteeDialog::get_selected() const {
 
     return out;
 }
+
+void SelectWellKnownTrusteeDialog::retranslate_ui() {
+    ui->retranslateUi(this);
+    for (auto* widget : children()) {
+        QEvent languageEvent(QEvent::LanguageChange);
+        QCoreApplication::sendEvent(widget, &languageEvent);
+    }
+}
+
+bool SelectWellKnownTrusteeDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QDialog::event(event);
+}

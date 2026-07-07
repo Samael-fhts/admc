@@ -55,6 +55,21 @@ AttributesTab::AttributesTab(QList<AttributeEdit *> *edit_list, QWidget *parent)
     });
 }
 
+void AttributesTab::retranslate_ui() {
+    ui->retranslateUi(this);
+    for (auto* widget : children()) {
+        QEvent languageEvent(QEvent::LanguageChange);
+        QCoreApplication::sendEvent(widget, &languageEvent);
+    }
+}
+
+bool AttributesTab::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}
+
 AttributesTabEdit::AttributesTabEdit(QTreeView *view_arg, QPushButton *filter_button_arg, QPushButton *edit_button_arg,
                                      QPushButton *view_button_arg, QPushButton *load_optional_attrs_button_arg, QObject *parent) : AttributeEdit(parent) {
     view = view_arg;
@@ -383,3 +398,4 @@ void AttributesTabEdit::reload_model() {
         load_row(row, attribute, values);
     }
 }
+

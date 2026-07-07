@@ -16,6 +16,9 @@ public:
     explicit GeneralSiteTab(QList<AttributeEdit *> *edit_list, QWidget *parent = nullptr);
     ~GeneralSiteTab();
 
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
 private:
     Ui::GeneralSiteTab *ui;
 };

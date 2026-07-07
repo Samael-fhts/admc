@@ -36,6 +36,10 @@ public:
 
     LAPSV2Tab(QList<AttributeEdit *> *edit_list, QWidget *parent);
     ~LAPSV2Tab();
+
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
 private slots:
     void on_show_password_button_toggled(bool checked);
     void on_copy_password_button_clicked();

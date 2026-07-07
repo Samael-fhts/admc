@@ -53,6 +53,9 @@ public:
     GroupPolicyTab(QList<AttributeEdit *> *edit_list, ConsoleWidget *console_widget, const QString &ou_dn, QWidget *parent);
     ~GroupPolicyTab();
 
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
 private:
     ConsoleWidget *console;
     QModelIndex target_ou_index;

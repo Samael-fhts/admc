@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,9 @@ public:
 
     ManagedByTab(QList<AttributeEdit *> *edit_list, QWidget *parent);
     ~ManagedByTab();
+
+    void retranslate_ui();
+    bool event(QEvent *event) override;
 };
 
 class ManagedByTabEdit final : public AttributeEdit {
