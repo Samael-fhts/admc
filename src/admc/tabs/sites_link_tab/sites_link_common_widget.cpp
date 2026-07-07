@@ -71,3 +71,19 @@ void SitesLinkCommonWidget::move_selected_list_items(QListWidget *from_list_wget
         to_list_wget->addItem(from_list_wget->takeItem(taken_row));
     }
 }
+
+void SitesLinkCommonWidget::retranslate_ui() {
+    ui->retranslateUi(this);
+    for (auto* widget : children()) {
+        QEvent languageEvent(QEvent::LanguageChange);
+        QCoreApplication::sendEvent(widget, &languageEvent);
+    }
+}
+
+bool SitesLinkCommonWidget::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}
+

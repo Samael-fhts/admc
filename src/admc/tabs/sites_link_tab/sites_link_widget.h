@@ -22,6 +22,9 @@ public:
     SitesLinkPartWidget *sites_link_part_widget();
     SitesLinkType get_type();
 
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
 private:
     Ui::SitesLinkWidget *ui;
     SitesLinkCommonWidget *common_wget = nullptr;

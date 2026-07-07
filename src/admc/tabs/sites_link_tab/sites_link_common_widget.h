@@ -30,6 +30,9 @@ public:
     QPushButton *remove_button();
     void set_lists_labels(SitesLinkType type);
 
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
 private:
     Ui::SitesLinkCommonWidget *ui;
 

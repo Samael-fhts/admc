@@ -22,6 +22,9 @@ public:
      QSpinBox *replicate_spinbox();
      QPushButton *schedule_button();
 
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
 private:
     Ui::SitesLinkPartWidget *ui;
 };

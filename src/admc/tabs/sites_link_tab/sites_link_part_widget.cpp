@@ -23,3 +23,18 @@ QSpinBox *SitesLinkPartWidget::replicate_spinbox() {
 QPushButton *SitesLinkPartWidget::schedule_button() {
     return ui->schedule_button;
 }
+
+void SitesLinkPartWidget::retranslate_ui() {
+    ui->retranslateUi(this);
+    for (auto* widget : children()) {
+        QEvent languageEvent(QEvent::LanguageChange);
+        QCoreApplication::sendEvent(widget, &languageEvent);
+    }
+}
+
+bool SitesLinkPartWidget::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslate_ui();
+    }
+    return QObject::event(event);
+}

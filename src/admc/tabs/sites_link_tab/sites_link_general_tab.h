@@ -20,6 +20,9 @@ public:
                                  QWidget *parent = nullptr);
     ~SitesLinkGeneralTab();
 
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
 private:
     Ui::SitesLinkGeneralTab *ui;
     SitesLinkWidget *sites_link_widget = nullptr;
