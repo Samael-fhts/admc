@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@
  */
 
 #include <QDialog>
+#include <QPushButton>
 
 namespace Ui {
 class SecuritySortWarningDialog;
@@ -41,6 +43,13 @@ public:
 
     SecuritySortWarningDialog(QWidget *parent);
     ~SecuritySortWarningDialog();
+
+    void retranslate_ui();
+    bool event(QEvent *event) override;
+
+private:
+    QPushButton* fix_order_button;
+    QPushButton* cancel_button;
 };
 
 #endif /* SECURITY_SORT_WARNING_DIALOG */

@@ -29,12 +29,28 @@ SecuritySortWarningDialog::SecuritySortWarningDialog(QWidget *parent)
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    ui->label->setText(tr("This object's security descriptor contains ACL that has incorrect order. Fix order to proceed with editing. If order is not fixed, Security tab will be read only."));
-
-    ui->button_box->addButton(tr("Fix order"), QDialogButtonBox::AcceptRole);
-    ui->button_box->addButton(tr("Cancel"), QDialogButtonBox::RejectRole);
+    fix_order_button = new QPushButton();
+    cancel_button = new QPushButton();
+    ui->button_box->addButton(fix_order_button, QDialogButtonBox::AcceptRole);
+    ui->button_box->addButton(cancel_button, QDialogButtonBox::RejectRole);
+    retranslate_ui();
 }
 
 SecuritySortWarningDialog::~SecuritySortWarningDialog() {
     delete ui;
+}
+
+void SecuritySortWarningDialog::retranslate_ui() {
+    ui->label->setText(
+        tr("This object's security descriptor contains ACL that has incorrect order. Fix order to proceed with editing. If order is not fixed, Security tab will be read only."));
+    fix_order_button->setText(tr("Fix order"));
+    cancel_button->setText(tr("Cancel"));
+}
+
+bool SecuritySortWarningDialog::event(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        ui->retranslateUi(this);
+        retranslate_ui();
+    }
+    return QDialog::event(event);
 }
