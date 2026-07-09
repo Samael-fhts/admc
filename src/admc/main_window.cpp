@@ -168,7 +168,7 @@ void MainWindow::reload_console_tree() {
 void MainWindow::setup_themes() {
     const QStringList theme_list = g_icon_manager->available_themes();
     const QLocale current_locale = settings_get_current_locale();
-    auto theme_action_group = new QActionGroup(this);
+    theme_action_group = new QActionGroup(this);
     for (const QString &theme : theme_list) {
         const QString localized_name =
             g_icon_manager->localized_theme_name(current_locale, theme);
@@ -246,6 +246,28 @@ void MainWindow::setup_languages() {
     }
 }
 
+/**
+ * Re-translate ADMC "View"->"Theme" menu according to the locale set in the
+ * configuration.
+ */
+void MainWindow::retranslate_themes_menu() {
+    const QStringList theme_list = g_icon_manager->available_themes();
+    const QLocale current_locale =
+        settings_get_variant(SETTING_locale).toLocale();
+    auto  actions = theme_action_group->actions();
+    for (int idx = 0; idx < theme_list.length(); idx++) {
+        const QString& theme = theme_list[idx];
+        const QString localized_name = g_icon_manager->localized_theme_name(
+            current_locale,
+            theme);
+        if (localized_name.isEmpty()) {
+            continue;
+        }
+        QAction* a = actions[idx];
+        a->setText(localized_name);
+    }
+}
+
 void MainWindow::changeEvent(QEvent *event) {
     if (event->type() == QEvent::LanguageChange) {
         ui->retranslateUi(this);
@@ -259,6 +281,7 @@ void MainWindow::changeEvent(QEvent *event) {
         AdInterface ad;
         load_g_adconfig(ad);
         reload_console_tree();
+        retranslate_themes_menu();
         hide_busy_indicator();
     }
     QMainWindow::changeEvent(event);

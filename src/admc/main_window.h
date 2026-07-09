@@ -57,7 +57,9 @@ private:
     AuthDialogBase *auth_dialog;
     bool inited = false;
     Krb5Client *krb5_client = nullptr;
+    QActionGroup *theme_action_group;
 
+    void retranslate_themes_menu();
     void on_log_searches_changed();
     void on_show_login_changed();
     void open_manual();
