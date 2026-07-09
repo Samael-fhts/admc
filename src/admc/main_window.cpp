@@ -255,8 +255,9 @@ void MainWindow::changeEvent(QEvent *event) {
             QEvent languageEvent(QEvent::LanguageChange);
             QCoreApplication::sendEvent(widget, &languageEvent);
         }
+        AdInterface ad;
+        load_g_adconfig(ad);
     }
-
     QMainWindow::changeEvent(event);
 }
 
