@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,82 +113,104 @@ void OctetAttributeDialog::on_format_combo() {
     }
 }
 
+/**
+ * Check if a value is a proper hexadecimal value.
+ */
+static bool validate_hexadecimal(const QString& value) {
+    const QRegularExpression rx("^([0-9a-f]{2})$");
+    return rx.match(value).hasMatch();
+}
+
+/**
+ * Check if a value is a proper binary value.
+ */
+static bool validate_binary(const QString& value) {
+    const QRegularExpression rx("^([0-1]{8})$");
+    return rx.match(value).hasMatch();
+}
+
+/**
+ * Check if a value is a proper decimal value in the 0..255 range.
+ */
+static bool validate_decimal(const QString& value) {
+    const QRegularExpression rx("^([0-9]{3})$");
+    if (! rx.match(value).hasMatch()) {
+        return false;
+    }
+
+    const int number = value.toInt();
+    if ((number < 0) || (number > 255)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Check if a value is a proper octal value in the 0..377 range.
+ */
+static bool validate_octal(const QString& value) {
+    const QRegularExpression rx("^([0-7]{3})$");
+
+    if (! rx.match(value).hasMatch()) {
+        return false;
+    }
+
+    const int number = value.toInt();
+    if ((number < 0) || (number > 377)) {
+        return false;
+    }
+
+    return true;
+}
+
+typedef bool(*predicate_t)(const QString& value);
+
+/**
+ * A hash table that maps display formats and predicates to check their
+ * validity.
+ */
+static QHash<OctetDisplayFormat, predicate_t> validators = {
+    {OctetDisplayFormat_Binary,      validate_binary},
+    {OctetDisplayFormat_Decimal,     validate_decimal},
+    {OctetDisplayFormat_Hexadecimal, validate_hexadecimal},
+    {OctetDisplayFormat_Octal,       validate_octal}
+};
+
 bool OctetAttributeDialog::check_input(const OctetDisplayFormat format) {
-    const bool ok = [=]() {
-        const QString text = ui->edit->toPlainText();
+    const QString text = ui->edit->toPlainText();
+    bool ok = true;
 
-        if (text.isEmpty()) {
-            return true;
-        }
-
-        const QList<QString> text_split = text.split(" ");
-
-        for (const QString &element : text_split) {
-            switch (format) {
-                case OctetDisplayFormat_Hexadecimal: {
-                    const QRegularExpression rx("^([0-9a-f]{2})$");
-
-                    if (!rx.match(element).hasMatch()) {
-                        return false;
-                    }
-
-                    break;
-                }
-                case OctetDisplayFormat_Binary: {
-                    const QRegularExpression rx("^([0-1]{8})$");
-
-                    if (!rx.match(element).hasMatch()) {
-                        return false;
-                    }
-
-                    break;
-                }
-                case OctetDisplayFormat_Decimal: {
-                    const QRegularExpression rx("^([0-9]{3})$");
-
-                    if (!rx.match(element).hasMatch()) {
-                        return false;
-                    }
-
-                    const int number = element.toInt();
-                    if (0 > number || number > 255) {
-                        return false;
-                    }
-
-                    break;
-                }
-                case OctetDisplayFormat_Octal: {
-                    const QRegularExpression rx("^([0-7]{3})$");
-
-                    if (!rx.match(element).hasMatch()) {
-                        return false;
-                    }
-
-                    const int number = element.toInt();
-                    if (0 > number || number > 377) {
-                        return false;
-                    }
-
-                    break;
-                }
-            }
-        }
-
+    if (text.isEmpty()) {
         return true;
-    }();
+    }
 
-    if (!ok) {
+    const QList<QString> text_split = text.split(" ");
+    predicate_t is_valid = validators[format];
+    for (const QString &element : text_split) {
+        if (! is_valid(element)) {
+            ok = false;
+            break;
+        }
+    }
+
+    if (! ok) {
         const QString title = tr("Error");
-
-        const QString text = [format]() {
-            switch (format) {
-                case OctetDisplayFormat_Hexadecimal: return tr("Input must be strings of 2 hexadecimal digits separated by spaces. Example: \"0a 00 b5 ff\"");
-                case OctetDisplayFormat_Binary: return tr("Input must be strings of 8 binary digits separated by spaces. Example: \"01010010 01000010 01000010\"");
-                case OctetDisplayFormat_Decimal: return tr("Input must be strings of 3 decimal digits (0-255) separated by spaces. Example: \"010 000 191\"");
-                case OctetDisplayFormat_Octal: return tr("Input must be strings of 3 octal digits (0-377) separated by spaces.. Example: \"070 343 301\"");
-            }
-            return QString();
-        }();
+        QString text;
+        switch (format) {
+        case OctetDisplayFormat_Hexadecimal:
+            text = tr("Input must be strings of 2 hexadecimal digits separated by spaces. Example: \"0a 00 b5 ff\"");
+            break;
+        case OctetDisplayFormat_Binary:
+            text = tr("Input must be strings of 8 binary digits separated by spaces. Example: \"01010010 01000010 01000010\"");
+            break;
+        case OctetDisplayFormat_Decimal:
+            text = tr("Input must be strings of 3 decimal digits (0-255) separated by spaces. Example: \"010 000 191\"");
+            break;
+        case OctetDisplayFormat_Octal:
+            text = tr("Input must be strings of 3 octal digits (0-377) separated by spaces.. Example: \"070 343 301\"");
+            break;
+        }
 
         message_box_warning(this, title, text);
     }
