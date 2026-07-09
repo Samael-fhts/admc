@@ -40,45 +40,61 @@
 #include <QLabel>
 #include <QDebug>
 
-AttributeDialog *AttributeDialog::make(const QString &attribute, const QList<QByteArray> &value_list, const bool read_only, const bool single_valued, QWidget *parent) {
+AttributeDialog *AttributeDialog::make(
+    const QString &attribute,
+    const QList<QByteArray> &value_list,
+    const bool read_only,
+    const bool single_valued,
+    QWidget *parent)
+{
     // Single/multi valued logic is separated out of the
     // switch statement for better flow
     auto octet_attribute_dialog = [&]() -> AttributeDialog * {
         if (single_valued) {
-            return new OctetAttributeDialog(value_list, attribute, read_only, parent);
+            return new OctetAttributeDialog(
+                value_list, attribute, read_only, parent);
         } else {
-            return new ListAttributeDialog(value_list, attribute, read_only, parent);
+            return new ListAttributeDialog(
+                value_list, attribute, read_only, parent);
         }
     };
 
     auto string_attribute_dialog = [&]() -> AttributeDialog * {
         if (single_valued) {
-            const bool attribute_is_number = g_adconfig->get_attribute_is_number(attribute);
+            const bool attribute_is_number =
+                g_adconfig->get_attribute_is_number(attribute);
 
             if (attribute_is_number) {
                 if (attribute_value_is_hex_displayed(attribute))
-                    return new HexNumberAttributeDialog(value_list, attribute, read_only, parent);
+                    return new HexNumberAttributeDialog(
+                        value_list, attribute, read_only, parent);
                 else
-                    return new NumberAttributeDialog(value_list, attribute, read_only, parent);
+                    return new NumberAttributeDialog(
+                        value_list, attribute, read_only, parent);
             } else {
-                return new StringAttributeDialog(value_list, attribute, read_only, parent);
+                return new StringAttributeDialog(
+                    value_list, attribute, read_only, parent);
             }
         } else {
-            return new ListAttributeDialog(value_list, attribute, read_only, parent);
+            return new ListAttributeDialog(
+                value_list, attribute, read_only, parent);
         }
     };
 
     auto bool_attribute_dialog = [&]() -> AttributeDialog * {
         if (single_valued) {
-            return new BoolAttributeDialog(value_list, attribute, read_only, parent);
+            return new BoolAttributeDialog(
+                value_list, attribute, read_only, parent);
         } else {
-            return new ListAttributeDialog(value_list, attribute, read_only, parent);
+            return new ListAttributeDialog(
+                value_list, attribute, read_only, parent);
         }
     };
 
     auto datetime_attribute_dialog = [&]() -> AttributeDialog * {
         if (single_valued) {
-            return new DatetimeAttributeDialog(value_list, attribute, read_only, parent);
+            return new DatetimeAttributeDialog(
+                value_list, attribute, read_only, parent);
         } else {
             return nullptr;
         }
@@ -86,16 +102,20 @@ AttributeDialog *AttributeDialog::make(const QString &attribute, const QList<QBy
 
     auto time_span_attribute_dialog = [&]() -> AttributeDialog * {
         if (single_valued) {
-            return new TimeSpanAttributeDialog(value_list, attribute, read_only, parent);
+            return new TimeSpanAttributeDialog(
+                value_list, attribute, read_only, parent);
         } else {
             return nullptr;
         }
     };
 
     AttributeType type = g_adconfig->get_attribute_type(attribute);
-    const LargeIntegerSubtype large_int_subtype = g_adconfig->get_attribute_large_integer_subtype(attribute);
-    if (type == AttributeType_LargeInteger && large_int_subtype == LargeIntegerSubtype_Datetime)
+    const LargeIntegerSubtype large_int_subtype =
+        g_adconfig->get_attribute_large_integer_subtype(attribute);
+    if ((type == AttributeType_LargeInteger) &&
+        (large_int_subtype == LargeIntegerSubtype_Datetime)) {
         type = AttributeType_UTCTime;
+    }
 
     AttributeDialog *dialog = nullptr;
     switch (type) {
@@ -165,7 +185,10 @@ AttributeDialog *AttributeDialog::make(const QString &attribute, const QList<QBy
     return dialog;
 }
 
-AttributeDialog::AttributeDialog(const QString &attribute, const bool read_only, QWidget *parent)
+AttributeDialog::AttributeDialog(
+    const QString &attribute,
+    const bool read_only,
+    QWidget *parent)
 : QDialog(parent) {
     m_attribute = attribute;
     m_read_only = read_only;
@@ -179,7 +202,9 @@ bool AttributeDialog::get_read_only() const {
     return m_read_only;
 }
 
-void AttributeDialog::load_attribute_label(QLabel *attribute_label) {
+void AttributeDialog::load_attribute_label(
+    QLabel *attribute_label)
+{
     const QString text = QString(tr("Attribute: %1")).arg(m_attribute);
     attribute_label->setText(text);
 }
