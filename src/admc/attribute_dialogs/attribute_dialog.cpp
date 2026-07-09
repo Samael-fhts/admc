@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,60 +97,68 @@ AttributeDialog *AttributeDialog::make(const QString &attribute, const QList<QBy
     if (type == AttributeType_LargeInteger && large_int_subtype == LargeIntegerSubtype_Datetime)
         type = AttributeType_UTCTime;
 
-    AttributeDialog *dialog = [&]() -> AttributeDialog * {
-        if (type == AttributeType_LargeInteger && large_int_subtype == LargeIntegerSubtype_Timespan) {
-            return time_span_attribute_dialog();
-        }
+    AttributeDialog *dialog = nullptr;
+    switch (type) {
+    case AttributeType_Octet:
+    case AttributeType_Sid:
+    case AttributeType_NTSecDesc:
+        dialog = octet_attribute_dialog();
+        break;
 
-        switch (type) {
-            case AttributeType_Octet: return octet_attribute_dialog();
-            case AttributeType_Sid: return octet_attribute_dialog();
+    case AttributeType_Boolean:
+        dialog = bool_attribute_dialog();
+        break;
 
-            case AttributeType_Boolean: return bool_attribute_dialog();
+    case AttributeType_Unicode:
+    case AttributeType_StringCase:
+    case AttributeType_DSDN:
+    case AttributeType_IA5:
+    case AttributeType_Teletex:
+    case AttributeType_ObjectIdentifier:
+    case AttributeType_Integer:
+    case AttributeType_Enumeration:
+    case AttributeType_Numeric:
+    case AttributeType_Printable:
+    case AttributeType_DNString:
+        dialog = string_attribute_dialog();
+        break;
 
-            case AttributeType_Unicode: return string_attribute_dialog();
-            case AttributeType_StringCase: return string_attribute_dialog();
-            case AttributeType_DSDN: return string_attribute_dialog();
-            case AttributeType_IA5: return string_attribute_dialog();
-            case AttributeType_Teletex: return string_attribute_dialog();
-            case AttributeType_ObjectIdentifier: return string_attribute_dialog();
-            case AttributeType_Integer: return string_attribute_dialog();
-            case AttributeType_Enumeration: return string_attribute_dialog();
-            case AttributeType_LargeInteger: return string_attribute_dialog();
-            case AttributeType_UTCTime: return datetime_attribute_dialog();
-            case AttributeType_GeneralizedTime: return datetime_attribute_dialog();
-            case AttributeType_NTSecDesc: return octet_attribute_dialog();
-            case AttributeType_Numeric: return string_attribute_dialog();
-            case AttributeType_Printable: return string_attribute_dialog();
-            case AttributeType_DNString: return string_attribute_dialog();
-
-            // NOTE: putting these here as confirmed to be unsupported
-            case AttributeType_ReplicaLink: return nullptr;
-            case AttributeType_DNBinary: return nullptr;
-        }
-
-        return nullptr;
-    }();
-
-    const QString title = [&]() {
-        const QString title_action = [&]() {
-            if (read_only) {
-                return tr("View");
-            } else {
-                return tr("Edit");
-            }
-        }();
-
-        const QString title_attribute = attribute_type_display_string(type);
-
-        if (single_valued) {
-            return QString("%1 %2").arg(title_action, title_attribute);
+    case AttributeType_LargeInteger:
+        if (large_int_subtype == LargeIntegerSubtype_Timespan) {
+            dialog = time_span_attribute_dialog();
         } else {
-            return QString(tr("%1 Multi-Valued %2", "This is a dialog title for attribute editors. Example: \"Edit Multi-Valued String\"")).arg(title_action, title_attribute);
+            dialog = string_attribute_dialog();
         }
-    }();
+        break;
+
+    case AttributeType_UTCTime:
+    case AttributeType_GeneralizedTime:
+        dialog = datetime_attribute_dialog();
+        break;
+
+        // NOTE: putting these here as confirmed to be unsupported
+    case AttributeType_ReplicaLink:
+    case AttributeType_DNBinary:
+        dialog = nullptr;
+        break;
+
+    default:
+        dialog = nullptr;
+    }
 
     if (dialog != nullptr) {
+        const QString title_action = read_only ? tr("View") : tr("Edit");
+        const QString title_attribute = attribute_type_display_string(type);
+        QString title;
+        if (single_valued) {
+            title = QString("%1 %2");
+        } else {
+            title = tr(
+                "%1 Multi-Valued %2",
+                "This is a dialog title for attribute editors. Example: \"Edit Multi-Valued String\"");
+        }
+        title = title.arg(title_action, title_attribute);
+
         dialog->setWindowTitle(title);
     }
 
