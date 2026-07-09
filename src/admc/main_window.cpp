@@ -255,8 +255,11 @@ void MainWindow::changeEvent(QEvent *event) {
             QEvent languageEvent(QEvent::LanguageChange);
             QCoreApplication::sendEvent(widget, &languageEvent);
         }
+        show_busy_indicator();
         AdInterface ad;
         load_g_adconfig(ad);
+        reload_console_tree();
+        hide_busy_indicator();
     }
     QMainWindow::changeEvent(event);
 }
