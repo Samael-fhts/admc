@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,21 +34,14 @@ GeneralNameEdit::GeneralNameEdit(QLabel *label_arg, QObject *parent)
 void GeneralNameEdit::load(AdInterface &ad, const AdObject &object) {
     UNUSED_ARG(ad);
 
-    const QString label_text = [&]() {
-        const QString name_attribute = [&]() {
-            const bool is_gpc = object.is_class(CLASS_GP_CONTAINER);
-
-            if (is_gpc) {
-                return ATTRIBUTE_DISPLAY_NAME;
-            } else {
-                return ATTRIBUTE_NAME;
-            }
-        }();
-
-        const QString name = object.get_string(name_attribute);
-
-        return name;
-    }();
+    const bool is_gpc = object.is_class(CLASS_GP_CONTAINER);
+    QString name_attribute;
+    if (is_gpc) {
+        name_attribute = ATTRIBUTE_DISPLAY_NAME;
+    } else {
+        name_attribute = ATTRIBUTE_NAME;
+    }
+    QString label_text = object.get_string(name_attribute);
 
     label->setText(label_text);
 }
