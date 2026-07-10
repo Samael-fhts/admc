@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,13 +104,12 @@ QLineEdit *PasswordEdit::get_confirm_edit() const {
 }
 
 void PasswordEdit::on_show_password_check(bool checked) {
-    const QLineEdit::EchoMode echo_mode = [&]() {
-        if (checked) {
-            return QLineEdit::Normal;
-        } else {
-            return QLineEdit::Password;
-        }
-    }();
+    QLineEdit::EchoMode echo_mode;
+    if (checked) {
+        echo_mode = QLineEdit::Normal;
+    } else {
+        echo_mode = QLineEdit::Password;
+    }
 
     edit->setEchoMode(echo_mode);
     confirm_edit->setEchoMode(echo_mode);
