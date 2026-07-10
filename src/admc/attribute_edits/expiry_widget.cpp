@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,10 +54,8 @@ ExpiryWidget::~ExpiryWidget() {
 }
 
 void ExpiryWidget::load(const AdObject &object) {
-    const bool never = [object]() {
-        const QString expiry_string = object.get_string(ATTRIBUTE_ACCOUNT_EXPIRES);
-        return large_integer_datetime_is_never(expiry_string);
-    }();
+    const QString expiry_string = object.get_string(ATTRIBUTE_ACCOUNT_EXPIRES);
+    const bool never = large_integer_datetime_is_never(expiry_string);
 
     if (never) {
         ui->never_check->setChecked(true);
@@ -70,15 +69,15 @@ void ExpiryWidget::load(const AdObject &object) {
         ui->date_edit->setEnabled(true);
     }
 
-    const QDate date = [=]() {
-        if (never) {
-            // Default to current date when expiry is never
-            return QDate::currentDate();
-        } else {
-            const QDateTime datetime = object.get_datetime(ATTRIBUTE_ACCOUNT_EXPIRES, g_adconfig);
-            return datetime.date();
-        }
-    }();
+    QDate date;
+    if (never) {
+        // Default to current date when expiry is never
+        date = QDate::currentDate();
+    } else {
+        const QDateTime datetime =
+            object.get_datetime(ATTRIBUTE_ACCOUNT_EXPIRES, g_adconfig);
+        date = datetime.date();
+    }
 
     ui->date_edit->setDate(date);
 }
