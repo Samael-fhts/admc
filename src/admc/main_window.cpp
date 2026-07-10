@@ -279,7 +279,7 @@ void MainWindow::changeEvent(QEvent *event) {
         }
         show_busy_indicator();
         AdInterface ad;
-        load_g_adconfig(ad);
+        init_on_connect(ad);
         reload_console_tree();
         retranslate_themes_menu();
         hide_busy_indicator();
@@ -498,29 +498,53 @@ void MainWindow::setup_status_bar(const AdInterface &ad) {
 void MainWindow::init_on_connect(AdInterface &ad) {
     load_g_adconfig(ad);
 
-    auto domain_info_impl = new DomainInfoImpl(ui->console);
+    if (domain_info_impl) {
+        delete domain_info_impl;
+    }
+    domain_info_impl = new DomainInfoImpl(ui->console);
     ui->console->register_impl(ItemType_DomainInfo, domain_info_impl);
 
-    auto object_impl = new ObjectImpl(ui->console);
+    if (object_impl) {
+        delete object_impl;
+    }
+    object_impl = new ObjectImpl(ui->console);
     ui->console->register_impl(ItemType_Object, object_impl);
 
-    auto policy_root_impl = new PolicyRootImpl(ui->console);
+    if (policy_root_impl) {
+        delete policy_root_impl;
+    }
+    policy_root_impl = new PolicyRootImpl(ui->console);
     ui->console->register_impl(ItemType_PolicyRoot, policy_root_impl);
 
-    auto all_policies_folder_impl = new AllPoliciesFolderImpl(ui->console);
+    if (all_policies_folder_impl) {
+        delete all_policies_folder_impl;
+    }
+    all_policies_folder_impl = new AllPoliciesFolderImpl(ui->console);
     ui->console->register_impl(ItemType_AllPoliciesFolder,
                                all_policies_folder_impl);
 
-    auto policy_ou_impl = new PolicyOUImpl(ui->console);
+    if (policy_ou_impl) {
+        delete policy_ou_impl;
+    }
+    policy_ou_impl = new PolicyOUImpl(ui->console);
     ui->console->register_impl(ItemType_PolicyOU, policy_ou_impl);
 
-    auto policy_impl = new PolicyImpl(ui->console);
+    if (policy_impl) {
+        delete policy_impl;
+    }
+    policy_impl = new PolicyImpl(ui->console);
     ui->console->register_impl(ItemType_Policy, policy_impl);
 
-    auto query_item_impl = new QueryItemImpl(ui->console);
+    if (query_item_impl) {
+        delete query_item_impl;
+    }
+    query_item_impl = new QueryItemImpl(ui->console);
     ui->console->register_impl(ItemType_QueryItem, query_item_impl);
 
-    auto query_folder_impl = new QueryFolderImpl(ui->console);
+    if (query_folder_impl) {
+        delete query_folder_impl;
+    }
+    query_folder_impl = new QueryFolderImpl(ui->console);
     ui->console->register_impl(ItemType_QueryFolder, query_folder_impl);
 
     query_item_impl->set_query_folder_impl(query_folder_impl);
@@ -549,9 +573,11 @@ void MainWindow::init_on_connect(AdInterface &ad) {
 
     restore_console_widget_state();
 
-    // NOTE: "Action" menu actions need to be filled by the
-    // console
-    ui->console->setup_menubar_action_menu(ui->menu_action);
+    if (! inited) {
+        // NOTE: "Action" menu actions need to be filled by the
+        // console
+        ui->console->setup_menubar_action_menu(ui->menu_action);
+    }
 
     // Set current scope to object head to load it
     const QModelIndex object_tree_root =

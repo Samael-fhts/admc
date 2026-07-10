@@ -25,6 +25,15 @@
 #include <memory>
 #include "krb5client.h"
 
+#include "console_impls/all_policies_folder_impl.h"
+#include "console_impls/item_type.h"
+#include "console_impls/object_impl/object_impl.h"
+#include "console_impls/policy_impl.h"
+#include "console_impls/policy_ou_impl.h"
+#include "console_impls/policy_root_impl.h"
+#include "console_impls/query_folder_impl.h"
+#include "console_impls/query_item_impl.h"
+
 class AdInterface;
 class QLabel;
 class ObjectImpl;
@@ -58,6 +67,14 @@ private:
     bool inited = false;
     Krb5Client *krb5_client = nullptr;
     QActionGroup *theme_action_group;
+    DomainInfoImpl *domain_info_impl = nullptr;
+    ObjectImpl *object_impl = nullptr;
+    PolicyRootImpl *policy_root_impl = nullptr;
+    AllPoliciesFolderImpl *all_policies_folder_impl = nullptr;
+    PolicyOUImpl *policy_ou_impl = nullptr;
+    PolicyImpl *policy_impl = nullptr;
+    QueryItemImpl *query_item_impl = nullptr;
+    QueryFolderImpl *query_folder_impl = nullptr;
 
     void retranslate_themes_menu();
     void on_log_searches_changed();
