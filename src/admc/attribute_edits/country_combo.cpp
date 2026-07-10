@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,27 +79,21 @@ void country_combo_load_data() {
             //
             // NOTE: there's definitely a better way to
             // do this
-            const QList<QString> line_split = [&]() -> QList<QString> {
-                if (line.contains('\"')) {
-                    QList<QString> split_by_quotes = line.split('\"');
-                    split_by_quotes.removeAll("");
+            QList<QString> line_split;
+            if (line.contains('\"')) {
+                QList<QString> split_by_quotes = line.split('\"');
+                split_by_quotes.removeAll("");
 
-                    if (split_by_quotes.size() == 2) {
-                        QList<QString> split_rest = split_by_quotes[1].split(',');
-                        split_rest.removeAll("");
+                if (split_by_quotes.size() == 2) {
+                    QList<QString> split_rest = split_by_quotes[1].split(',');
+                    split_rest.removeAll("");
 
-                        QList<QString> out;
-                        out.append(split_by_quotes[0]);
-                        out.append(split_rest);
-
-                        return out;
-                    } else {
-                        return QList<QString>();
-                    }
-                } else {
-                    return line.split(',');
+                    line_split.append(split_by_quotes[0]);
+                    line_split.append(split_rest);
                 }
-            }();
+            } else {
+                line_split = line.split(',');
+            }
 
             if (line_split.size() != CountryColumn_COUNT) {
                 qDebug() << "country.csv contains malformed line: " << line;
@@ -127,20 +122,14 @@ void country_combo_load_data() {
 }
 
 void country_combo_init(QComboBox *combo) {
-    const QHash<int, QString> name_map = [&]() {
-        const bool locale_is_ru = [&]() {
-            const QLocale locale = settings_get_variant(SETTING_locale).toLocale();
-            const bool out = (locale.language() == QLocale::Russian);
-
-            return out;
-        }();
-
-        if (locale_is_ru) {
-            return country_strings_ru;
-        } else {
-            return country_strings;
-        }
-    }();
+    const QLocale locale = settings_get_variant(SETTING_locale).toLocale();
+    const bool locale_is_ru = (locale.language() == QLocale::Russian);
+    QHash<int, QString> name_map;
+    if (locale_is_ru) {
+        name_map = country_strings_ru;
+    } else {
+        name_map = country_strings;
+    }
 
     // Generate order of countries that will be used to
     // fill the combo.
@@ -150,42 +139,31 @@ void country_combo_init(QComboBox *combo) {
     // If this program ever happens to be used outside
     // of that particular country, there is a feature
     // flag "SETTING_feature_current_locale_first".
-    const QList<QString> country_list = [&]() {
-        const QString country_russia = [&]() {
-            const QLocale top_locale = [&]() {
-                const bool current_locale_first = settings_get_variant(SETTING_feature_current_locale_first).toBool();
+    QString country_russia;
+    const bool current_locale_first =
+        settings_get_variant(SETTING_feature_current_locale_first).toBool();
+    QLocale top_locale;
+    if (current_locale_first) {
+        top_locale = settings_get_variant(SETTING_locale).toLocale();
+    } else {
+        top_locale = QLocale(QLocale::Russian, QLocale::Russia);
+    }
 
-                if (current_locale_first) {
-                    const QLocale current_locale = settings_get_variant(SETTING_locale).toLocale();
+    const QString locale_name = top_locale.name();
+    const QList<QString> locale_name_split = locale_name.split("_");
 
-                    return current_locale;
-                } else {
-                    const QLocale russia_locale = QLocale(QLocale::Russian, QLocale::Russia);
+    if (locale_name_split.size() == 2) {
+        const QString abbreviation = locale_name_split[1];
+        const int code = abbreviation_to_code[abbreviation];
+        const QString country_name = name_map[code];
 
-                    return russia_locale;
-                }
-            }();
-            const QString locale_name = top_locale.name();
-            const QList<QString> locale_name_split = locale_name.split("_");
+        country_russia = country_name;
+    }
 
-            if (locale_name_split.size() == 2) {
-                const QString abbreviation = locale_name_split[1];
-                const int code = abbreviation_to_code[abbreviation];
-                const QString country_name = name_map[code];
-
-                return country_name;
-            } else {
-                return QString();
-            }
-        }();
-
-        QList<QString> out = name_map.values();
-        std::sort(out.begin(), out.end());
-        out.removeAll(country_russia);
-        out.prepend(country_russia);
-
-        return out;
-    }();
+    QList<QString> country_list = name_map.values();
+    std::sort(country_list.begin(), country_list.end());
+    country_list.removeAll(country_russia);
+    country_list.prepend(country_russia);
 
     // Add "None" at the start
     combo->addItem(QCoreApplication::translate("country_widget", "None"), COUNTRY_CODE_NONE);
@@ -198,13 +176,12 @@ void country_combo_init(QComboBox *combo) {
 }
 
 void country_combo_load(QComboBox *combo, const AdObject &object) {
-    const int country_code = [object]() {
-        if (object.contains(ATTRIBUTE_COUNTRY_CODE)) {
-            return object.get_int(ATTRIBUTE_COUNTRY_CODE);
-        } else {
-            return COUNTRY_CODE_NONE;
-        }
-    }();
+    int country_code;
+    if (object.contains(ATTRIBUTE_COUNTRY_CODE)) {
+        country_code = object.get_int(ATTRIBUTE_COUNTRY_CODE);
+    } else {
+        country_code = COUNTRY_CODE_NONE;
+    }
 
     const int index = combo->findData(QVariant(country_code));
     if (index != -1) {
