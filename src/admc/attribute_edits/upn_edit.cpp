@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,16 +60,12 @@ void UpnEdit::load(AdInterface &ad, const AdObject &object) {
 bool UpnEdit::verify(AdInterface &ad, const QString &dn) const {
     const QString new_value = get_new_value();
     const QString new_prefix = prefix_edit->text();
-
-    const bool contains_bad_chars = [&]() {
-        const bool some_bad_chars = string_contains_bad_chars(new_prefix, UPN_BAD_CHARS);
-        const bool starts_with_space = new_prefix.startsWith(" ");
-        const bool ends_with_space = new_prefix.endsWith(" ");
-
-        const bool out = (some_bad_chars || starts_with_space || ends_with_space);
-
-        return out;
-    }();
+    const bool some_bad_chars =
+        string_contains_bad_chars(new_prefix, UPN_BAD_CHARS);
+    const bool starts_with_space = new_prefix.startsWith(" ");
+    const bool ends_with_space = new_prefix.endsWith(" ");
+    const bool contains_bad_chars =
+        (some_bad_chars || starts_with_space || ends_with_space);
 
     if (contains_bad_chars) {
         const QString text = tr("Input field for User Principal Name contains one or more of the following illegal characters: # , + \" \\ < > (leading space) (trailing space)");
@@ -78,23 +75,31 @@ bool UpnEdit::verify(AdInterface &ad, const QString &dn) const {
     }
 
     // Check that new upn is unique
-    // NOTE: filter has to also check that it's not the same object because of attribute edit weirdness. If user edits logon name, then retypes original, then applies, the edit will apply because it was modified by the user, even if the value didn't change. Without "not_object_itself", this check would determine that object's logon name conflicts with itself.
+    // NOTE: filter has to also check that it's not the same object because of
+    // attribute edit weirdness. If user edits logon name, then retypes
+    // original, then applies, the edit will apply because it was modified by
+    // the user, even if the value didn't change. Without "not_object_itself",
+    // this check would determine that object's logon name conflicts with
+    // itself.
     const QString base = g_adconfig->domain_dn();
     const SearchScope scope = SearchScope_All;
-    const QString filter = [=]() {
-        const QString not_object_itself = filter_CONDITION(Condition_NotEquals, ATTRIBUTE_DN, dn);
-        const QString same_upn = filter_CONDITION(Condition_Equals, ATTRIBUTE_USER_PRINCIPAL_NAME, new_value);
+    const QString not_object_itself =
+        filter_CONDITION(Condition_NotEquals, ATTRIBUTE_DN, dn);
+    const QString same_upn =
+        filter_CONDITION(Condition_Equals, ATTRIBUTE_USER_PRINCIPAL_NAME,
+                         new_value);
+    const QString filter = filter_AND({same_upn, not_object_itself});
 
-        return filter_AND({same_upn, not_object_itself});
-    }();
     const QList<QString> attributes = QList<QString>();
 
-    const QHash<QString, AdObject> results = ad.search(base, scope, filter, attributes);
+    const QHash<QString, AdObject> results =
+        ad.search(base, scope, filter, attributes);
 
     const bool upn_not_unique = (results.size() > 0);
 
     if (upn_not_unique) {
-        const QString text = tr("The specified user logon name already exists.");
+        const QString text =
+            tr("The specified user logon name already exists.");
         message_box_warning(prefix_edit, tr("Error"), text);
 
         return false;
@@ -117,14 +122,13 @@ QString UpnEdit::get_new_value() const {
 }
 
 void UpnEdit::on_suffix_combo_changed() {
-    const int prefix_range_upper = [&]() {
-        const int total_range_upper = g_adconfig->get_attribute_range_upper(ATTRIBUTE_USER_PRINCIPAL_NAME);
-        const int at_length = QString("@").length();
-        const int suffix_length = upn_suffix_combo->currentText().length();
-        const int out = total_range_upper - at_length - suffix_length;
+    const int total_range_upper =
+        g_adconfig->get_attribute_range_upper(ATTRIBUTE_USER_PRINCIPAL_NAME);
+    const int at_length = QString("@").length();
+    const int suffix_length = upn_suffix_combo->currentText().length();
+    const int prefix_range_upper =
+        total_range_upper - at_length - suffix_length;
 
-        return out;
-    }();
     prefix_edit->setMaxLength(prefix_range_upper);
 
     emit edited();
