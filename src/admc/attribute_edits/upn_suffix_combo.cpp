@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,22 +27,17 @@
 #include <QComboBox>
 
 void upn_suffix_combo_init(QComboBox *combo, AdInterface &ad) {
-    const QList<QString> suffixes = [&]() {
-        QList<QString> out;
+    const QString partitions_dn = g_adconfig->partitions_dn();
+    const AdObject partitions_object = ad.search_object(partitions_dn);
 
-        const QString partitions_dn = g_adconfig->partitions_dn();
-        const AdObject partitions_object = ad.search_object(partitions_dn);
+    QList<QString> suffixes =
+        partitions_object.get_strings(ATTRIBUTE_UPN_SUFFIXES);
 
-        out = partitions_object.get_strings(ATTRIBUTE_UPN_SUFFIXES);
-
-        const QString domain = g_adconfig->domain();
-        const QString domain_suffix = domain.toLower();
-        if (!out.contains(domain_suffix)) {
-            out.append(domain_suffix);
-        }
-
-        return out;
-    }();
+    const QString domain = g_adconfig->domain();
+    const QString domain_suffix = domain.toLower();
+    if (! suffixes.contains(domain_suffix)) {
+        suffixes.append(domain_suffix);
+    }
 
     for (const QString &suffix : suffixes) {
         combo->addItem(suffix);
