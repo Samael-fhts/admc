@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,15 +34,13 @@ UpnMultiEdit::UpnMultiEdit(QComboBox *upn_suffix_combo_arg, AdInterface &ad, QOb
 }
 
 bool UpnMultiEdit::apply(AdInterface &ad, const QString &target) const {
-    const QString new_value = [&]() {
-        const AdObject current_object = ad.search_object(target);
-        const QString current_prefix = current_object.get_upn_prefix();
-        const QString new_suffix = upn_suffix_combo->currentText();
+    const AdObject current_object = ad.search_object(target);
+    const QString current_prefix = current_object.get_upn_prefix();
+    const QString new_suffix = upn_suffix_combo->currentText();
+    const QString new_value = QString("%1@%2").arg(current_prefix, new_suffix);
 
-        return QString("%1@%2").arg(current_prefix, new_suffix);
-    }();
-
-    return ad.attribute_replace_string(target, ATTRIBUTE_USER_PRINCIPAL_NAME, new_value);
+    return ad.attribute_replace_string(target, ATTRIBUTE_USER_PRINCIPAL_NAME,
+                                       new_value);
 }
 
 void UpnMultiEdit::set_enabled(const bool enabled) {
