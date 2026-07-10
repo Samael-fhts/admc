@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,21 +79,13 @@ QString LogonComputersDialog::get() const {
         return QString();
     }
 
-    const QList<QString> value_list = [&]() {
-        QList<QString> out;
+    QList<QString> value_list;
+    for (int i = 0; i < ui->list->count(); i++) {
+        QListWidgetItem *item = ui->list->item(i);
+        value_list.append(item->text());
+    }
 
-        for (int i = 0; i < ui->list->count(); i++) {
-            QListWidgetItem *item = ui->list->item(i);
-            const QString value = item->text();
-            out.append(value);
-        }
-
-        return out;
-    }();
-
-    const QString value_string = value_list.join(",");
-
-    return value_string;
+    return value_list.join(",");
 }
 
 void LogonComputersDialog::on_add_button() {
