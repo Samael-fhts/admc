@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +34,9 @@ SamNameEdit::SamNameEdit(QLineEdit *edit_arg, QLineEdit *domain_edit, QObject *p
 
     edit->setMaxLength(SAM_NAME_MAX_LENGTH);
 
-    const QString domain_text = []() {
-        const QString domain = g_adconfig->domain();
-        const QString domain_name = domain.split(".")[0];
-        const QString out = domain_name + "\\";
-
-        return out;
-    }();
+    const QString domain = g_adconfig->domain();
+    const QString domain_name = domain.split(".")[0];
+    const QString domain_text = domain_name + "\\";
 
     domain_edit->setText(domain_text);
 
