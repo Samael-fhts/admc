@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,16 +49,12 @@ ScheduleHoursDialog::ScheduleHoursDialog(const QByteArray &value, QWidget *paren
         tr("Saturday"),
     });
 
-    const QList<QString> horizontalheader_labels = []() {
-        QList<QString> out;
+    QList<QString> horizontalheader_labels;
+    for (int i = 0; i < HOURS_IN_DAY; i++) {
+        const QString label = QString::number(i);
+        horizontalheader_labels.append(label);
+    }
 
-        for (int i = 0; i < HOURS_IN_DAY; i++) {
-            const QString label = QString::number(i);
-            out.append(label);
-        }
-
-        return out;
-    }();
     model->setHorizontalHeaderLabels(horizontalheader_labels);
 
     ui->view->setModel(model);
@@ -73,24 +70,26 @@ ScheduleHoursDialog::ScheduleHoursDialog(const QByteArray &value, QWidget *paren
 
     load(value);
 
-    settings_setup_dialog_geometry(SETTING_schedule_hours_dialog_geometry, this);
+    settings_setup_dialog_geometry(SETTING_schedule_hours_dialog_geometry,
+                                   this);
 
-    const QString allowed_style_sheet = [&]() {
-        const QPalette palette = ui->view->palette();
-        const QColor color = palette.highlight().color();
-        const QString out = QString("background-color: rgb(%1, %2, %3);").arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue()));
+    const QPalette palette = ui->view->palette();
+    QColor color = palette.highlight().color();
+    const QString allowed_style_sheet =
+        QString("background-color: rgb(%1, %2, %3);").arg(
+            QString::number(color.red()),
+            QString::number(color.green()),
+            QString::number(color.blue()));
 
-        return out;
-    }();
     ui->legend_allowed->setStyleSheet(allowed_style_sheet);
 
-    const QString denied_style_sheet = [&]() {
-        const QPalette palette = ui->view->palette();
-        const QColor color = palette.base().color();
-        const QString out = QString("background-color: rgb(%1, %2, %3);").arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue()));
+    color = palette.base().color();
+    const QString denied_style_sheet =
+        QString("background-color: rgb(%1, %2, %3);").arg(
+            QString::number(color.red()),
+            QString::number(color.green()),
+            QString::number(color.blue()));
 
-        return out;
-    }();
     ui->legend_denied->setStyleSheet(denied_style_sheet);
 
     connect(
@@ -140,24 +139,20 @@ void ScheduleHoursDialog::load(const QByteArray &value) {
 }
 
 QByteArray ScheduleHoursDialog::get() const {
-    const QList<QList<bool>> bools = [&]() {
-        // Initialize empty grid based on type
-        QList<QList<bool>> out = type == ScheduleType_SiteLink ?
-                    site_schedule_bytes_to_bools(QByteArray(SITE_LINK_SCHEDULE_DATA_SIZE, '\0'), 0) :
-                    logon_hours_to_bools(QByteArray(LOGON_HOURS_SIZE, '\0'));
+    const QList<QModelIndex> selected =
+        ui->view->selectionModel()->selectedIndexes();
 
+    QList<QList<bool>> bools =
+        (type == ScheduleType_SiteLink) ?
+        site_schedule_bytes_to_bools(
+            QByteArray(SITE_LINK_SCHEDULE_DATA_SIZE, '\0'), 0) :
+        logon_hours_to_bools(QByteArray(LOGON_HOURS_SIZE, '\0'));
 
-        const QList<QModelIndex> selected = ui->view->selectionModel()->selectedIndexes();
-
-        for (const QModelIndex &index : selected) {
-            const int day = index.row();
-            const int h = index.column();
-
-            out[day][h] = true;
-        }
-
-        return out;
-    }();
+    for (const QModelIndex &index : selected) {
+        const int day = index.row();
+        const int h = index.column();
+        bools[day][h] = true;
+    }
 
     // Get original bools for comparison
     QList<QList<bool>> original_bools;
@@ -227,80 +222,58 @@ QList<QList<bool>> logon_hours_to_bools(const QByteArray &byte_list_arg, const i
     // times" (all bits set). This also handles the
     // case where value is unset and we need to treat
     // it as "allow all logon times".
-    const QByteArray byte_list = [&]() {
-        if (byte_list_arg.size() == LOGON_HOURS_SIZE) {
-            // logonHours format (21 bytes)
-            return byte_list_arg;
-        } else {
-            // Invalid or empty - allow all
-            return QByteArray(LOGON_HOURS_SIZE, (char) 0xFF);
-        }
-    }();
+    QByteArray byte_list;
+    if (byte_list_arg.size() == LOGON_HOURS_SIZE) {
+        // logonHours format (21 bytes)
+        byte_list = byte_list_arg;
+    } else {
+        // Invalid or empty - allow all
+        byte_list = QByteArray(LOGON_HOURS_SIZE, (char) 0xFF);
+    }
 
     // Convet byte array to list of bools
-    const QList<bool> joined = [&]() {
-        QList<bool> out;
-
-        for (const char byte : byte_list) {
-            for (int bit_i = 0; bit_i < 8; bit_i++) {
-                const int bit = (0x01 << bit_i);
-                const bool is_set = bitmask_is_set((int) byte, bit);
-                out.append(is_set);
-            }
+    QList<bool> joined;
+    for (const char byte : byte_list) {
+        for (int bit_i = 0; bit_i < 8; bit_i++) {
+            const int bit = (0x01 << bit_i);
+            const bool is_set = bitmask_is_set((int) byte, bit);
+            joined.append(is_set);
         }
-
-        out = shift_list(out, time_offset);
-
-        return out;
-    }();
+    }
+    joined = shift_list(joined, time_offset);;
 
     // Split the list into sublists for each day
-    const QList<QList<bool>> out = [&]() {
-        QList<QList<bool>> out_the;
+    QList<QList<bool>> result;
+    for (int i = 0; i < joined.size(); i += HOURS_IN_DAY) {
+        const QList<bool> day_list = joined.mid(i, HOURS_IN_DAY);
+        result.append(day_list);
+    }
 
-        for (int i = 0; i < joined.size(); i += HOURS_IN_DAY) {
-            const QList<bool> day_list = joined.mid(i, HOURS_IN_DAY);
-            out_the.append(day_list);
-        }
-
-        return out_the;
-    }();
-
-    return out;
+    return result;
 }
 
 QByteArray logon_hours_to_bytes(const QList<QList<bool>> bool_list, const int time_offset) {
-    const QList<bool> joined = [&]() {
-        QList<bool> out;
+    QList<bool> joined;
+    for (const QList<bool> &sublist : bool_list) {
+        joined += sublist;
+    }
 
-        for (const QList<bool> &sublist : bool_list) {
-            out += sublist;
+    joined = shift_list(joined, -time_offset);
+
+    QByteArray result;
+    for (int i = 0; i * 8 < joined.size(); i++) {
+        const QList<bool> byte_list = joined.mid(i * 8, 8);
+
+        int byte = 0;
+        for (int bit_i = 0; bit_i < 8; bit_i++) {
+            const int bit = (0x01 << bit_i);
+            byte = bitmask_set(byte, bit, byte_list[bit_i]);
         }
 
-        out = shift_list(out, -time_offset);
+        result.append(byte);
+    }
 
-        return out;
-    }();
-
-    const QByteArray out = [&]() {
-        QByteArray bytes;
-
-        for (int i = 0; i * 8 < joined.size(); i++) {
-            const QList<bool> byte_list = joined.mid(i * 8, 8);
-
-            int byte = 0;
-            for (int bit_i = 0; bit_i < 8; bit_i++) {
-                const int bit = (0x01 << bit_i);
-                byte = bitmask_set(byte, bit, byte_list[bit_i]);
-            }
-
-            bytes.append(byte);
-        }
-
-        return bytes;
-    }();
-
-    return out;
+    return result;
 }
 
 QList<bool> shift_list(const QList<bool> &list, const int shift_amount) {
@@ -308,25 +281,21 @@ QList<bool> shift_list(const QList<bool> &list, const int shift_amount) {
         return list;
     }
 
-    QList<bool> out;
+    QList<bool> result;
 
     for (int i = 0; i < list.size(); i++) {
-        const int shifted_i = [&]() {
-            int out_i = i - shift_amount;
+        int shifted_i = i - shift_amount;
 
-            if (out_i < 0) {
-                out_i += list.size();
-            } else if (out_i >= list.size()) {
-                out_i -= list.size();
-            }
+        if (shifted_i < 0) {
+            shifted_i += list.size();
+        } else if (shifted_i >= list.size()) {
+            shifted_i -= list.size();
+        }
 
-            return out_i;
-        }();
-
-        out.append(list[shifted_i]);
+        result.append(list[shifted_i]);
     }
 
-    return out;
+    return result;
 }
 
 // Convert schedule attribute (byte-per-hour format) to bool grid
