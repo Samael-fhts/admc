@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,15 +53,14 @@ void DelegationEdit::load(AdInterface &ad, const AdObject &object) {
 }
 
 bool DelegationEdit::apply(AdInterface &ad, const QString &dn) const {
-    const bool is_on = [&]() {
-        if (on_button->isChecked()) {
-            return true;
-        } else if (off_button->isChecked()) {
-            return false;
-        }
-
-        return false;
-    }();
+    bool is_on;
+    if (on_button->isChecked()) {
+        is_on = true;
+    } else if (off_button->isChecked()) {
+        is_on = false;
+    } else {
+        is_on = false;
+    }
 
     const bool success = ad.user_set_account_option(dn, AccountOption_TrustedForDelegation, is_on);
 
