@@ -354,19 +354,15 @@ QList<QVariant> string_list_to_variant_list(const QList<QString> &string_list) {
 }
 
 bool string_contains_bad_chars(const QString &string, const QString &bad_chars) {
-    const QRegularExpression regexp = [&]() {
-        const QString bad_chars_escaped = QRegularExpression::escape(bad_chars);
-        const QString regexp_string = QString("[%1]").arg(bad_chars_escaped);
-        const QRegularExpression out = QRegularExpression(regexp_string);
-
-        return out;
-    }();
+    const QString bad_chars_escaped = QRegularExpression::escape(bad_chars);
+    const QString regexp_string = QString("[%1]").arg(bad_chars_escaped);
+    const QRegularExpression regexp = QRegularExpression(regexp_string);
 
     const bool out = string.contains(regexp);
 
     return out;
-}
 
+}
 bool verify_object_name(const QString &name, QWidget *parent) {
     const bool some_bad_chars = string_contains_bad_chars(name, NAME_BAD_CHARS);
     const bool starts_with_space = name.startsWith(" ");
