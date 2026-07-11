@@ -89,21 +89,20 @@ bool CreateObjectHelper::accept() const {
 
     bool final_success = true;
 
-    const QHash<QString, QList<QString>> attr_map = [&]() {
-        if (m_object_class == CLASS_SHARED_FOLDER) {
-            // NOTE: for shared folders, UNC name must
-            // be defined on creation because it's a
-            // mandatory attribute
-            return QHash<QString, QList<QString>>({
+    QHash<QString, QList<QString>> attr_map;
+    if (m_object_class == CLASS_SHARED_FOLDER) {
+        // NOTE: for shared folders, UNC name must
+        // be defined on creation because it's a
+        // mandatory attribute
+        attr_map = QHash<QString, QList<QString>>({
                 {ATTRIBUTE_OBJECT_CLASS, {m_object_class}},
                 {ATTRIBUTE_UNC_NAME, {"placeholder"}},
             });
-        } else {
-            return QHash<QString, QList<QString>>({
+    } else {
+        attr_map = QHash<QString, QList<QString>>({
                 {ATTRIBUTE_OBJECT_CLASS, {m_object_class}},
             });
-        }
-    }();
+    }
 
     const bool add_success = ad.object_add(dn, attr_map);
 
@@ -114,12 +113,9 @@ bool CreateObjectHelper::accept() const {
         const bool is_computer = (m_object_class == CLASS_COMPUTER);
 
         if (is_user_or_person) {
-            const int uac = [dn, &ad]() {
-                const AdObject object = ad.search_object(dn, {ATTRIBUTE_USER_ACCOUNT_CONTROL});
-                const int out = object.get_int(ATTRIBUTE_USER_ACCOUNT_CONTROL);
-
-                return out;
-            }();
+            const AdObject object =
+                ad.search_object(dn, {ATTRIBUTE_USER_ACCOUNT_CONTROL});
+            const int uac = object.get_int(ATTRIBUTE_USER_ACCOUNT_CONTROL);
 
             const int bit = UAC_PASSWD_NOTREQD;
             const int updated_uac = bitmask_set(uac, bit, false);
@@ -158,16 +154,14 @@ bool CreateObjectHelper::accept() const {
 
 // Enable/disable create button if all required edits filled
 void CreateObjectHelper::on_edited() {
-    const bool all_required_filled = [this]() {
-        QRegularExpression reg_exp_spaces("^\\s*$");
-        for (QLineEdit *edit : m_required_list) {
-            if (edit->text().isEmpty() || edit->text().contains(reg_exp_spaces)) {
-                return false;
-            }
+    bool all_required_filled = true;
+    QRegularExpression reg_exp_spaces("^\\s*$");
+    for (QLineEdit *edit : m_required_list) {
+        if (edit->text().isEmpty() || edit->text().contains(reg_exp_spaces)) {
+            all_required_filled = false;
+            break;
         }
-
-        return true;
-    }();
+    }
 
     ok_button->setEnabled(all_required_filled);
 }
