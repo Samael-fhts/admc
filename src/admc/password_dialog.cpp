@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,13 +58,14 @@ PasswordDialog::PasswordDialog(AdInterface &ad, const QString &target_arg, QWidg
 
     AttributeEdit::load(edits, ad, object);
 
-    const bool expired_check_enabled = [&]() {
-        const bool dont_expire_pass = object.get_account_option(AccountOption_DontExpirePassword, g_adconfig);
-        const bool cant_change_pass = object.get_account_option(AccountOption_CantChangePassword, g_adconfig);
-        const bool out = !(dont_expire_pass || cant_change_pass);
 
-        return out;
-    }();
+    const bool dont_expire_pass =
+        object.get_account_option(AccountOption_DontExpirePassword,
+                                  g_adconfig);
+    const bool cant_change_pass =
+        object.get_account_option(AccountOption_CantChangePassword,
+                                  g_adconfig);
+    const bool expired_check_enabled = !(dont_expire_pass || cant_change_pass);
 
     if (expired_check_enabled) {
         ui->expired_check->setChecked(true);
@@ -116,15 +118,13 @@ void PasswordDialog::accept() {
 }
 
 void PasswordDialog::on_edited() {
-    const bool all_required_filled = [this]() {
-        for (QLineEdit *edit : required_list) {
-            if (edit->text().isEmpty()) {
-                return false;
-            }
+    bool all_required_filled = true;
+    for (QLineEdit *edit : required_list) {
+        if (edit->text().isEmpty()) {
+            all_required_filled = false;
+            break;
         }
-
-        return true;
-    }();
+    }
 
     auto ok_button = ui->button_box->button(QDialogButtonBox::Ok);
     ok_button->setEnabled(all_required_filled);
