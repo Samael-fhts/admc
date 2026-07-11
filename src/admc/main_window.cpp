@@ -215,26 +215,20 @@ void MainWindow::setup_languages() {
     for (const QLocale::Language &language : language_list) {
         const QLocale locale(language);
 
-        const QString language_name = [locale]() {
-            // NOTE: Russian nativeLanguageName starts with lowercase letter for some reason
-            QString name_out = locale.nativeLanguageName();
-
-            const QChar first_letter_uppercased = name_out[0].toUpper();
-
-            name_out.replace(0, 1, first_letter_uppercased);
-
-            return name_out;
-        }();
+        // NOTE: Russian nativeLanguageName starts with lowercase letter for
+        // some reason
+        QString language_name = locale.nativeLanguageName();
+        const QChar first_letter_uppercased = language_name[0].toUpper();
+        language_name.replace(0, 1, first_letter_uppercased);
 
         const auto action = new QAction(language_name, language_group);
         action->setCheckable(true);
         language_group->addAction(action);
 
-        const bool is_checked = [=]() {
-            const QLocale current_locale = settings_get_variant(SETTING_locale).toLocale();
+        const QLocale current_locale =
+            settings_get_variant(SETTING_locale).toLocale();
 
-            return (current_locale.language() == locale.language());
-        }();
+        bool is_checked = (current_locale.language() == locale.language());
         action->setChecked(is_checked);
 
         ui->menu_language->addAction(action);
@@ -355,22 +349,17 @@ void MainWindow::init_globals() {
 }
 
 void MainWindow::setup_console_actions() {
-    const ConsoleWidgetActions console_actions = [&]() {
-        ConsoleWidgetActions out;
-
-        out.navigate_up = ui->action_navigate_up;
-        out.navigate_back = ui->action_navigate_back;
-        out.navigate_forward = ui->action_navigate_forward;
-        out.refresh = ui->action_refresh;
-        out.customize_columns = ui->action_customize_columns;
-        out.view_icons = ui->action_view_icons;
-        out.view_list = ui->action_view_list;
-        out.view_detail = ui->action_view_detail;
-        out.toggle_console_tree = ui->action_toggle_console_tree;
-        out.toggle_description_bar = ui->action_toggle_description_bar;
-
-        return out;
-    }();
+    ConsoleWidgetActions console_actions;
+    console_actions.navigate_up = ui->action_navigate_up;
+    console_actions.navigate_back = ui->action_navigate_back;
+    console_actions.navigate_forward = ui->action_navigate_forward;
+    console_actions.refresh = ui->action_refresh;
+    console_actions.customize_columns = ui->action_customize_columns;
+    console_actions.view_icons = ui->action_view_icons;
+    console_actions.view_list = ui->action_view_list;
+    console_actions.view_detail = ui->action_view_detail;
+    console_actions.toggle_console_tree = ui->action_toggle_console_tree;
+    console_actions.toggle_description_bar = ui->action_toggle_description_bar;
 
     ui->console->set_actions(console_actions);
 }
@@ -433,11 +422,10 @@ void MainWindow::restore_main_window_state() {
 }
 
 void MainWindow::show_changelog_on_update() {
-    const bool first_time_opening_this_version = []() {
-        const QString last_version = settings_get_variant(SETTING_last_opened_version).toString();
+    const QString last_version =
+        settings_get_variant(SETTING_last_opened_version).toString();
+    bool first_time_opening_this_version = (last_version != ADMC_VERSION);
 
-        return (last_version != ADMC_VERSION);
-    }();
     if (first_time_opening_this_version) {
         settings_set_variant(SETTING_last_opened_version, ADMC_VERSION);
         open_changelog();
