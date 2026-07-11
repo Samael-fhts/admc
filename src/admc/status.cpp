@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,23 +66,27 @@ void Status::add_message(const QString &msg, const StatusType &type) {
 
     m_status_bar->showMessage(msg);
 
-    const QString timestamp = []() {
-        const QDateTime current_datetime = QDateTime::currentDateTime();
-        return current_datetime.toString("hh:mm:ss");
-    }();
+    const QDateTime current_datetime = QDateTime::currentDateTime();
+    const QString timestamp = current_datetime.toString("hh:mm:ss");
 
     const QString timestamped_msg = QString("%1 %2").arg(timestamp, msg);
 
     const bool timestamps_ON = settings_get_variant(SETTING_timestamp_log).toBool();
 
-    const QColor color = [type]() {
-        switch (type) {
-            case StatusType_Success: return Qt::darkGreen;
-            case StatusType_Error: return Qt::red;
-            case StatusType_Info: return Qt::darkBlue;
-        }
-        return Qt::black;
-    }();
+    QColor color;
+    switch (type) {
+    case StatusType_Success:
+        color = Qt::darkGreen;
+        break;
+    case StatusType_Error:
+        color = Qt::red;
+        break;
+    case StatusType_Info:
+        color = Qt::darkBlue;
+        break;
+    default:
+        color = Qt::black;
+    }
 
     const QColor original_color = m_message_log->textColor();
     m_message_log->setTextColor(color);
@@ -123,20 +128,28 @@ void Status::display_ad_messages(const AdInterface &ad, QWidget *parent) {
     display_ad_messages(messages, parent);
 }
 
+QHash<AdMessageType, StatusType> status_mapping = {
+    {AdMessageType_Success, StatusType_Success},
+    {AdMessageType_Error, StatusType_Error},
+    {AdMessageType_Info, StatusType_Info}
+};
+
 void Status::log_messages(const QList<AdMessage> &messages) {
     if (m_status_bar == nullptr || m_message_log == nullptr) {
         return;
     }
 
+    StatusType status_type;
+    AdMessageType type;
     for (const AdMessage &message : messages) {
-        const StatusType status_type = [message]() {
-            switch (message.type()) {
-                case AdMessageType_Success: return StatusType_Success;
-                case AdMessageType_Error: return StatusType_Error;
-                case AdMessageType_Info: return StatusType_Info;
-            }
-            return StatusType_Info;
-        }();
+        type = message.type();
+        if (status_mapping.contains(type)) {
+            status_type = status_mapping[type];
+        } else {
+            // XXX: Can it ever happen that a message has a type not included in
+            // "AdMessageType" enum?  See "ad_interface.h".
+            status_type = StatusType_Info;
+        }
 
         add_message(message.text(), status_type);
     }
@@ -149,17 +162,12 @@ void Status::log_messages(const AdInterface &ad) {
 }
 
 void ad_error_log(const QList<AdMessage> &messages, QWidget *parent) {
-    const QList<QString> error_list = [&]() {
-        QList<QString> out;
-
-        for (const auto &message : messages) {
-            if (message.type() == AdMessageType_Error) {
-                out.append(message.text());
-            }
+    QList<QString> error_list;
+    for (const auto &message : messages) {
+        if (message.type() == AdMessageType_Error) {
+            error_list.append(message.text());
         }
-
-        return out;
-    }();
+    }
 
     error_log(error_list, parent);
 }
