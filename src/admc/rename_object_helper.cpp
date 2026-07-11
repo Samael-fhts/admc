@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2020-2025 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,16 +132,14 @@ QString RenameObjectHelper::get_new_dn() const {
 }
 
 void RenameObjectHelper::on_edited() {
-    const bool all_required_filled = [this]() {
-        QRegularExpression reg_exp_spaces("^\\s*$");
-        for (QLineEdit *edit : required_list) {
-            if (edit->text().isEmpty() || edit->text().contains(reg_exp_spaces)) {
-                return false;
-            }
+    QRegularExpression reg_exp_spaces("^\\s*$");
+    bool all_required_filled = true;
+    for (QLineEdit *edit : required_list) {
+        if (edit->text().isEmpty() || edit->text().contains(reg_exp_spaces)) {
+            all_required_filled = false;
+            break;
         }
-
-        return true;
-    }();
+    }
 
     ok_button->setEnabled(all_required_filled);
 }
