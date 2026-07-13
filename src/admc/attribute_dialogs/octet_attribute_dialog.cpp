@@ -244,15 +244,22 @@ QString octet_bytes_to_string(const QByteArray bytes, const OctetDisplayFormat f
 
         const QString byte_string_unpadded(buffer);
 
-        const int string_length = [format]() {
-            switch (format) {
-                case OctetDisplayFormat_Hexadecimal: return 2;
-                case OctetDisplayFormat_Binary: return 8;
-                case OctetDisplayFormat_Decimal: return 3;
-                case OctetDisplayFormat_Octal: return 3;
-            }
-            return 0;
-        }();
+        int string_length = 0;
+        switch (format) {
+        case OctetDisplayFormat_Hexadecimal:
+            string_length = 2;
+            break;
+        case OctetDisplayFormat_Binary:
+            string_length = 8;
+            break;
+        case OctetDisplayFormat_Decimal:
+        case OctetDisplayFormat_Octal:
+            string_length = 3;
+            break;
+        default:
+            // XXX: Can it ever happen?
+            string_length = 0;
+        }
 
         // "5" => "005"
         // "f" => "0f"
