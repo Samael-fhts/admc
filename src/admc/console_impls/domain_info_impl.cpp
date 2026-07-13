@@ -137,6 +137,7 @@ void DomainInfoImpl::retranslate_ui() {
     if (connection_options_action != nullptr) {
         connection_options_action->setText(tr("Open connection options"));
     }
+    domain_info_results_widget->update();
 }
 
 bool DomainInfoImpl::event(QEvent *event) {
