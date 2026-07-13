@@ -75,6 +75,7 @@ private:
     PolicyImpl *policy_impl = nullptr;
     QueryItemImpl *query_item_impl = nullptr;
     QueryFolderImpl *query_folder_impl = nullptr;
+    bool is_language_changed = false;
 
     void retranslate_themes_menu();
     void on_log_searches_changed();

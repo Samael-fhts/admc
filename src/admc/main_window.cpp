@@ -238,9 +238,13 @@ void MainWindow::setup_languages() {
             this,
             [this, language](bool checked) {
                 if (checked) {
+                    QLocale current_locale =
+                        AdmcTranslator::get_instance().get_current_locale();
                     QLocale locale(language);
-                    AdmcTranslator::get_instance().load_locale(locale);
-                    ui->retranslateUi(this);
+                    if (current_locale != locale) {
+                        AdmcTranslator::get_instance().load_locale(locale);
+                        is_language_changed = true;
+                    }
                 }
             });
     }
@@ -269,8 +273,9 @@ void MainWindow::retranslate_themes_menu() {
 }
 
 void MainWindow::changeEvent(QEvent *event) {
-    if (event->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
+    if ((event->type() == QEvent::LanguageChange) && is_language_changed) {
+        QLocale current_locale =
+            AdmcTranslator::get_instance().get_current_locale();
 
         const QObjectList widgets = this->children();
         for (auto* widget : widgets) {
@@ -278,6 +283,7 @@ void MainWindow::changeEvent(QEvent *event) {
             QCoreApplication::sendEvent(widget, &languageEvent);
         }
         show_busy_indicator();
+        ui->retranslateUi(this);
         AdInterface ad;
         ui->console->hide_scope_and_results(true);
         init_on_connect(ad);
@@ -285,6 +291,8 @@ void MainWindow::changeEvent(QEvent *event) {
         ui->console->hide_scope_and_results(false);
         retranslate_themes_menu();
         hide_busy_indicator();
+
+        is_language_changed = false;
     }
     QMainWindow::changeEvent(event);
 }
