@@ -152,13 +152,9 @@ void LinkedPoliciesWidget::update(const QModelIndex &ou_index) {
         return;
     }
 
-    gplink = [&]() {
-        const AdObject object = ad.search_object(ou_dn);
-        const QString gplink_string = object.get_string(ATTRIBUTE_GPLINK);
-        const Gplink out = Gplink(gplink_string);
-
-        return out;
-    }();
+    const AdObject object = ad.search_object(ou_dn);
+    const QString gplink_string = object.get_string(ATTRIBUTE_GPLINK);
+    gplink = Gplink(gplink_string);
 
     update_link_items();
     emit gplink_changed(ou_index);
@@ -231,19 +227,12 @@ void LinkedPoliciesWidget::open_context_menu(const QPoint &pos) {
 void LinkedPoliciesWidget::remove_link() {
     // NOTE: save gpo dn list before they are removed in
     // modify_gplink()
-    const QList<QString> gpo_dn_list = [&]() {
-        QList<QString> out;
-
-        const QList<QModelIndex> selected = ui->view->get_selected_indexes();
-
-        for (const QModelIndex &index : selected) {
-            const QString gpo_dn = index.data(LinkedPoliciesRole_DN).toString();
-
-            out.append(gpo_dn);
-        }
-
-        return out;
-    }();
+    QList<QString> gpo_dn_list;
+    const QList<QModelIndex> selected = ui->view->get_selected_indexes();
+    for (const QModelIndex &index : selected) {
+        const QString gpo_dn = index.data(LinkedPoliciesRole_DN).toString();
+        gpo_dn_list.append(gpo_dn);
+    }
 
     auto modify_function = [](Gplink &gplink_arg, const QString &gpo) {
         gplink_arg.remove(gpo);
@@ -398,19 +387,14 @@ void LinkedPoliciesWidget::load_item_row(const AdObject &gpo_object, QList<QStan
     row[LinkedPoliciesColumn_Name]->setText(name);
     set_data_for_row(row, gpo_dn, LinkedPoliciesRole_DN);
 
+    Qt::CheckState checkstate;
     for (const auto column : option_columns) {
         QStandardItem *item = row[column];
         item->setCheckable(true);
 
-        const Qt::CheckState checkstate = [=]() {
-            const GplinkOption option = column_to_option[column];
-            const bool option_is_set = gplink.get_option(gpo_dn, option);
-            if (option_is_set) {
-                return Qt::Checked;
-            } else {
-                return Qt::Unchecked;
-            }
-        }();
+        const GplinkOption option = column_to_option[column];
+        const bool option_is_set = gplink.get_option(gpo_dn, option);
+        checkstate = option_is_set ? Qt::Checked : Qt::Unchecked;
         item->setCheckState(checkstate);
     }
 
