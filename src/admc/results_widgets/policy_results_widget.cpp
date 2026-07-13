@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,30 +155,18 @@ void PolicyResultsWidget::update(const QString &new_gpo) {
         const QString gplink_string = g_gplink_manager->ou_gplink(ou_dn);
         const Gplink gplink = Gplink(gplink_string);
 
-        const Qt::CheckState enforced_checkstate = [&]() {
-            const bool is_enforced = gplink.get_option(gpo, GplinkOption_Enforced);
-            if (is_enforced) {
-                return Qt::Checked;
-            } else {
-                return Qt::Unchecked;
-            }
-        }();
+        const bool is_enforced = gplink.get_option(gpo, GplinkOption_Enforced);
+        Qt::CheckState checkstate = is_enforced ? Qt::Checked : Qt::Unchecked;
         row[PolicyResultsColumn_Enforced]->setCheckable(true);
-        row[PolicyResultsColumn_Enforced]->setCheckState(enforced_checkstate);
+        row[PolicyResultsColumn_Enforced]->setCheckState(checkstate);
 
         for (const auto column : option_columns) {
             QStandardItem *item = row[column];
             item->setCheckable(true);
 
-            const Qt::CheckState checkstate = [=]() {
-                const GplinkOption option = column_to_option[column];
-                const bool option_is_set = gplink.get_option(gpo, option);
-                if (option_is_set) {
-                    return Qt::Checked;
-                } else {
-                    return Qt::Unchecked;
-                }
-            }();
+            const GplinkOption option = column_to_option[column];
+            const bool option_is_set = gplink.get_option(gpo, option);
+            checkstate = option_is_set ? Qt::Checked : Qt::Unchecked;
             item->setCheckState(checkstate);
         }
 
@@ -237,13 +226,8 @@ void PolicyResultsWidget::on_item_changed(QStandardItem *item) {
         emit ou_gplink_changed(ou_dn, gplink, gpo, option);
 
     } else {
-        const Qt::CheckState undo_check_state = [&]() {
-            if (item->checkState() == Qt::Checked) {
-                return Qt::Unchecked;
-            } else {
-                return Qt::Checked;
-            }
-        }();
+        const Qt::CheckState undo_check_state =
+            (item->checkState() == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
         item->setCheckState(undo_check_state);
     }
 
