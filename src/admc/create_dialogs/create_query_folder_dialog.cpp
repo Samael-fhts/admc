@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,11 +51,8 @@ QString CreateQueryFolderDialog::description() const {
 void CreateQueryFolderDialog::set_sibling_name_list(const QList<QString> &list) {
     sibling_name_list = list;
 
-    const QString default_name = [&]() {
-        const QString out = generate_new_name(sibling_name_list, tr("New Folder"));
-
-        return out;
-    }();
+    const QString default_name =
+        generate_new_name(sibling_name_list, tr("New Folder"));
 
     ui->name_edit->setText(default_name);
 }

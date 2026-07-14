@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,23 +85,17 @@ CreateUserDialog::CreateUserDialog(AdInterface &ad, const QString &parent_dn, co
         ui->sam_name_edit,
     };
 
-    const QList<AttributeEdit *> edit_list = [&]() {
-        QList<AttributeEdit *> out;
+    QList<AttributeEdit *> edit_list = {
+        first_name_edit,
+        last_name_edit,
+        initials_edit,
+        sam_name_edit,
+        password_edit,
+        upn_edit,
+        middle_name_edit,
+    };
 
-        out = {
-            first_name_edit,
-            last_name_edit,
-            initials_edit,
-            sam_name_edit,
-            password_edit,
-            upn_edit,
-            middle_name_edit,
-        };
-
-        out.append(option_edit_list);
-
-        return out;
-    }();
+    edit_list.append(option_edit_list);
 
     helper = new CreateObjectHelper(ui->name_edit, ui->button_box, edit_list, required_list, user_class, parent_dn, this);
 

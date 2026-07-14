@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,31 +40,21 @@ CreatePolicyDialog::CreatePolicyDialog(AdInterface &ad, QWidget *parent)
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    const QString default_name = [&]() {
-        const QList<QString> existing_name_list = [&]() {
-            const QString base = g_adconfig->domain_dn();
-            const SearchScope scope = SearchScope_All;
-            const QString filter = filter_CONDITION(Condition_Equals, ATTRIBUTE_OBJECT_CLASS, CLASS_GP_CONTAINER);
-            const QList<QString> attributes = {ATTRIBUTE_DISPLAY_NAME};
-            const QHash<QString, AdObject> results = ad.search(base, scope, filter, attributes);
+    const QString base = g_adconfig->domain_dn();
+    const SearchScope scope = SearchScope_All;
+    const QString filter = filter_CONDITION(Condition_Equals, ATTRIBUTE_OBJECT_CLASS, CLASS_GP_CONTAINER);
+    const QList<QString> attributes = {ATTRIBUTE_DISPLAY_NAME};
+    const QHash<QString, AdObject> results = ad.search(base, scope, filter, attributes);
+    QList<QString> existing_name_list;
+    for (const AdObject &object : results.values()) {
+        const QString name = object.get_string(ATTRIBUTE_DISPLAY_NAME);
+        existing_name_list.append(name);
+    }
+    const QString default_name =
+        generate_new_name(existing_name_list, tr("New Group Policy Object"));
 
-            QList<QString> out;
-
-            for (const AdObject &object : results.values()) {
-                const QString name = object.get_string(ATTRIBUTE_DISPLAY_NAME);
-                out.append(name);
-            }
-
-            return out;
-        }();
-
-        const QString out = generate_new_name(existing_name_list, tr("New Group Policy Object"));
-
-        connect(ui->name_edit, &QLineEdit::textChanged, this, &CreatePolicyDialog::on_edited);
-        on_edited();
-
-        return out;
-    }();
+    connect(ui->name_edit, &QLineEdit::textChanged, this, &CreatePolicyDialog::on_edited);
+    on_edited();
 
     ui->name_edit->setText(default_name);
     ui->name_edit->selectAll();
@@ -93,15 +84,14 @@ void CreatePolicyDialog::accept() {
     // NOTE: since this is *display name*, not just name,
     // have to manually check for conflict. Server wouldn't
     // catch this.
-    const bool name_conflict = [&]() {
-        const QString base = g_adconfig->domain_dn();
-        const SearchScope scope = SearchScope_All;
-        const QString filter = filter_CONDITION(Condition_Equals, ATTRIBUTE_DISPLAY_NAME, name);
-        const QList<QString> attributes = QList<QString>();
-        const QHash<QString, AdObject> results = ad.search(base, scope, filter, attributes);
-
-        return !results.isEmpty();
-    }();
+    const QString base = g_adconfig->domain_dn();
+    const SearchScope scope = SearchScope_All;
+    const QString filter =
+        filter_CONDITION(Condition_Equals, ATTRIBUTE_DISPLAY_NAME, name);
+    const QList<QString> attributes = QList<QString>();
+    const QHash<QString, AdObject> results =
+        ad.search(base, scope, filter, attributes);
+    const bool name_conflict = (! results.isEmpty());
 
     if (name_conflict) {
         message_box_warning(this, tr("Error"), tr("Group Policy Object with this name already exists."));
