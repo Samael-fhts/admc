@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,26 +63,22 @@ ListAttributeDialog::~ListAttributeDialog() {
 }
 
 void ListAttributeDialog::accept() {
-    const bool contains_empty_values = [&]() {
-        const bool is_bool = (g_adconfig->get_attribute_type(get_attribute()) == AttributeType_Boolean);
-        if (is_bool) {
-            return false;
-        }
-
+    bool contains_empty_values = false;
+    const AttributeType type = g_adconfig->get_attribute_type(get_attribute());
+    if (type != AttributeType_Boolean) {
         const QList<QByteArray> value_list = get_value_list();
-
         for (const QByteArray &value : value_list) {
             const QString value_string = QString(value);
-            const bool value_is_all_spaces = (value.count(' ') == value.length());
+            const bool value_is_all_spaces =
+                (value.count(' ') == value.length());
             const bool value_is_empty = value.isEmpty() || value_is_all_spaces;
 
             if (value_is_empty) {
-                return true;
+                contains_empty_values = true;
+                break;
             }
         }
-
-        return false;
-    }();
+    }
 
     if (contains_empty_values) {
         message_box_warning(this, tr("Error"), tr("One or more values are empty. Edit or remove them to proceed."));
