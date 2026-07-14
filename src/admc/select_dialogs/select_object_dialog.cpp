@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,27 +147,26 @@ void SelectObjectDialog::on_add_button() {
     }
 
     const QString base = ui->select_base_widget->get_base();
-
-    const QString filter = [&]() {
-        const QString entered_name = ui->name_edit->text();
-
-        const QString name_filter = filter_OR({
-            filter_CONDITION(Condition_StartsWith, ATTRIBUTE_NAME, entered_name),
-            filter_CONDITION(Condition_StartsWith, ATTRIBUTE_CN, entered_name),
-            filter_CONDITION(Condition_StartsWith, ATTRIBUTE_SAM_ACCOUNT_NAME, entered_name),
-            filter_CONDITION(Condition_StartsWith, ATTRIBUTE_USER_PRINCIPAL_NAME, entered_name),
+    const QString entered_name = ui->name_edit->text();
+    const QString name_filter = filter_OR({
+            filter_CONDITION(Condition_StartsWith,
+                             ATTRIBUTE_NAME,
+                             entered_name),
+            filter_CONDITION(Condition_StartsWith,
+                             ATTRIBUTE_CN,
+                             entered_name),
+            filter_CONDITION(Condition_StartsWith,
+                             ATTRIBUTE_SAM_ACCOUNT_NAME,
+                             entered_name),
+            filter_CONDITION(Condition_StartsWith,
+                             ATTRIBUTE_USER_PRINCIPAL_NAME,
+                             entered_name),
         });
-
-        const QString classes_filter = ui->select_classes_widget->get_filter();
-
-        const QString out = filter_AND({
+    const QString classes_filter = ui->select_classes_widget->get_filter();
+    const QString filter = filter_AND({
             name_filter,
             classes_filter,
         });
-
-        return out;
-    }();
-
     const QHash<QString, AdObject> search_results = ad.search(base, SearchScope_All, filter, ConsoleObjectTreeOperations::console_object_search_attributes());
 
     if (search_results.size() == 1) {
