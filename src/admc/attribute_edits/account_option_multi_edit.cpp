@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,24 +40,19 @@ AccountOptionMultiEdit::AccountOptionMultiEdit(const QHash<AccountOption, QCheck
 // do this if want to get separate status messages for each
 // bit.
 bool AccountOptionMultiEdit::apply(AdInterface &ad, const QString &target) const {
-    const QList<AccountOption> option_change_list = [&]() {
-        QList<AccountOption> out;
+    const AdObject object = ad.search_object(target);
+    QList<AccountOption> option_change_list;
+    for (const AccountOption &option : check_map.keys()) {
+        QCheckBox *check = check_map[option];
 
-        const AdObject object = ad.search_object(target);
-
-        for (const AccountOption &option : check_map.keys()) {
-            QCheckBox *check = check_map[option];
-
-            const bool current_option_state = object.get_account_option(option, g_adconfig);
-            const bool new_option_state = check->isChecked();
-            const bool option_changed = (new_option_state != current_option_state);
-            if (option_changed) {
-                out.append(option);
-            }
+        const bool current_option_state =
+            object.get_account_option(option, g_adconfig);
+        const bool new_option_state = check->isChecked();
+        const bool option_changed = (new_option_state != current_option_state);
+        if (option_changed) {
+            option_change_list.append(option);
         }
-
-        return out;
-    }();
+    }
 
     bool total_success = true;
 
