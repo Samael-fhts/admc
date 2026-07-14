@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,14 +35,9 @@ ComputerSamNameEdit::ComputerSamNameEdit(QLineEdit *edit_arg, QLineEdit *domain_
 
     edit->setMaxLength(SAM_NAME_COMPUTER_MAX_LENGTH);
 
-    const QString domain_text = []() {
-        const QString domain = g_adconfig->domain();
-        const QString domain_name = domain.split(".")[0];
-        const QString out = domain_name + "\\";
-
-        return out;
-    }();
-
+    const QString domain = g_adconfig->domain();
+    const QString domain_name = domain.split(".")[0];
+    const QString domain_text = domain_name + "\\";
     domain_edit->setText(domain_text);
 
     connect(
@@ -53,15 +49,10 @@ void ComputerSamNameEdit::load(AdInterface &ad, const AdObject &object) {
     UNUSED_ARG(ad);
 
     // NOTE: display value without the '$' at the end
-    const QString value = [&]() {
-        QString out = object.get_string(ATTRIBUTE_SAM_ACCOUNT_NAME);
-
-        if (out.endsWith('$')) {
-            out.chop(1);
-        }
-
-        return out;
-    }();
+    QString value = object.get_string(ATTRIBUTE_SAM_ACCOUNT_NAME);
+    if (value.endsWith('$')) {
+        value.chop(1);
+    }
     edit->setText(value);
 }
 
