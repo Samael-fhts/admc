@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,15 +137,14 @@ QTreeView *ResultsView::detail_view() const {
 }
 
 QList<QModelIndex> ResultsView::get_selected_indexes() const {
-    const QList<QModelIndex> proxy_indexes = [this]() {
-        QItemSelectionModel *selection_model = current_view()->selectionModel();
+    QItemSelectionModel *selection_model = current_view()->selectionModel();
+    QList<QModelIndex> proxy_indexes;
 
-        if (current_view_type() == ResultsViewType_Detail) {
-            return selection_model->selectedRows();
-        } else {
-            return selection_model->selectedIndexes();
-        }
-    }();
+    if (current_view_type() == ResultsViewType_Detail) {
+        proxy_indexes = selection_model->selectedRows();
+    } else {
+        proxy_indexes = selection_model->selectedIndexes();
+    }
 
     // NOTE: need to map from proxy to source indexes if
     // focused view is results
@@ -206,13 +206,12 @@ void ResultsView::on_item_activated(const QModelIndex &proxy_index) {
 }
 
 void ResultsView::set_drag_drop_enabled(const bool enabled) {
-    const QAbstractItemView::DragDropMode mode = [&]() {
-        if (enabled) {
-            return QAbstractItemView::DragDrop;
-        } else {
-            return QAbstractItemView::NoDragDrop;
-        }
-    }();
+    QAbstractItemView::DragDropMode mode;
+    if (enabled) {
+        mode = QAbstractItemView::DragDrop;
+    } else {
+        mode = QAbstractItemView::NoDragDrop;
+    }
 
     for (auto view : views.values()) {
         view->setDragDropMode(mode);
