@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,16 +110,7 @@ void SelectContainerDialog::fetch_node(const QModelIndex &proxy_index) {
 
     const QString base = index.data(ContainerRole_DN).toString();
     const SearchScope scope = SearchScope_Children;
-
-    const QString filter = [=]() {
-        QString out;
-
-        out = is_container_filter();
-        out = advanced_features_filter(out);
-
-        return out;
-    }();
-
+    const QString filter = advanced_features_filter(is_container_filter());
     const QList<QString> attributes = QList<QString>();
 
     QHash<QString, AdObject> results = ad.search(base, scope, filter, attributes);
