@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,17 +37,12 @@ ConsoleDragModel::ConsoleDragModel(ConsoleWidget *console_arg)
 }
 
 QMimeData *ConsoleDragModel::mimeData(const QModelIndexList &indexes) const {
-    const QList<QPersistentModelIndex> main_indexes = [&]() {
-        QList<QPersistentModelIndex> out;
-
-        for (const QModelIndex &index : indexes) {
-            if (index.column() == 0) {
-                out.append(QPersistentModelIndex(index));
-            }
+    QList<QPersistentModelIndex> main_indexes;
+    for (const QModelIndex &index : indexes) {
+        if (index.column() == 0) {
+            main_indexes.append(QPersistentModelIndex(index));
         }
-
-        return out;
-    }();
+    }
 
     console->d->start_drag(main_indexes);
 
