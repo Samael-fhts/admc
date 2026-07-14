@@ -251,41 +251,33 @@ const QIcon IconManager::item_icon(ItemIcon icon_type) const {
 }
 
 QIcon IconManager::object_icon(const AdObject &object) const {
-    const QString object_category = [&]() {
-        const QString category_dn = object.get_string(ATTRIBUTE_OBJECT_CATEGORY);
-        const QString out = dn_get_name(category_dn);
-
-        return out;
-    }();
-
-    const QIcon out = category_icon(object_category);
-
-    return out;
+    const QString category_dn = object.get_string(ATTRIBUTE_OBJECT_CATEGORY);
+    const QString object_category = dn_get_name(category_dn);
+    return category_icon(object_category);
 }
 
 QIcon IconManager::category_icon(const QString &object_category) const {
-    const QString icon_name = [&]() -> QString {
-        const QList<QString> fallback_icon_list = {
-            impl->fallback_icon_name,
-            "emblem-system",
-            "emblem-system-symbolic",
-            "dialog-question",
-        };
+    const QList<QString> fallback_icon_list = {
+        impl->fallback_icon_name,
+        "emblem-system",
+        "emblem-system-symbolic",
+        "dialog-question",
+    };
 
-        QList<QString> icon_name_list = impl->category_icon_names_map.value(object_category, fallback_icon_list);
-        icon_name_list.prepend(object_category);
+    QList<QString> icon_name_list =
+        impl->category_icon_names_map.value(object_category,
+                                            fallback_icon_list);
+    icon_name_list.prepend(object_category);
 
-        for (const QString &icon_name : icon_name_list) {
-            if (QIcon::hasThemeIcon(icon_name)) {
-                return icon_name;
-            }
+    QString icon_name = impl->error_icon_name;
+    for (const QString &name : icon_name_list) {
+        if (QIcon::hasThemeIcon(name)) {
+            icon_name = name;
+            break;
         }
+    }
 
-        return impl->error_icon_name;
-    }();
-
-    const QIcon icon = QIcon::fromTheme(icon_name);
-    return icon;
+    return QIcon::fromTheme(icon_name);
 }
 
 void IconManager::set_theme(const QString &icons_theme) {
