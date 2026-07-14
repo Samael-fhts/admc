@@ -1,7 +1,7 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
  * Copyright (C) 2026 Artyom V. Poptsov
  *
@@ -283,13 +283,10 @@ QByteArray octet_string_to_bytes(const QString string, const OctetDisplayFormat 
     for (const QString &byte_string_padded : string_split) {
         // NOTE: remove padding because strtol doesn't understand it
         // "005" => "5"
-        const QString byte_string = [byte_string_padded]() {
-            QString byte = byte_string_padded;
-            while (byte[0] == '0' && byte.size() > 0) {
-                byte.remove(0, 1);
-            }
-            return byte;
-        }();
+        QString byte_string = byte_string_padded;
+        while ((byte_string[0] == '0') && (byte_string.size() > 0)) {
+            byte_string.remove(0, 1);
+        }
 
         const QByteArray byte_bytes = byte_string.toLocal8Bit();
         const char *byte_cstr = byte_bytes.constData();
