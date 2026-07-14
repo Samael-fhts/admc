@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,25 +38,19 @@ FSMODialog::FSMODialog(AdInterface &ad, QWidget *parent)
 
     setAttribute(Qt::WA_DeleteOnClose);
 
+    const QHash<FSMORole, QString> role_mapping = {
+        { FSMORole_DomainDNS,      tr("Domain DNS") },
+        { FSMORole_ForestDNS,      tr("Forest DNS") },
+        { FSMORole_PDCEmulation,   tr("PDC Emulation") },
+        { FSMORole_Schema,         tr("Schema") },
+        { FSMORole_DomainNaming,   tr("Domain Naming") },
+        { FSMORole_Infrastructure, tr("Infrastructure") },
+        { FSMORole_RidAllocation,  tr("Rid Allocation") },
+    };
+
     for (int role_i = 0; role_i < FSMORole_COUNT; role_i++) {
         const FSMORole role = (FSMORole) role_i;
-
-        const QString title = [&]() {
-            switch (role) {
-                case FSMORole_DomainDNS: return tr("Domain DNS");
-                case FSMORole_ForestDNS: return tr("Forest DNS");
-                case FSMORole_PDCEmulation: return tr("PDC Emulation");
-                case FSMORole_Schema: return tr("Schema");
-                case FSMORole_DomainNaming: return tr("Domain Naming");
-                case FSMORole_Infrastructure: return tr("Infrastructure");
-                case FSMORole_RidAllocation: return tr("Rid Allocation");
-
-                case FSMORole_COUNT: break;
-            };
-
-            return QString();
-        }();
-
+        const QString title = role_mapping[role];
         const QString role_dn = dn_from_role(role);
 
         auto tab = new FSMOTab(title, role_dn);
