@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,17 +57,17 @@ FindPolicyDialog::FindPolicyDialog(ConsoleWidget *buddy_console, QWidget *parent
         SearchItem_Name,
         SearchItem_GUID,
     };
-
+    const QHash<SearchItem, QString> item_mapping = {
+        { SearchItem_Name, tr("Name") },
+        { SearchItem_GUID, tr("GUID") }
+    };
+    QString search_item_string;
     for (const SearchItem &search_item : search_item_list) {
-        const QString search_item_string = [&]() {
-            switch (search_item) {
-                case SearchItem_Name: return tr("Name");
-                case SearchItem_GUID: return tr("GUID");
-            }
-
-            return QString();
-        }();
-
+        if (item_mapping.contains(search_item)) {
+            search_item_string = item_mapping[search_item];
+        } else {
+            search_item_string = QString();
+        }
         ui->search_item_combo->addItem(search_item_string, (int) search_item);
     }
 
@@ -102,24 +103,19 @@ FindPolicyDialog::FindPolicyDialog(ConsoleWidget *buddy_console, QWidget *parent
     auto action_toggle_description_bar = new QAction(tr("&Description Bar"), this);
     action_toggle_description_bar->setCheckable(true);
 
-    const ConsoleWidgetActions console_actions = [&]() {
-        ConsoleWidgetActions out;
+    ConsoleWidgetActions console_actions;
+    console_actions.view_icons = action_view_icons;
+    console_actions.view_list = action_view_list;
+    console_actions.view_detail = action_view_detail;
+    console_actions.toggle_description_bar = action_toggle_description_bar;
+    console_actions.customize_columns = action_customize_columns;
 
-        out.view_icons = action_view_icons;
-        out.view_list = action_view_list;
-        out.view_detail = action_view_detail;
-        out.toggle_description_bar = action_toggle_description_bar;
-        out.customize_columns = action_customize_columns;
-
-        // Use placeholders for unused actions
-        out.navigate_up = new QAction(this);
-        out.navigate_back = new QAction(this);
-        out.navigate_forward = new QAction(this);
-        out.refresh = new QAction(this);
-        out.toggle_console_tree = new QAction(this);
-
-        return out;
-    }();
+    // Use placeholders for unused actions
+    console_actions.navigate_up = new QAction(this);
+    console_actions.navigate_back = new QAction(this);
+    console_actions.navigate_forward = new QAction(this);
+    console_actions.refresh = new QAction(this);
+    console_actions.toggle_console_tree = new QAction(this);
 
     ui->console->set_actions(console_actions);
 
@@ -165,50 +161,36 @@ FindPolicyDialog::~FindPolicyDialog() {
 }
 
 void FindPolicyDialog::add_filter() {
-    const QString filter = [&]() {
-        const QString attribute = [&]() -> QString {
-            const SearchItem search_item = (SearchItem) ui->search_item_combo->currentData().toInt();
-            switch (search_item) {
-                case SearchItem_Name: return ATTRIBUTE_DISPLAY_NAME;
-                case SearchItem_GUID: return ATTRIBUTE_CN;
-            }
+    const QHash<SearchItem, QString> item_to_attribute_mapping = {
+        { SearchItem_Name, ATTRIBUTE_DISPLAY_NAME },
+        { SearchItem_GUID, ATTRIBUTE_CN }
+    };
+    const QHash<SearchItem, QString> item_to_name_mapping = {
+        { SearchItem_Name, tr("Name") },
+        { SearchItem_GUID, tr("GUID") }
+    };
+    const SearchItem search_item =
+        (SearchItem) ui->search_item_combo->currentData().toInt();
+    const Condition condition =
+        (Condition) ui->condition_combo->currentData().toInt();
+    const QString value = ui->value_edit->text();
 
-            return QString();
-        }();
+    QString attribute;
+    if (item_to_attribute_mapping.contains(search_item)) {
+        attribute = item_to_attribute_mapping[search_item];
+    }
 
-        const Condition condition = (Condition) ui->condition_combo->currentData().toInt();
+    const QString filter = filter_CONDITION(condition, attribute, value);
+    QString search_item_display;
+    if (item_to_name_mapping.contains(search_item)) {
+        search_item_display = item_to_name_mapping[search_item];
+    }
 
-        const QString value = ui->value_edit->text();
-
-        const QString out = filter_CONDITION(condition, attribute, value);
-
-        return out;
-    }();
-
-    const QString filter_display = [&]() {
-        const QString search_item_display = [&]() -> QString {
-            const SearchItem search_item = (SearchItem) ui->search_item_combo->currentData().toInt();
-            switch (search_item) {
-                case SearchItem_Name: return tr("Name");
-                case SearchItem_GUID: return tr("GUID");
-            }
-
-            return QString();
-        }();
-
-        const QString condition_display = [&]() {
-            const Condition condition = (Condition) ui->condition_combo->currentData().toInt();
-            const QString out = condition_to_display_string(condition);
-
-            return out;
-        }();
-
-        const QString value = ui->value_edit->text();
-
-        const QString out = QString("%1 %2: \"%3\"").arg(search_item_display, condition_display, value);
-
-        return out;
-    }();
+    const QString condition_display = condition_to_display_string(condition);
+    const QString filter_display =
+        QString("%1 %2: \"%3\"").arg(search_item_display,
+                                     condition_display,
+                                     value);
 
     auto item = new QListWidgetItem();
     item->setText(filter_display);
@@ -220,20 +202,15 @@ void FindPolicyDialog::add_filter() {
 
 void FindPolicyDialog::find() {
     const QString base = g_adconfig->policies_dn();
-    const QString filter = [this]() {
-        QList<QString> filter_string_list;
+    QList<QString> filter_string_list;
+    for (int i = 0; i < ui->filter_list->count(); i++) {
+        const QListWidgetItem *item = ui->filter_list->item(i);
+        const QString this_filter = item->data(Qt::UserRole).toString();
 
-        for (int i = 0; i < ui->filter_list->count(); i++) {
-            const QListWidgetItem *item = ui->filter_list->item(i);
-            const QString this_filter = item->data(Qt::UserRole).toString();
+        filter_string_list.append(this_filter);
+    }
 
-            filter_string_list.append(this_filter);
-        }
-
-        const QString out = filter_AND(filter_string_list);
-
-        return out;
-    }();
+    const QString filter = filter_AND(filter_string_list);
     const QList<QString> search_attributes = QList<QString>();
 
     auto search_thread = new SearchThread(base, SearchScope_Children, filter, search_attributes);
