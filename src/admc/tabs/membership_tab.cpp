@@ -2,8 +2,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -279,28 +280,37 @@ bool MembershipTabEdit::apply(AdInterface &ad, const QString &target) const {
 }
 
 void MembershipTabEdit::on_add_button() {
-    const QList<QString> classes = [this]() -> QList<QString> {
-        switch (type) {
-            case MembershipTabType_Members: return {
-                CLASS_USER,
-                CLASS_GROUP,
-                CLASS_CONTACT,
-                CLASS_COMPUTER,
-            };
-            case MembershipTabType_MemberOf: return {CLASS_GROUP};
-        }
-        return QList<QString>();
-    }();
+    QList<QString> classes;
+    switch (type) {
+    case MembershipTabType_Members:
+        classes = {
+            CLASS_USER,
+            CLASS_GROUP,
+            CLASS_CONTACT,
+            CLASS_COMPUTER,
+        };
+        break;
+    case MembershipTabType_MemberOf:
+        classes = {CLASS_GROUP};
+        break;
+    default:
+        classes = QList<QString>();
+    }
 
     auto dialog = new SelectObjectDialog(classes, SelectObjectDialogMultiSelection_Yes, view);
 
-    const QString title = [&]() {
-        switch (type) {
-            case MembershipTabType_Members: return tr("Add Member");
-            case MembershipTabType_MemberOf: return tr("Add to Group");
-        }
-        return QString();
-    }();
+    QString title;
+    switch (type) {
+    case MembershipTabType_Members:
+        title = tr("Add Member");
+        break;
+    case MembershipTabType_MemberOf:
+        title = tr("Add to Group");
+        break;
+    default:
+        title = QString();
+    }
+
     dialog->setWindowTitle(title);
 
     dialog->open();
@@ -326,24 +336,28 @@ void MembershipTabEdit::on_remove_button() {
         removed_values.append(dn);
     }
 
-    const bool any_selected_are_primary = [this, removed_values]() {
-        for (const QString &dn : removed_values) {
-            if (current_primary_values.contains(dn)) {
-                return true;
-            }
+    bool any_selected_are_primary = false;
+    for (const QString &dn : removed_values) {
+        if (current_primary_values.contains(dn)) {
+            any_selected_are_primary = true;
+            break;
         }
-
-        return false;
-    }();
+    }
 
     if (any_selected_are_primary) {
-        const QString error_text = [this]() {
-            switch (type) {
-                case MembershipTabType_Members: return tr("Can't remove because this group is a primary group to selected user.");
-                case MembershipTabType_MemberOf: return tr("Can't remove because selected group is a primary group to this user.");
-            }
-            return QString();
-        }();
+        QString error_text;
+        switch (type) {
+        case MembershipTabType_Members:
+            error_text =
+                tr("Can't remove because this group is a primary group to selected user.");
+            break;
+        case MembershipTabType_MemberOf:
+            error_text =
+                tr("Can't remove because selected group is a primary group to this user.");
+            break;
+        default:
+            error_text = QString();
+        }
 
         message_box_warning(view, tr("Error"), error_text);
     } else {
@@ -393,14 +407,11 @@ void MembershipTabEdit::enable_primary_button_on_valid_selection() {
     // Enable "set primary group" button if
     // 1) there's a selection
     // 2) the selected group is NOT primary already
-    const QSet<QString> selected_dns = [selecteds]() {
-        QSet<QString> out;
-        for (const QModelIndex selected : selecteds) {
-            const QString dn = selected.data(MembersRole_DN).toString();
-            out.insert(dn);
-        }
-        return out;
-    }();
+    QSet<QString> selected_dns;
+    for (const QModelIndex selected : selecteds) {
+        const QString dn = selected.data(MembersRole_DN).toString();
+        selected_dns.insert(dn);
+    }
 
     if (selected_dns.size() == 1) {
         const QString dn = selected_dns.values()[0];
@@ -415,18 +426,12 @@ void MembershipTabEdit::enable_primary_button_on_valid_selection() {
 void MembershipTabEdit::reload_model() {
     // Load primary group name into label
     if (type == MembershipTabType_MemberOf) {
-        const QString primary_group_label_text = [this]() {
-            QString out = tr("Primary group: ");
-
-            if (!current_primary_values.isEmpty()) {
-                const QString primary_group_dn = current_primary_values.values()[0];
-                const QString primary_group_name = dn_get_name(primary_group_dn);
-
-                out += primary_group_name;
-            }
-
-            return out;
-        }();
+        QString primary_group_label_text = tr("Primary group: ");
+        if (! current_primary_values.isEmpty()) {
+            const QString primary_group_dn = current_primary_values.values()[0];
+            const QString primary_group_name = dn_get_name(primary_group_dn);
+            primary_group_label_text += primary_group_name;
+        }
 
         primary_group_label->setText(primary_group_label_text);
     }
