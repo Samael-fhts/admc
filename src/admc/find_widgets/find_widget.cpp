@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,24 +50,19 @@ FindWidget::FindWidget(QWidget *parent)
     action_toggle_description_bar = new QAction(tr("&Description Bar"), this);
     action_toggle_description_bar->setCheckable(true);
 
-    const ConsoleWidgetActions console_actions = [&]() {
-        ConsoleWidgetActions out;
+    ConsoleWidgetActions console_actions;
+    console_actions.view_icons = action_view_icons;
+    console_actions.view_list = action_view_list;
+    console_actions.view_detail = action_view_detail;
+    console_actions.toggle_description_bar = action_toggle_description_bar;
+    console_actions.customize_columns = action_customize_columns;
 
-        out.view_icons = action_view_icons;
-        out.view_list = action_view_list;
-        out.view_detail = action_view_detail;
-        out.toggle_description_bar = action_toggle_description_bar;
-        out.customize_columns = action_customize_columns;
-
-        // Use placeholders for unused actions
-        out.navigate_up = new QAction(this);
-        out.navigate_back = new QAction(this);
-        out.navigate_forward = new QAction(this);
-        out.refresh = new QAction(this);
-        out.toggle_console_tree = new QAction(this);
-
-        return out;
-    }();
+    // Use placeholders for unused actions
+    console_actions.navigate_up = new QAction(this);
+    console_actions.navigate_back = new QAction(this);
+    console_actions.navigate_forward = new QAction(this);
+    console_actions.refresh = new QAction(this);
+    console_actions.toggle_console_tree = new QAction(this);
 
     ui->console->set_actions(console_actions);
 
