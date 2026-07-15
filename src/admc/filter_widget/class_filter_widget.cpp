@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,23 +66,19 @@ void ClassFilterWidget::set_classes(const QList<QString> &class_list_arg, const 
 }
 
 QString ClassFilterWidget::get_filter() const {
-    const QList<QString> selected_list = [&] {
-        QList<QString> out;
+    QList<QString> selected_list;
 
-        // NOTE: important iterate over class list
-        // because iterating over map keys causes
-        // undefined order, which breaks tests and
-        // creates other problems
-        for (const QString &object_class : class_list) {
-            QCheckBox *checkbox = checkbox_map[object_class];
+    // NOTE: important iterate over class list
+    // because iterating over map keys causes
+    // undefined order, which breaks tests and
+    // creates other problems
+    for (const QString &object_class : class_list) {
+        QCheckBox *checkbox = checkbox_map[object_class];
 
-            if (checkbox->isChecked()) {
-                out.append(object_class);
-            }
+        if (checkbox->isChecked()) {
+            selected_list.append(object_class);
         }
-
-        return out;
-    }();
+    }
 
     const QString filter = get_classes_filter(selected_list);
 
@@ -134,16 +131,12 @@ QVariant ClassFilterWidget::save_state() const {
 void ClassFilterWidget::restore_state(const QVariant &state_variant) {
     const QHash<QString, QVariant> state = state_variant.toHash();
 
+    bool checked;
     for (const QString &object_class : class_list) {
-        const bool checked = [&]() {
-            if (state.contains(object_class)) {
-                const bool out = state[object_class].toBool();
-
-                return out;
-            } else {
-                return false;
-            }
-        }();
+        checked = false;
+        if (state.contains(object_class)) {
+            checked = state[object_class].toBool();
+        }
 
         QCheckBox *checkbox = checkbox_map[object_class];
         checkbox->setChecked(checked);
