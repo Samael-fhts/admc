@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,17 +70,13 @@ void FilterWidgetNormalTab::enable_filtering_all_classes() {
 }
 
 QString FilterWidgetNormalTab::get_filter() const {
-    const QString attribute_filter = [this]() {
-        QList<QString> filters;
-        for (int i = 0; i < ui->filter_list->count(); i++) {
-            const QListWidgetItem *item = ui->filter_list->item(i);
-            const QString filter = item->data(Qt::UserRole).toString();
-
-            filters.append(filter);
-        }
-
-        return filter_AND(filters);
-    }();
+    QList<QString> filters;
+    for (int i = 0; i < ui->filter_list->count(); i++) {
+        const QListWidgetItem *item = ui->filter_list->item(i);
+        const QString filter = item->data(Qt::UserRole).toString();
+        filters.append(filter);
+    }
+    QString attribute_filter = filter_AND(filters);
 
     const QString class_filter = ui->select_classes_widget->get_filter();
 
@@ -105,43 +102,33 @@ void FilterWidgetNormalTab::clear() {
 }
 
 void FilterWidgetNormalTab::add_filter() {
-    const QString filter = [&]() {
-        const QString attribute = ui->attribute_combo->itemData(ui->attribute_combo->currentIndex()).toString();
-        const Condition condition = (Condition) ui->condition_combo->itemData(ui->condition_combo->currentIndex()).toInt();
-        const QString value = ui->value_edit->text();
+    const int attribute_index = ui->attribute_combo->currentIndex();
+    const int condition_index = ui->condition_combo->currentIndex();
+    const QString attribute =
+        ui->attribute_combo->itemData(attribute_index).toString();
+    const Condition condition =
+        (Condition) ui->condition_combo->itemData(condition_index).toInt();
+    const QString value = ui->value_edit->text();
+    const QString attribute_display =
+        ui->attribute_combo->itemText(attribute_index);
+    const QString condition_string = condition_to_display_string(condition);
+    QString filter_display_string;
+    const bool set_unset_condition =
+        ((condition == Condition_Set) || (condition == Condition_Unset));
+    if (set_unset_condition) {
+        filter_display_string =
+            QString("%1 %2").arg(attribute_display, condition_string);
+    } else {
+        filter_display_string =
+            QString("%1 %2: \"%3\"").arg(attribute_display,
+                                         condition_string,
+                                         value);
+    }
 
-        const QString filter_display_string = [this, condition, value]() {
-            const QString attribute_display = ui->attribute_combo->itemText(ui->attribute_combo->currentIndex());
-            const QString condition_string = condition_to_display_string(condition);
-
-            const bool set_unset_condition = (condition == Condition_Set || condition == Condition_Unset);
-            if (set_unset_condition) {
-                return QString("%1 %2").arg(attribute_display, condition_string);
-            } else {
-                return QString("%1 %2: \"%3\"").arg(attribute_display, condition_string, value);
-            }
-        }();
-
-        return filter_CONDITION(condition, attribute, value);
-    }();
-    const QString filter_display = [&]() {
-        const QString attribute = ui->attribute_combo->itemData(ui->attribute_combo->currentIndex()).toString();
-        const Condition condition = (Condition) ui->condition_combo->itemData(ui->condition_combo->currentIndex()).toInt();
-        const QString value = ui->value_edit->text();
-
-        const QString attribute_display = ui->attribute_combo->itemText(ui->attribute_combo->currentIndex());
-        const QString condition_string = condition_to_display_string(condition);
-
-        const bool set_unset_condition = (condition == Condition_Set || condition == Condition_Unset);
-        if (set_unset_condition) {
-            return QString("%1 %2").arg(attribute_display, condition_string);
-        } else {
-            return QString("%1 %2: \"%3\"").arg(attribute_display, condition_string, value);
-        }
-    }();
+    const QString filter = filter_CONDITION(condition, attribute, value);
 
     auto item = new QListWidgetItem();
-    item->setText(filter_display);
+    item->setText(filter_display_string);
     item->setData(Qt::UserRole, filter);
     ui->filter_list->addItem(item);
 
@@ -206,38 +193,28 @@ void FilterWidgetNormalTab::restore_state(const QVariant &state_variant) {
 void FilterWidgetNormalTab::update_attributes_combo() {
     ui->attribute_combo->clear();
 
-    const QString object_class = [this]() {
-        const int index = ui->attribute_class_combo->currentIndex();
-        const QVariant item_data = ui->attribute_class_combo->itemData(index);
-
-        return item_data.toString();
-    }();
+    const int index = ui->attribute_class_combo->currentIndex();
+    const QVariant item_data = ui->attribute_class_combo->itemData(index);
+    const QString object_class = item_data.toString();
 
     const QList<QString> attributes = g_adconfig->get_find_attributes(object_class);
 
-    const QList<QString> display_attributes = [&]() {
-        QList<QString> out;
+    QList<QString> display_attributes;
+    for (const QString &attribute : attributes) {
+        const QString display_name =
+            g_adconfig->get_attribute_display_name(attribute, object_class);
+        display_attributes.append(display_name);
+    }
 
-        for (const QString &attribute : attributes) {
-            const QString display_name = g_adconfig->get_attribute_display_name(attribute, object_class);
-            out.append(display_name);
-        }
-
-        std::sort(out.begin(), out.end());
-
-        return out;
-    }();
+    std::sort(display_attributes.begin(), display_attributes.end());
 
     // NOTE: need backwards mapping from display name to attribute for insertion
-    const QHash<QString, QString> display_to_attribute = [&]() {
-        QHash<QString, QString> out;
-        for (const QString &attribute : attributes) {
-            const QString display_name = g_adconfig->get_attribute_display_name(attribute, object_class);
-
-            out[display_name] = attribute;
-        }
-        return out;
-    }();
+    QHash<QString, QString> display_to_attribute;
+    for (const QString &attribute : attributes) {
+        const QString display_name =
+            g_adconfig->get_attribute_display_name(attribute, object_class);
+        display_to_attribute[display_name] = attribute;
+    }
 
     // Insert attributes into combobox in the sorted order of display attributes
     for (const auto &display_attribute : display_attributes) {
@@ -248,36 +225,33 @@ void FilterWidgetNormalTab::update_attributes_combo() {
 
 // Conditions combo contents depend on what attribute is selected
 void FilterWidgetNormalTab::update_conditions_combo() {
-    const QList<Condition> conditions = [this]() -> QList<Condition> {
-        const AttributeType attribute_type = [this]() {
-            const int index = ui->attribute_combo->currentIndex();
-            const QVariant item_data = ui->attribute_combo->itemData(index);
-            const QString attribute = item_data.toString();
+    const int index = ui->attribute_combo->currentIndex();
+    const QVariant item_data = ui->attribute_combo->itemData(index);
+    const QString attribute = item_data.toString();
+    const AttributeType attribute_type =
+        g_adconfig->get_attribute_type(attribute);
 
-            return g_adconfig->get_attribute_type(attribute);
-        }();
-
-        // NOTE: extra conditions don't work on DSDN type
-        // attributes, so don't include them in the combobox
-        // in that case
-        if (attribute_type == AttributeType_DSDN) {
-            return {
-                Condition_Equals,
-                Condition_NotEquals,
-                Condition_Set,
-                Condition_Unset,
-            };
-        } else {
-            return {
-                Condition_StartsWith,
-                Condition_EndsWith,
-                Condition_Equals,
-                Condition_NotEquals,
-                Condition_Set,
-                Condition_Unset,
-            };
-        }
-    }();
+    QList<Condition> conditions;
+    // NOTE: extra conditions don't work on DSDN type
+    // attributes, so don't include them in the combobox
+    // in that case
+    if (attribute_type == AttributeType_DSDN) {
+        conditions = {
+            Condition_Equals,
+            Condition_NotEquals,
+            Condition_Set,
+            Condition_Unset,
+        };
+    } else {
+        conditions = {
+            Condition_StartsWith,
+            Condition_EndsWith,
+            Condition_Equals,
+            Condition_NotEquals,
+            Condition_Set,
+            Condition_Unset,
+        };
+    }
 
     ui->condition_combo->clear();
     for (const auto condition : conditions) {
