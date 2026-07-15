@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,25 +108,21 @@ void SelectClassesWidget::open_dialog() {
 void SelectClassesWidget::update_class_display() {
     // Convert class list to list of class display strings,
     // then sort it and finally join by comma's
-    const QString display_string = [&]() {
-        if (m_all_is_checked) {
-            return tr("All");
-        } else {
-            QList<QString> class_display_list;
+    QString display_string;
+    if (m_all_is_checked) {
+        display_string = tr("All");
+    } else {
+        QList<QString> class_display_list;
 
-            for (const QString &object_class : m_selected_list) {
-                const QString class_display = g_adconfig->get_class_display_name(object_class);
+        for (const QString &object_class : m_selected_list) {
+            const QString class_display = g_adconfig->get_class_display_name(object_class);
 
-                class_display_list.append(class_display);
-            }
-
-            std::sort(class_display_list.begin(), class_display_list.end());
-
-            const QString joined = class_display_list.join(", ");
-
-            return joined;
+            class_display_list.append(class_display);
         }
-    }();
+
+        std::sort(class_display_list.begin(), class_display_list.end());
+        display_string = class_display_list.join(", ");
+    }
 
     ui->classes_display->setText(display_string);
 
