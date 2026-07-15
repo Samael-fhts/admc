@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +31,19 @@ PropertiesWarningDialog::PropertiesWarningDialog(const PropertiesWarningType typ
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    const QString label_text = [&]() {
-        switch (type) {
-            case PropertiesWarningType_SwitchToAttributes: return tr("You're switching to attributes tab, while another tab has unapplied changes. Choose to apply or discard those changes.");
-            case PropertiesWarningType_SwitchFromAttributes: return tr("You're switching from attributes tab, while it has unapplied changes. Choose to apply or discard those changes.");
-        }
-        return QString();
-    }();
+    QString label_text;
+    switch (type) {
+    case PropertiesWarningType_SwitchToAttributes:
+        label_text =
+            tr("You're switching to attributes tab, while another tab has unapplied changes. Choose to apply or discard those changes.");
+        break;
+    case PropertiesWarningType_SwitchFromAttributes:
+        label_text =
+            tr("You're switching from attributes tab, while it has unapplied changes. Choose to apply or discard those changes.");
+        break;
+    default:
+        label_text = QString();
+    }
 
     ui->label->setText(label_text);
 
