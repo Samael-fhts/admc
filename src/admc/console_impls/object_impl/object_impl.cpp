@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,26 +86,22 @@ void ObjectImpl::fetch(const QModelIndex &index) {
     //
     // Search object's children
     //
-    const QString filter = [=]() {
-        QString out;
+    // NOTE: OR user filter with containers filter so
+    // that container objects are always shown, even if
+    // they are filtered out by user filter
+    QString filter;
+    if (object_filter_enabled) {
+        filter = filter_OR({is_container_filter(), filter});
+        filter = filter_OR({object_filter, filter});
+    }
 
-        // NOTE: OR user filter with containers filter so
-        // that container objects are always shown, even if
-        // they are filtered out by user filter
-        if (object_filter_enabled) {
-            out = filter_OR({is_container_filter(), out});
-            out = filter_OR({object_filter, out});
-        }
-
-        const QString fetched_obj_class = index.data(ObjectRole_ObjectClasses).toStringList().last();
-        // Disable advances features option for site-related and pso objects
-        if (!g_adconfig->get_site_related_classes().contains(fetched_obj_class) &&
-                fetched_obj_class != CLASS_PSO_CONTAINER) {
-            out = advanced_features_filter(out);
-        }
-
-        return out;
-    }();
+    const QString fetched_obj_class =
+        index.data(ObjectRole_ObjectClasses).toStringList().last();
+    // Disable advances features option for site-related and pso objects
+    if ((! g_adconfig->get_site_related_classes().contains(fetched_obj_class)) &&
+        (fetched_obj_class != CLASS_PSO_CONTAINER)) {
+        filter = advanced_features_filter(filter);
+    }
 
     const QList<QString> attributes = ConsoleObjectTreeOperations::console_object_search_attributes();
 
@@ -236,12 +233,8 @@ QSet<QAction *> ObjectImpl::get_custom_actions(const QModelIndex &index, const b
     QSet<QAction *> out;
 
     const QString object_class = index.data(ObjectRole_ObjectClasses).toStringList().last();
-
-    const bool is_container = [=]() {
-        const QList<QString> container_classes = g_adconfig->get_filter_containers();
-
-        return container_classes.contains(object_class);
-    }();
+    const QList<QString> container_classes = g_adconfig->get_filter_containers();
+    const bool is_container = container_classes.contains(object_class);
 
     const bool is_user = (object_class == CLASS_USER);
     const bool is_group = (object_class == CLASS_GROUP);
@@ -373,19 +366,16 @@ QSet<StandardAction> ObjectImpl::get_standard_actions(const QModelIndex &index, 
         out.insert(StandardAction_Refresh);
     }
 
-    const bool can_rename = [&]() {
-        const QList<QString> renamable_class_list = {
-            CLASS_USER,
-            CLASS_GROUP,
-            CLASS_OU,
-            CLASS_SITE
-        };
-        const QString object_class = index.data(ObjectRole_ObjectClasses).toStringList().last();
-        const bool can_rename_out = (single_selection && renamable_class_list.contains(object_class));
-
-        return can_rename_out;
-    }();
-
+    const QList<QString> renamable_class_list = {
+        CLASS_USER,
+        CLASS_GROUP,
+        CLASS_OU,
+        CLASS_SITE
+    };
+    const QString object_class =
+        index.data(ObjectRole_ObjectClasses).toStringList().last();
+    const bool can_rename =
+        (single_selection && renamable_class_list.contains(object_class));
     if (can_rename) {
         out.insert(StandardAction_Rename);
     }
@@ -422,17 +412,15 @@ void ObjectImpl::rename(const QList<QModelIndex> &index_list) {
 }
 
 void ObjectImpl::properties(const QList<QModelIndex> &index_list) {
-    const QList<QString> class_list = [&]() {
-        QSet<QString> out;
-
-        for (const QModelIndex &index : index_list) {
-            const QList<QString> this_class_list = index.data(ObjectRole_ObjectClasses).toStringList();
-            const QString main_class = this_class_list.last();
-            out.insert(main_class);
-        }
-
-        return QList<QString>(out.begin(), out.end());
-    }();
+    QSet<QString> class_set;
+    for (const QModelIndex &index : index_list) {
+        const QList<QString> this_class_list =
+            index.data(ObjectRole_ObjectClasses).toStringList();
+        const QString main_class = this_class_list.last();
+        class_set.insert(main_class);
+    }
+    QList<QString> class_list =
+        QList<QString>(class_set.begin(), class_set.end());
 
     ConsoleObjectTreeOperations::console_object_properties(console_list, index_list, ObjectRole_DN, class_list);
 }
@@ -642,19 +630,13 @@ void ObjectImpl::on_move() {
             const QString new_parent_dn = dialog->get_selected();
 
             // First move in AD
-            const QList<QString> moved_objects = [&]() {
-                QList<QString> out;
-
-                for (const QString &dn : dn_list) {
-                    const bool success = ad2.object_move(dn, new_parent_dn);
-
-                    if (success) {
-                        out.append(dn);
-                    }
+            QList<QString> moved_objects;
+            for (const QString &dn : dn_list) {
+                const bool success = ad2.object_move(dn, new_parent_dn);
+                if (success) {
+                    moved_objects.append(dn);
                 }
-
-                return out;
-            }();
+            }
 
             g_status->display_ad_messages(ad2, nullptr);
 
@@ -802,21 +784,14 @@ void ObjectImpl::set_disabled(const bool disabled) {
 
     show_busy_indicator();
 
-    const QList<QString> changed_objects = [&]() {
-        QList<QString> out;
-
-        const QList<QString> dn_list = get_selected_dn_list_object();
-
-        for (const QString &dn : dn_list) {
-            const bool success = ad.user_set_account_option(dn, AccountOption_Disabled, disabled);
-
-            if (success) {
-                out.append(dn);
-            }
+    QList<QString> changed_objects;
+    const QList<QString> dn_list = get_selected_dn_list_object();
+    for (const QString &dn : dn_list) {
+        const bool success = ad.user_set_account_option(dn, AccountOption_Disabled, disabled);
+        if (success) {
+            changed_objects.append(dn);
         }
-
-        return out;
-    }();
+    }
 
     auto apply_changes = [&changed_objects, &disabled](ConsoleWidget *target_console) {
         auto apply_changes_to_branch = [&](const QModelIndex &root_index) {
@@ -867,16 +842,11 @@ void ObjectImpl::set_disabled(const bool disabled) {
 // generates the new_dn_list for you, assuming that you just
 // want to move objects to new parent without renaming
 void ObjectImpl::move(AdInterface &ad, const QList<QString> &old_dn_list, const QString &new_parent_dn) {
-    const QHash<QString, QString> old_to_new_dn_map = [&]() {
-        QHash<QString, QString> out;
-
-        for (const QString &old_dn : old_dn_list) {
-            const QString new_dn = dn_move(old_dn, new_parent_dn);
-            out[old_dn] = new_dn;
-        }
-
-        return out;
-    }();
+    QHash<QString, QString> old_to_new_dn_map;
+    for (const QString &old_dn : old_dn_list) {
+        const QString new_dn = dn_move(old_dn, new_parent_dn);
+        old_to_new_dn_map[old_dn] = new_dn;
+    }
 
     ConsoleObjectTreeOperations::console_object_move_and_rename(console_list, ad, old_to_new_dn_map, new_parent_dn);
 }
@@ -992,12 +962,9 @@ void ObjectImpl::setup_actions() {
     auto new_menu = new QMenu(tr("New"), console);
     new_action = new_menu->menuAction();
 
-    const QList<QString> new_action_keys_sorted = [&]() {
-        QList<QString> out = standard_create_action_map.keys();
-        std::sort(out.begin(), out.end());
+    QList<QString> new_action_keys_sorted = standard_create_action_map.keys();
+    std::sort(new_action_keys_sorted.begin(), new_action_keys_sorted.end());
 
-        return out;
-    }();
     for (const QString &key : new_action_keys_sorted) {
         QAction *action = standard_create_action_map[key];
         new_menu->addAction(action);
