@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,13 +47,11 @@ AttributesTabFilterMenu::AttributesTabFilterMenu(QWidget *parent)
         action->setObjectName(QString::number(filter));
         action->setCheckable(true);
 
-        const bool is_checked = [&]() {
-            if (filter < state.size()) {
-                return state[filter].toBool();
-            } else {
-                return true;
-            }
-        }();
+        bool is_checked = true;
+        if (filter < state.size()) {
+            is_checked = state[filter].toBool();
+        }
+
         action->setChecked(is_checked);
 
         action_map.insert(filter, action);
@@ -83,19 +82,13 @@ AttributesTabFilterMenu::AttributesTabFilterMenu(QWidget *parent)
 }
 
 AttributesTabFilterMenu::~AttributesTabFilterMenu() {
-    const QList<QVariant> state = [&]() {
-        QList<QVariant> out;
-
-        for (int fitler_i = 0; fitler_i < AttributeFilter_COUNT; fitler_i++) {
-            const AttributeFilter filter = (AttributeFilter) fitler_i;
-            const QAction *action = action_map[filter];
-            const QVariant filter_state = QVariant(action->isChecked());
-
-            out.append(filter_state);
-        }
-
-        return out;
-    }();
+    QList<QVariant> state;
+    for (int fitler_i = 0; fitler_i < AttributeFilter_COUNT; fitler_i++) {
+        const AttributeFilter filter = (AttributeFilter) fitler_i;
+        const QAction *action = action_map[filter];
+        const QVariant filter_state = QVariant(action->isChecked());
+        state.append(filter_state);
+    }
 
     settings_set_variant(SETTING_attributes_tab_filter_state, state);
 }
