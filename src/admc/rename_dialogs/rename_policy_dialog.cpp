@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +39,8 @@ RenamePolicyDialog::RenamePolicyDialog(AdInterface &ad, const QString &target_dn
 
     target_dn = target_dn_arg;
 
-    target_name = [&]() {
-        const AdObject object = ad.search_object(target_dn);
-
-        return object.get_string(ATTRIBUTE_DISPLAY_NAME);
-    }();
+    const AdObject object = ad.search_object(target_dn);
+    target_name = object.get_string(ATTRIBUTE_DISPLAY_NAME);
 
     ui->name_edit->setText(target_name);
     limit_edit(ui->name_edit, ATTRIBUTE_DISPLAY_NAME);
