@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,14 +76,14 @@ void QueryItemImpl::fetch(const QModelIndex &index) {
     const QString filter = index.data(QueryItemRole_Filter).toString();
     const QString base = index.data(QueryItemRole_Base).toString();
     const QList<QString> search_attributes = ConsoleObjectTreeOperations::console_object_search_attributes();
-    const SearchScope scope = [&]() {
-        const bool scope_is_children = index.data(QueryItemRole_ScopeIsChildren).toBool();
-        if (scope_is_children) {
-            return SearchScope_Children;
-        } else {
-            return SearchScope_All;
-        }
-    }();
+    const bool scope_is_children =
+        index.data(QueryItemRole_ScopeIsChildren).toBool();
+    SearchScope scope;
+    if (scope_is_children) {
+        scope = SearchScope_Children;
+    } else {
+        scope = SearchScope_All;
+    }
 
     ConsoleObjectTreeOperations::console_object_search(console, index, base, scope, filter, search_attributes);
 }
@@ -167,17 +168,18 @@ QList<int> QueryItemImpl::default_columns() const {
 void QueryItemImpl::on_export() {
     const QModelIndex index = console->get_selected_item(ItemType_QueryItem);
 
-    const QString file_path = [&]() {
-        const QString query_name = index.data(Qt::DisplayRole).toString();
+    const QString query_name = index.data(Qt::DisplayRole).toString();
+    const QString caption =
+        QCoreApplication::translate("query_item_impl.cpp", "Export Query");
+    const QString suggested_file =
+        QString("%1/%2.json").arg(
+            QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
+            query_name);
+    const QString filter =
+        QCoreApplication::translate("query_item_impl.cpp", "JSON (*.json)");
 
-        const QString caption = QCoreApplication::translate("query_item_impl.cpp", "Export Query");
-        const QString suggested_file = QString("%1/%2.json").arg(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation), query_name);
-        const QString filter = QCoreApplication::translate("query_item_impl.cpp", "JSON (*.json)");
-
-        const QString out = QFileDialog::getSaveFileName(console, caption, suggested_file, filter);
-
-        return out;
-    }();
+    const QString file_path =
+        QFileDialog::getSaveFileName(console, caption, suggested_file, filter);
 
     if (file_path.isEmpty()) {
         return;
