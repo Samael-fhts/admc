@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,15 +86,10 @@ void ClassFilterDialog::reset() {
 }
 
 void ClassFilterDialog::on_input_changed() {
-    const bool input_is_valid = [&]() {
-        const bool all_is_selected = ui->all_checkbox->isChecked();
-        const QList<QString> selected_classes = get_selected_classes();
-        const bool any_specific_class_selected = !selected_classes.isEmpty();
-        const bool out = (all_is_selected || any_specific_class_selected);
-
-        return out;
-    }();
-
+    const bool all_is_selected = ui->all_checkbox->isChecked();
+    const QList<QString> selected_classes = get_selected_classes();
+    const bool any_specific_class_selected = !selected_classes.isEmpty();
+    const bool input_is_valid = (all_is_selected || any_specific_class_selected);
     QPushButton *ok_button = ui->button_box->button(QDialogButtonBox::Ok);
     ok_button->setEnabled(input_is_valid);
 }
