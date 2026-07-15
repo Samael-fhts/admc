@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,15 +137,12 @@ QList<QStandardItem *> AttributesTabEdit::get_selected_row() const {
     const QModelIndex proxy_index = selecteds[0];
     const QModelIndex index = proxy->mapToSource(proxy_index);
 
-    const QList<QStandardItem *> row = [this, index]() {
-        QList<QStandardItem *> out;
-        for (int col = 0; col < AttributesColumn_COUNT; col++) {
-            const QModelIndex item_index = index.siblingAtColumn(col);
-            QStandardItem *item = model->itemFromIndex(item_index);
-            out.append(item);
-        }
-        return out;
-    }();
+    QList<QStandardItem *> row;
+    for (int col = 0; col < AttributesColumn_COUNT; col++) {
+        const QModelIndex item_index = index.siblingAtColumn(col);
+        QStandardItem *item = model->itemFromIndex(item_index);
+        row.append(item);
+    }
 
     return row;
 }
