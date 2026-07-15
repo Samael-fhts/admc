@@ -71,36 +71,25 @@ void ConsoleObjectTreeOperations::console_object_move_and_rename(const QList<Con
     // glitches because that kind of move is not
     // considered in the update logic. Instead, we skip
     // these kinds of objects.
-    const QHash<QString, QString> &old_to_new_dn_map = [&]() {
-        QHash<QString, QString> out;
-
-        for (const QString &old_dn : old_to_new_dn_map_arg.keys()) {
-            const QString new_dn = old_to_new_dn_map_arg[old_dn];
-            const bool dn_changed = (new_dn != old_dn);
-
-            if (dn_changed) {
-                out[old_dn] = new_dn;
-            }
+    QHash<QString, QString> old_to_new_dn_map;
+    for (const QString &old_dn : old_to_new_dn_map_arg.keys()) {
+        const QString new_dn = old_to_new_dn_map_arg[old_dn];
+        const bool dn_changed = (new_dn != old_dn);
+        if (dn_changed) {
+            old_to_new_dn_map[old_dn] = new_dn;
         }
-
-        return out;
-    }();
+    }
 
     const QList<QString> old_dn_list = old_to_new_dn_map.keys();
     const QList<QString> new_dn_list = old_to_new_dn_map.values();
 
     // NOTE: search for objects once here to reuse them
     // multiple times later
-    const QHash<QString, AdObject> object_map = [&]() {
-        QHash<QString, AdObject> out;
-
-        for (const QString &dn : new_dn_list) {
-            const AdObject object = ad.search_object(dn);
-            out[dn] = object;
-        }
-
-        return out;
-    }();
+    QHash<QString, AdObject> object_map;
+    for (const QString &dn : new_dn_list) {
+        const AdObject object = ad.search_object(dn);
+        object_map[dn] = object;
+    }
 
     auto apply_changes = [&old_to_new_dn_map, &old_dn_list, &new_parent_dn, &object_map](ConsoleWidget *target_console) {
         // For object tree, we add items representing
@@ -145,19 +134,17 @@ void ConsoleObjectTreeOperations::console_object_move_and_rename(const QList<Con
         if (query_root.isValid()) {
             // Find indexes of modified objects in query
             // tree
-            const QHash<QString, QModelIndex> index_map = [&]() {
-                QHash<QString, QModelIndex> out;
-
-                for (const QString &old_dn : old_dn_list) {
-                    const QList<QModelIndex> results = target_console->search_items(query_root, ObjectRole_DN, old_dn, {ItemType_Object});
-
-                    for (const QModelIndex &index : results) {
-                        out[old_dn] = index;
-                    }
+            QHash<QString, QModelIndex> index_map;
+            for (const QString &old_dn : old_dn_list) {
+                const QList<QModelIndex> results =
+                    target_console->search_items(query_root,
+                                                 ObjectRole_DN,
+                                                 old_dn,
+                                                 { ItemType_Object });
+                for (const QModelIndex &index : results) {
+                    index_map[old_dn] = index;
                 }
-
-                return out;
-            }();
+            }
 
             for (const QString &old_dn : index_map.keys()) {
                 const QModelIndex index = index_map[old_dn];
@@ -185,19 +172,17 @@ void ConsoleObjectTreeOperations::console_object_move_and_rename(const QList<Con
         if (find_object_root.isValid()) {
             // Find indexes of modified objects in find
             // tree
-            const QHash<QString, QModelIndex> index_map = [&]() {
-                QHash<QString, QModelIndex> out;
-
-                for (const QString &old_dn : old_dn_list) {
-                    const QList<QModelIndex> results = target_console->search_items(find_object_root, ObjectRole_DN, old_dn, {ItemType_Object});
-
-                    for (const QModelIndex &index : results) {
-                        out[old_dn] = index;
-                    }
+            QHash<QString, QModelIndex> index_map;
+            for (const QString &old_dn : old_dn_list) {
+                const QList<QModelIndex> results =
+                    target_console->search_items(find_object_root,
+                                                 ObjectRole_DN,
+                                                 old_dn,
+                                                 { ItemType_Object });
+                for (const QModelIndex &index : results) {
+                    index_map[old_dn] = index;
                 }
-
-                return out;
-            }();
+            }
 
             for (const QString &old_dn : index_map.keys()) {
                 const QModelIndex index = index_map[old_dn];
@@ -271,32 +256,33 @@ void ConsoleObjectTreeOperations::add_objects_to_console(ConsoleWidget *console,
     for (const AdObject &object : object_list) {
         if (object.is_empty())
             continue;
-        const bool should_be_in_scope = [&]() {
-            // NOTE: "containers" referenced here don't mean
-            // objects with "container" object class.
-            // Instead it means all the objects that can
-            // have children(some of which are not
-            // "container" class).
-            const QString object_class = object.get_string(ATTRIBUTE_OBJECT_CLASS);
-            const bool is_container = [=]() {
-                const QList<QString> filter_containers = g_adconfig->get_filter_containers();
+        // NOTE: "containers" referenced here don't mean
+        // objects with "container" object class.
+        // Instead it means all the objects that can
+        // have children(some of which are not
+        // "container" class).
+        const QString object_class = object.get_string(ATTRIBUTE_OBJECT_CLASS);
+        const QList<QString> filter_containers =
+            g_adconfig->get_filter_containers();
+        const bool is_container =
+            filter_containers.contains(object_class);
+        const bool show_non_containers_ON =
+            settings_get_variant(SETTING_show_non_containers_in_console_tree).toBool();
+        const bool is_site_related =
+            g_adconfig->get_site_related_classes().contains(object_class);
 
-                return filter_containers.contains(object_class);
-            }();
+        const bool should_be_in_scope =
+            (is_container ||
+             show_non_containers_ON ||
+             is_site_related ||
+             (object_class == CLASS_PSO));
 
-            const bool show_non_containers_ON = settings_get_variant(SETTING_show_non_containers_in_console_tree).toBool();
-            const bool is_site_related = g_adconfig->get_site_related_classes().contains(object_class);
-
-            return (is_container || show_non_containers_ON || is_site_related || object_class == CLASS_PSO);
-        }();
-
-        const QList<QStandardItem *> row = [&]() {
-            if (should_be_in_scope) {
-                return console->add_scope_item(ItemType_Object, parent);
-            } else {
-                return console->add_results_item(ItemType_Object, parent);
-            }
-        }();
+        QList<QStandardItem *> row;
+        if (should_be_in_scope) {
+            row = console->add_scope_item(ItemType_Object, parent);
+        } else {
+            row = console->add_results_item(ItemType_Object, parent);
+        }
 
         if (object.get_string(ATTRIBUTE_OBJECT_CLASS) == CLASS_SITE) {
             console->set_item_sort_index(row[0]->index(), 1);
@@ -307,16 +293,11 @@ void ConsoleObjectTreeOperations::add_objects_to_console(ConsoleWidget *console,
 }
 
 void ConsoleObjectTreeOperations::add_objects_to_console_from_dn_list(ConsoleWidget *console, AdInterface &ad, const QList<QString> &dn_list, const QModelIndex &parent) {
-    const QList<AdObject> object_list = [&]() {
-        QList<AdObject> out;
-
-        for (const QString &dn : dn_list) {
-            const AdObject object = ad.search_object(dn);
-            out.append(object);
-        }
-
-        return out;
-    }();
+    QList<AdObject> object_list;
+    for (const QString &dn : dn_list) {
+        const AdObject object = ad.search_object(dn);
+        object_list.append(object);
+    }
 
     ConsoleObjectTreeOperations::add_objects_to_console(console, object_list, parent);
 }
@@ -334,27 +315,28 @@ void ConsoleObjectTreeOperations::console_object_load(const QList<QStandardItem 
             continue;
         }
 
-        const QString display_value = [attribute, object]() {
-            if (attribute == ATTRIBUTE_OBJECT_CLASS) {
-                const QString object_class = object.get_string(attribute);
+        QString display_value;
+        if (attribute == ATTRIBUTE_OBJECT_CLASS) {
+            const QString object_class = object.get_string(attribute);
 
-                if (object_class == CLASS_GROUP) {
-                    const GroupScope scope = object.get_group_scope();
-                    const QString scope_string = group_scope_string(scope);
+            if (object_class == CLASS_GROUP) {
+                const GroupScope scope = object.get_group_scope();
+                const QString scope_string = group_scope_string(scope);
 
-                    const GroupType type = object.get_group_type();
-                    const QString type_string = group_type_string_adjective(type);
+                const GroupType type = object.get_group_type();
+                const QString type_string = group_type_string_adjective(type);
 
-                    return QString("%1 - %2").arg(type_string, scope_string);
-                } else {
-                    return g_adconfig->get_class_display_name(object_class);
-                }
+                display_value =
+                    QString("%1 - %2").arg(type_string, scope_string);
             } else {
-                const QByteArray value = object.get_value(attribute);
-                return attribute_display_value(attribute, value, g_adconfig);
+                display_value =
+                    g_adconfig->get_class_display_name(object_class);
             }
-        }();
-
+        } else {
+            const QByteArray value = object.get_value(attribute);
+            display_value =
+                attribute_display_value(attribute, value, g_adconfig);
+        }
         row[i]->setText(display_value);
     }
 
@@ -738,29 +720,24 @@ void ConsoleObjectTreeOperations::console_object_rename(const QList<ConsoleWidge
         return;
     }
 
-    const QString old_dn = [&]() {
-        if (!index_list.isEmpty()) {
-            const QModelIndex index = index_list[0];
-            const QString out = index.data(dn_role).toString();
+    QString old_dn;
+    if (!index_list.isEmpty()) {
+        const QModelIndex index = index_list[0];
+        old_dn = index.data(dn_role).toString();
+    } else {
+        old_dn = QString();
+    }
 
-            return out;
-        } else {
-            return QString();
-        }
-    }();
-
-    RenameObjectDialog *dialog = [&]() -> RenameObjectDialog * {
-        const bool is_user = (object_class == CLASS_USER);
-        const bool is_group = (object_class == CLASS_GROUP);
-
-        if (is_user) {
-            return new RenameUserDialog(ad, old_dn, console_list[0]);
-        } else if (is_group) {
-            return new RenameGroupDialog(ad, old_dn, console_list[0]);
-        } else {
-            return new RenameOtherDialog(ad, old_dn, console_list[0]);
-        }
-    }();
+    const bool is_user = (object_class == CLASS_USER);
+    const bool is_group = (object_class == CLASS_GROUP);
+    RenameObjectDialog *dialog;
+    if (is_user) {
+        dialog = new RenameUserDialog(ad, old_dn, console_list[0]);
+    } else if (is_group) {
+        dialog = new RenameGroupDialog(ad, old_dn, console_list[0]);
+    } else {
+        dialog = new RenameOtherDialog(ad, old_dn, console_list[0]);
+    }
 
     dialog->open();
 
@@ -857,29 +834,24 @@ void ConsoleObjectTreeOperations::console_object_properties(const QList<ConsoleW
             return;
         }
 
-        const QList<AdObject> object_list = [&]() {
-            QList<AdObject> out;
+        QList<AdObject> object_list;
+        for (const QString &dn : dn_list) {
+            const AdObject object = ad2.search_object(dn);
 
-            for (const QString &dn : dn_list) {
-                const AdObject object = ad2.search_object(dn);
-
-                // TODO: band-aid for the situations
-                // where properties dialog interacts
-                // with deleted objects. Bad stuff can
-                // still happen if properties is opened
-                // while object exists, then object is
-                // deleted and properties is applied.
-                // Remove this or improve it when you
-                // tackle this issue head-on.
-                if (object.is_empty()) {
-                    continue;
-                }
-
-                out.append(object);
+            // TODO: band-aid for the situations
+            // where properties dialog interacts
+            // with deleted objects. Bad stuff can
+            // still happen if properties is opened
+            // while object exists, then object is
+            // deleted and properties is applied.
+            // Remove this or improve it when you
+            // tackle this issue head-on.
+            if (object.is_empty()) {
+                continue;
             }
 
-            return out;
-        }();
+            object_list.append(object);
+        }
 
         auto apply_changes = [&object_list](ConsoleWidget *target_console) {
             auto apply_changes_to_branch = [&](const QModelIndex &root_index, const int item_type, const int update_dn_role) {
