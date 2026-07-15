@@ -4,12 +4,9 @@
 #include "console_impls/object_impl/object_impl.h"
 
 ObjectDragDrop::DropType ObjectDragDrop::console_object_get_drop_type(const QModelIndex &dropped, const QModelIndex &target) {
-    const bool dropped_is_target = [&]() {
-        const QString dropped_dn = dropped.data(ObjectRole_DN).toString();
-        const QString target_dn = target.data(ObjectRole_DN).toString();
-
-        return (dropped_dn == target_dn);
-    }();
+    const QString dropped_dn = dropped.data(ObjectRole_DN).toString();
+    const QString target_dn = target.data(ObjectRole_DN).toString();
+    const bool dropped_is_target = (dropped_dn == target_dn);
 
     const QList<QString> dropped_classes = dropped.data(ObjectRole_ObjectClasses).toStringList();
     const QList<QString> target_classes = target.data(ObjectRole_ObjectClasses).toStringList();
@@ -27,16 +24,13 @@ ObjectDragDrop::DropType ObjectDragDrop::console_object_get_drop_type(const QMod
         return DropType_AddToGroup;
     } else {
         const QList<QString> dropped_superiors = g_adconfig->get_possible_superiors(dropped_classes);
-
-        const bool target_is_valid_superior = [&]() {
-            for (const auto &object_class : dropped_superiors) {
-                if (target_classes.contains(object_class)) {
-                    return true;
-                }
+        bool target_is_valid_superior = false;
+        for (const auto &object_class : dropped_superiors) {
+            if (target_classes.contains(object_class)) {
+                target_is_valid_superior = true;
+                break;
             }
-
-            return false;
-        }();
+        }
 
         if (target_is_valid_superior) {
             return DropType_Move;
