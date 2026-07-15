@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,17 +43,19 @@ void FilterWidgetSimpleTab::enable_filtering_all_classes() {
 }
 
 QString FilterWidgetSimpleTab::get_filter() const {
-    const QString name_filter = [this]() {
-        const QString name = ui->name_edit->text();
-
-        if (!name.isEmpty()) {
-            const QString filter = filter_OR({filter_CONDITION(Condition_Contains, ATTRIBUTE_NAME, name),
-                                       filter_CONDITION(Condition_Contains, ATTRIBUTE_SAM_ACCOUNT_NAME, name)});
-            return filter;
-        } else {
-            return QString();
-        }
-    }();
+    const QString name = ui->name_edit->text();
+    QString name_filter;
+    if (! name.isEmpty()) {
+        name_filter =
+            filter_OR({
+                    filter_CONDITION(Condition_Contains,
+                                     ATTRIBUTE_NAME,
+                                     name),
+                    filter_CONDITION(Condition_Contains,
+                                     ATTRIBUTE_SAM_ACCOUNT_NAME,
+                                     name)
+                });
+    }
 
     const QString classes_filter = ui->select_classes_widget->get_filter();
 
