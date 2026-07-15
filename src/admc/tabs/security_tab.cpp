@@ -1,8 +1,9 @@
 ﻿/*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,18 +211,14 @@ void SecurityTab::load_sd(AdInterface &ad, security_descriptor *sd_arg) {
     // Save previous selected trustee before reloading
     // trustee model. This is for the case where we
     // need to restore selection later.
-    const QByteArray previous_selected_trustee = [&]() {
-        const QList<QModelIndex> selected_list = ui->trustee_view->selectionModel()->selectedRows();
-
-        if (!selected_list.isEmpty()) {
-            const QModelIndex selected = selected_list[0];
-            const QByteArray out = selected.data(TrusteeItemRole_Sid).toByteArray();
-
-            return out;
-        } else {
-            return QByteArray();
-        }
-    }();
+    QByteArray previous_selected_trustee;
+    const QList<QModelIndex> selected_list =
+        ui->trustee_view->selectionModel()->selectedRows();
+    if (! selected_list.isEmpty()) {
+        const QModelIndex selected = selected_list[0];
+        previous_selected_trustee =
+            selected.data(TrusteeItemRole_Sid).toByteArray();
+    }
 
     // Load trustee model
     trustee_model->removeRows(0, trustee_model->rowCount());
@@ -233,18 +230,23 @@ void SecurityTab::load_sd(AdInterface &ad, security_descriptor *sd_arg) {
     // Note that trustee view must always have a
     // selection so that rights view displays
     // something. We also restore
-    const QModelIndex selected_trustee = [&]() {
-        const QModelIndex first_index = trustee_model->index(0, 0);
+    QModelIndex selected_trustee;
+    const QModelIndex first_index = trustee_model->index(0, 0);
 
-        // Restore previously selected trustee
-        const QList<QModelIndex> match_list = trustee_model->match(first_index, TrusteeItemRole_Sid, previous_selected_trustee, -1, Qt::MatchFlags(Qt::MatchExactly | Qt::MatchRecursive));
+    // Restore previously selected trustee
+    const QList<QModelIndex> match_list =
+        trustee_model->match(
+            first_index,
+            TrusteeItemRole_Sid,
+            previous_selected_trustee,
+            -1,
+            Qt::MatchFlags(Qt::MatchExactly | Qt::MatchRecursive));
 
-        if (!match_list.isEmpty()) {
-            return match_list[0];
-        } else {
-            return first_index;
-        }
-    }();
+    if (! match_list.isEmpty()) {
+        selected_trustee = match_list[0];
+    } else {
+        selected_trustee = first_index;
+    }
 
     ui->trustee_view->selectionModel()->setCurrentIndex(selected_trustee, QItemSelectionModel::Current | QItemSelectionModel::ClearAndSelect);
 }
@@ -428,19 +430,14 @@ void SecurityTab::on_add_trustee_button() {
             }
 
             // Get sid's of selected objects
-            const QList<QByteArray> sid_list = [&, dialog]() {
-                QList<QByteArray> out;
-
-                const QList<QString> selected_list = dialog->get_selected();
-                for (const QString &dn : selected_list) {
-                    const AdObject object = ad.search_object(dn, {ATTRIBUTE_OBJECT_SID});
-                    const QByteArray sid = object.get_value(ATTRIBUTE_OBJECT_SID);
-
-                    out.append(sid);
-                }
-
-                return out;
-            }();
+            QList<QByteArray> sid_list;
+            const QList<QString> selected_list = dialog->get_selected();
+            for (const QString &dn : selected_list) {
+                const AdObject object =
+                    ad.search_object(dn, {ATTRIBUTE_OBJECT_SID});
+                const QByteArray sid = object.get_value(ATTRIBUTE_OBJECT_SID);
+                sid_list.append(sid);
+            }
 
             add_trustees(sid_list, ad);
         });
@@ -452,20 +449,15 @@ void SecurityTab::on_remove_trustee_button() {
         return;
     }
 
-    const QList<QByteArray> removed_trustee_list = [&]() {
-        QList<QByteArray> out;
+    QList<QByteArray> removed_trustee_list;
+    QItemSelectionModel *selection_model = ui->trustee_view->selectionModel();
+    const QList<QPersistentModelIndex> selected_list =
+        persistent_index_list(selection_model->selectedRows());
 
-        QItemSelectionModel *selection_model = ui->trustee_view->selectionModel();
-        const QList<QPersistentModelIndex> selected_list = persistent_index_list(selection_model->selectedRows());
-
-        for (const QPersistentModelIndex &index : selected_list) {
-            const QByteArray sid = index.data(TrusteeItemRole_Sid).toByteArray();
-
-            out.append(sid);
-        }
-
-        return out;
-    }();
+    for (const QPersistentModelIndex &index : selected_list) {
+        const QByteArray sid = index.data(TrusteeItemRole_Sid).toByteArray();
+        removed_trustee_list.append(sid);
+    }
 
     // Remove from sd
     security_descriptor_remove_trustee(sd, removed_trustee_list);
@@ -485,19 +477,14 @@ void SecurityTab::on_remove_trustee_button() {
 }
 
 void SecurityTab::add_trustees(const QList<QByteArray> &sid_list, AdInterface &ad) {
-    const QList<QString> current_sid_string_list = [&]() {
-        QList<QString> out;
+    QList<QString> current_sid_string_list;
+    for (int row = 0; row < trustee_model->rowCount(); row++) {
+        QStandardItem *item = trustee_model->item(row, 0);
+        const QByteArray sid = item->data(TrusteeItemRole_Sid).toByteArray();
+        const QString sid_string = object_sid_display_value(sid);
 
-        for (int row = 0; row < trustee_model->rowCount(); row++) {
-            QStandardItem *item = trustee_model->item(row, 0);
-            const QByteArray sid = item->data(TrusteeItemRole_Sid).toByteArray();
-            const QString sid_string = object_sid_display_value(sid);
-
-            out.append(sid_string);
-        }
-
-        return out;
-    }();
+        current_sid_string_list.append(sid_string);
+    }
 
     bool added_anything = false;
     bool failed_to_add_because_already_exists = false;
