@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,16 +146,11 @@ void PolicyOUImpl::drop(const QList<QPersistentModelIndex> &dropped_list, const 
 
     const QString ou_dn = target.data(PolicyOURole_DN).toString();
 
-    const QList<QString> gpo_list = [&]() {
-        QList<QString> out;
-
-        for (const QPersistentModelIndex &index : dropped_list) {
-            const QString gpo = index.data(PolicyRole_DN).toString();
-            out.append(gpo);
-        }
-
-        return out;
-    }();
+    QList<QString> gpo_list;
+    for (const QPersistentModelIndex &index : dropped_list) {
+        const QString gpo = index.data(PolicyRole_DN).toString();
+        gpo_list.append(gpo);
+    }
 
     link_gpo_to_ou(target, ou_dn, gpo_list);
 
@@ -202,14 +198,9 @@ QSet<QAction *> PolicyOUImpl::get_custom_actions(const QModelIndex &index, const
         out.insert(link_gpo_action);
         out.insert(change_gp_options_action);
 
-        const bool is_domain = [&]() {
-            const QString dn = index.data(PolicyOURole_DN).toString();
-            const QString domain_dn = g_adconfig->domain_dn();
-            const bool is_domain_out = (dn == domain_dn);
-
-            return is_domain_out;
-        }();
-
+        const QString dn = index.data(PolicyOURole_DN).toString();
+        const QString domain_dn = g_adconfig->domain_dn();
+        const bool is_domain = (dn == domain_dn);
         if (is_domain) {
             out.insert(find_gpo_action);
         }
@@ -344,16 +335,11 @@ void PolicyOUImpl::delete_action(const QList<QModelIndex> &index_list) {
 }
 
 void policy_ou_impl_add_objects_from_dns(ConsoleWidget *console, AdInterface &ad, const QList<QString> &dn_list, const QModelIndex &parent) {
-    const QList<AdObject> object_list = [&]() {
-        QList<AdObject> out;
-
-        for (const QString &dn : dn_list) {
-            const AdObject object = ad.search_object(dn);
-            out.append(object);
-        }
-
-        return out;
-    }();
+    QList<AdObject> object_list;
+    for (const QString &dn : dn_list) {
+        const AdObject object = ad.search_object(dn);
+        object_list.append(object);
+    }
 
     policy_ou_impl_add_objects_to_console(console, object_list, parent);
 }
@@ -401,23 +387,13 @@ void PolicyOUImpl::link_gpo_to_ou(const QModelIndex &ou_index, const QString &ou
         return;
     }
 
-    const Gplink original_gplink = [&]() {
-        const AdObject target_object = ad.search_object(ou_dn);
-        const QString gplink_string = target_object.get_string(ATTRIBUTE_GPLINK);
-        const Gplink out = Gplink(gplink_string);
-
-        return out;
-    }();
-
-    const Gplink new_gplink = [&]() {
-        Gplink out = original_gplink;
-
-        for (const QString &gpo : gpo_list) {
-            out.add(gpo);
-        }
-
-        return out;
-    }();
+    const AdObject target_object = ad.search_object(ou_dn);
+    const QString gplink_string = target_object.get_string(ATTRIBUTE_GPLINK);
+    const Gplink original_gplink = Gplink(gplink_string);
+    Gplink new_gplink = original_gplink;
+    for (const QString &gpo : gpo_list) {
+        new_gplink.add(gpo);
+    }
 
     const QString new_gplink_string = new_gplink.to_string();
 
@@ -430,20 +406,14 @@ void PolicyOUImpl::link_gpo_to_ou(const QModelIndex &ou_index, const QString &ou
 
     update_ou_gplink_data(new_gplink_string, ou_index);
 
-    const QList<QString> added_gpo_list = [&]() {
-        QList<QString> out;
-
-        const QList<QString> new_gpo_list = new_gplink.get_gpo_list();
-
-        for (const QString &gpo : new_gpo_list) {
-            const bool added = !original_gplink.contains(gpo);
-            if (added) {
-                out.append(gpo);
-            }
+    QList<QString> added_gpo_list;
+    const QList<QString> new_gpo_list = new_gplink.get_gpo_list();
+    for (const QString &gpo : new_gpo_list) {
+        const bool added = (! original_gplink.contains(gpo));
+        if (added) {
+            added_gpo_list.append(gpo);
         }
-
-        return out;
-    }();
+    }
 
     policy_ou_impl_add_objects_from_dns(console, ad, added_gpo_list, ou_index);
 
