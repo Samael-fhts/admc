@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,15 +135,14 @@ PropertiesDialog::PropertiesDialog(AdInterface &ad, const QString &target_arg, C
     reset_button = ui->button_box->button(QDialogButtonBox::Reset);
     auto cancel_button = ui->button_box->button(QDialogButtonBox::Cancel);
 
-    const QString title = [&]() {
-        const QString target_name = dn_get_name(target_arg);
+    QString title;
+    const QString target_name = dn_get_name(target_arg);
+    if (! target_name.isEmpty()) {
+        title = QString(tr("%1 Properties")).arg(target_name);
+    } else {
+        title = tr("Properties");
+    }
 
-        if (!target_name.isEmpty()) {
-            return QString(tr("%1 Properties")).arg(target_name);
-        } else {
-            return tr("Properties");
-        }
-    }();
     setWindowTitle(title);
 
     const AdObject object = ad.search_object(target);
@@ -152,31 +152,34 @@ PropertiesDialog::PropertiesDialog(AdInterface &ad, const QString &target_arg, C
     //
     // Create tabs
     //
-    QWidget *general_tab = [&]() -> QWidget * {
-        if (is_person || object.is_class(CLASS_CONTACT)) {
-            return new GeneralUserTab(&edit_list, this);
-        } else if (object.is_class(CLASS_GROUP)) {
-            return new GeneralGroupTab(&edit_list, this);
-        } else if (object.is_class(CLASS_OU)) {
-            return new GeneralOUTab(&edit_list, this);
-        } else if (object.is_class(CLASS_COMPUTER)) {
-            return new GeneralComputerTab(&edit_list, this);
-        } else if (object.is_class(CLASS_GP_CONTAINER)) {
-            return new GeneralPolicyTab(&edit_list, this);
-        } else if (object.is_class(CLASS_SHARED_FOLDER)) {
-            return new GeneralSharedFolderTab(&edit_list, this);
-        } else if (object.is_class(CLASS_SITE_LINK)) {
-            return new SitesLinkGeneralTab(&edit_list, SitesLinkType::Link, this);
-        } else if (object.is_class(CLASS_SITE_LINK_BRIDGE)) {
-            return new SitesLinkGeneralTab(&edit_list, SitesLinkType::Bridge, this);
-        } else if (object.is_class(CLASS_SITE)) {
-            return new GeneralSiteTab(&edit_list, this);
-        } else if (!object.is_empty()) {
-            return new GeneralOtherTab(&edit_list, this);
-        } else {
-            return new ErrorTab(this);
-        }
-    }();
+    QWidget *general_tab;
+    if (is_person || object.is_class(CLASS_CONTACT)) {
+        general_tab = new GeneralUserTab(&edit_list, this);
+    } else if (object.is_class(CLASS_GROUP)) {
+        general_tab = new GeneralGroupTab(&edit_list, this);
+    } else if (object.is_class(CLASS_OU)) {
+        general_tab = new GeneralOUTab(&edit_list, this);
+    } else if (object.is_class(CLASS_COMPUTER)) {
+        general_tab = new GeneralComputerTab(&edit_list, this);
+    } else if (object.is_class(CLASS_GP_CONTAINER)) {
+        general_tab = new GeneralPolicyTab(&edit_list, this);
+    } else if (object.is_class(CLASS_SHARED_FOLDER)) {
+        general_tab = new GeneralSharedFolderTab(&edit_list, this);
+    } else if (object.is_class(CLASS_SITE_LINK)) {
+        general_tab = new SitesLinkGeneralTab(&edit_list,
+                                              SitesLinkType::Link,
+                                              this);
+    } else if (object.is_class(CLASS_SITE_LINK_BRIDGE)) {
+        general_tab = new SitesLinkGeneralTab(&edit_list,
+                                              SitesLinkType::Bridge,
+                                              this);
+    } else if (object.is_class(CLASS_SITE)) {
+        general_tab = new GeneralSiteTab(&edit_list, this);
+    } else if (!object.is_empty()) {
+        general_tab = new GeneralOtherTab(&edit_list, this);
+    } else {
+        general_tab = new ErrorTab(this);
+    }
 
     ui->tab_widget->add_tab(general_tab, tr("General"));
 
@@ -244,22 +247,17 @@ PropertiesDialog::PropertiesDialog(AdInterface &ad, const QString &target_arg, C
 
         ui->tab_widget->add_tab(os_tab, tr("Operating System"));
 
-        const bool laps_enabled = [&]() {
-            const QList<QString> attribute_list = object.attributes();
-            const bool out = (attribute_list.contains(ATTRIBUTE_LAPS_PASSWORD) && attribute_list.contains(ATTRIBUTE_LAPS_EXPIRATION));
-
-            return out;
-        }();
+        const QList<QString> attribute_list = object.attributes();
+        const bool laps_enabled =
+            (attribute_list.contains(ATTRIBUTE_LAPS_PASSWORD)
+             && attribute_list.contains(ATTRIBUTE_LAPS_EXPIRATION));
 
 #if ADMC_ENABLE_NATIVE_LAPS > 0
-        const bool laps_v2_enabled = [&]() {
-            const QList<QString> attribute_list = object.attributes();
-            const bool out = ((attribute_list.contains(ATTRIBUTE_LAPS_V2_ENCRYPTED_PASSWORD)
-                        ||    attribute_list.contains(ATTRIBUTE_LAPS_V2_DSRM_ENCRYPTED_PASSWORD)
-                        ||    attribute_list.contains(ATTRIBUTE_LAPS_V2_PASSWORD))
-                        &&    attribute_list.contains(ATTRIBUTE_LAPS_V2_EXPIRATION_TIME));
-            return out;
-        }();
+        const bool laps_v2_enabled =
+            ((attribute_list.contains(ATTRIBUTE_LAPS_V2_ENCRYPTED_PASSWORD)
+              ||    attribute_list.contains(ATTRIBUTE_LAPS_V2_DSRM_ENCRYPTED_PASSWORD)
+              ||    attribute_list.contains(ATTRIBUTE_LAPS_V2_PASSWORD))
+             &&    attribute_list.contains(ATTRIBUTE_LAPS_V2_EXPIRATION_TIME));
 #else
       const bool laps_v2_enabled = false;
 #endif
@@ -340,13 +338,12 @@ void PropertiesDialog::on_current_tab_changed(const int prev, const int current)
         return;
     }
 
-    const PropertiesWarningType warning_type = [&]() {
-        if (new_tab == attributes_tab) {
-            return PropertiesWarningType_SwitchToAttributes;
-        } else {
-            return PropertiesWarningType_SwitchFromAttributes;
-        }
-    }();
+    PropertiesWarningType warning_type;
+    if (new_tab == attributes_tab) {
+        warning_type = PropertiesWarningType_SwitchToAttributes;
+    } else {
+        warning_type = PropertiesWarningType_SwitchFromAttributes;
+    }
 
     auto attributes_warning_dialog = new PropertiesWarningDialog(warning_type, this);
     attributes_warning_dialog->open();
@@ -405,12 +402,8 @@ void PropertiesDialog::open_security_warning() {
         return;
     }
 
-    const bool switched_to_security_tab = [&]() {
-        const QWidget *current_tab = ui->tab_widget->get_current_tab();
-        const bool out = (current_tab == security_tab);
-
-        return out;
-    }();
+    const QWidget *current_tab = ui->tab_widget->get_current_tab();
+    const bool switched_to_security_tab = (current_tab == security_tab);
     if (!switched_to_security_tab) {
         return;
     }
