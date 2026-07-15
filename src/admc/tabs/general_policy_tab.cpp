@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,21 +93,19 @@ void GeneralPolicyTabEdit::load(AdInterface &ad, const AdObject &object) {
     // "unknown" instead of number
     const QString unknown_string = tr("unknown");
 
-    const QString sysvol_user_string = [&]() {
-        if (get_sysvol_version_success) {
-            return QString::number(sysvol_user);
-        } else {
-            return unknown_string;
-        }
-    }();
+    QString sysvol_user_string;
+    if (get_sysvol_version_success) {
+        sysvol_user_string = QString::number(sysvol_user);
+    } else {
+        sysvol_user_string = unknown_string;
+    }
 
-    const QString sysvol_machine_string = [&]() {
-        if (get_sysvol_version_success) {
-            return QString::number(sysvol_machine);
-        } else {
-            return unknown_string;
-        }
-    }();
+    QString sysvol_machine_string;
+    if (get_sysvol_version_success) {
+        sysvol_machine_string = QString::number(sysvol_machine);
+    } else {
+        sysvol_machine_string = unknown_string;
+    }
 
     const QString user_version_string = QString("%1 (AD), %2 (sysvol)").arg(ad_user).arg(sysvol_user_string);
     const QString machine_version_string = QString("%1 (AD), %2 (sysvol)").arg(ad_machine).arg(sysvol_machine_string);
