@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,36 +116,25 @@ bool PropertiesMultiDialog::apply() {
 
     show_busy_indicator();
 
-    const bool apply_success = [&]() {
-        bool out = true;
+    bool apply_success = true;
+    for (AttributeEdit *edit : edit_list) {
+        QCheckBox *apply_check = check_map[edit];
+        const bool need_to_apply = apply_check->isChecked();
 
-        for (AttributeEdit *edit : edit_list) {
-            QCheckBox *apply_check = check_map[edit];
-            const bool need_to_apply = apply_check->isChecked();
-
-            if (need_to_apply) {
-                const bool success = [&]() {
-                    bool success_out = true;
-
-                    for (const QString &target : target_list) {
-                        const bool this_success = edit->apply(ad, target);
-
-                        success_out = (success_out && this_success);
-                    }
-
-                    return success_out;
-                }();
-
-                if (success) {
-                    apply_check->setChecked(false);
-                }
-
-                out = (out && success);
+        if (need_to_apply) {
+            bool success = true;
+            for (const QString &target : target_list) {
+                const bool this_success = edit->apply(ad, target);
+                success = (success && this_success);
             }
-        }
 
-        return out;
-    }();
+            if (success) {
+                apply_check->setChecked(false);
+            }
+
+            apply_success = (apply_success && success);
+        }
+    }
 
     g_status->display_ad_messages(ad, this);
 
