@@ -1,7 +1,7 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
  * Copyright (C) 2026 Artyom V. Poptsov
  *
@@ -191,12 +191,8 @@ QList<QAction *> QueryFolderImpl::get_all_custom_actions() const {
 QSet<QAction *> QueryFolderImpl::get_custom_actions(const QModelIndex &index, const bool single_selection) const {
     UNUSED_ARG(index);
 
-    const bool is_root = [&]() {
-        QStandardItem *item = console->get_item(index);
-        const bool out = item->data(QueryItemRole_IsRoot).toBool();
-
-        return out;
-    }();
+    QStandardItem *item = console->get_item(index);
+    const bool is_root = item->data(QueryItemRole_IsRoot).toBool();
 
     QSet<QAction *> out;
 
@@ -217,12 +213,8 @@ QSet<QAction *> QueryFolderImpl::get_custom_actions(const QModelIndex &index, co
 QSet<StandardAction> QueryFolderImpl::get_standard_actions(const QModelIndex &index, const bool single_selection) const {
     UNUSED_ARG(index);
 
-    const bool is_root = [&]() {
-        QStandardItem *item = console->get_item(index);
-        const bool out = item->data(QueryItemRole_IsRoot).toBool();
-
-        return out;
-    }();
+    QStandardItem *item = console->get_item(index);
+    const bool is_root = item->data(QueryItemRole_IsRoot).toBool();
 
     QSet<StandardAction> out;
 
@@ -267,17 +259,15 @@ void QueryFolderImpl::paste(const QList<QModelIndex> &index_list) {
         return;
     }
 
-    const bool parent_is_same = [&]() {
-        for (const QModelIndex &index : copied_list) {
-            const QModelIndex this_parent = index.parent();
+    bool parent_is_same = false;
+    for (const QModelIndex &index : copied_list) {
+        const QModelIndex this_parent = index.parent();
 
-            if (this_parent == parent_index) {
-                return true;
-            }
+        if (this_parent == parent_index) {
+            parent_is_same = true;
+            break;
         }
-
-        return false;
-    }();
+    }
 
     // TODO: this is a band-aid on top of name conflict
     // check inside move(), try to make this
@@ -369,12 +359,11 @@ void console_query_tree_init(ConsoleWidget *console) {
     while (!folder_stack.isEmpty()) {
         const QPersistentModelIndex folder_index = folder_stack.pop();
 
-        const QList<QString> child_list = [&]() {
-            const QString folder_path = console_query_folder_path(folder_index);
-            const QHash<QString, QVariant> folder_data = folder_list[folder_path].toHash();
-
-            return folder_data["child_list"].toStringList();
-        }();
+        const QString folder_path = console_query_folder_path(folder_index);
+        const QHash<QString, QVariant> folder_data =
+            folder_list[folder_path].toHash();
+        const QList<QString> child_list =
+            folder_data["child_list"].toStringList();
 
         // Go through children and add them as folders or
         // query items
@@ -427,18 +416,12 @@ void console_query_tree_save(ConsoleWidget *console) {
         const QString parent_path = console_query_folder_path(index.parent());
         const ItemType type = (ItemType) console_item_get_type(index);
 
-        const QList<QString> child_list = [&]() {
-            QList<QString> out;
-
-            for (int i = 0; i < model->rowCount(index); i++) {
-                const QModelIndex child = model->index(i, 0, index);
-                const QString child_path = console_query_folder_path(child);
-
-                out.append(child_path);
-            }
-
-            return out;
-        }();
+        QList<QString> child_list;
+        for (int i = 0; i < model->rowCount(index); i++) {
+            const QModelIndex child = model->index(i, 0, index);
+            const QString child_path = console_query_folder_path(child);
+            child_list.append(child_path);
+        }
 
         if (type == ItemType_QueryFolder) {
             const bool is_root = !index.parent().isValid();
@@ -500,40 +483,29 @@ QString console_query_folder_path(const QModelIndex &index) {
         return QString(QUERY_ROOT);
     }
 
-    const QList<QString> path_split = [&index]() {
-        QList<QString> out;
+    QList<QString> path_split;
+    QModelIndex current = index;
+    while (current.isValid()) {
+        const QString name = current.data(Qt::DisplayRole).toString();
+        path_split.prepend(name);
+        current = current.parent();
+    }
 
-        QModelIndex current = index;
-        while (current.isValid()) {
-            const QString name = current.data(Qt::DisplayRole).toString();
-            out.prepend(name);
+    // NOTE: remove root
+    path_split.removeAt(0);
 
-            current = current.parent();
+    QString path;
+    for (int i = 0; i < path_split.size(); i++) {
+        const QString part = path_split[i];
+
+        if (i == 0) {
+            path += QString(QUERY_ROOT) + "/";
+        } else {
+            path += "/";
         }
 
-        // NOTE: remove root
-        out.removeAt(0);
-
-        return out;
-    }();
-
-    const QString path = [&path_split]() {
-        QString out;
-
-        for (int i = 0; i < path_split.size(); i++) {
-            const QString part = path_split[i];
-
-            if (i == 0) {
-                out += QString(QUERY_ROOT) + "/";
-            } else {
-                out += "/";
-            }
-
-            out += part;
-        }
-
-        return out;
-    }();
+        path += part;
+    }
 
     return path;
 }
