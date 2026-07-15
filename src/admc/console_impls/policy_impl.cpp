@@ -1,8 +1,9 @@
 ﻿/*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -460,23 +461,15 @@ void console_policy_remove_link(const QList<ConsoleWidget *> &console_list, Poli
 
     show_busy_indicator();
 
-    const QString gplink_new_string = [&]() {
-        Gplink gplink = [&]() {
-            const AdObject parent_object = ad.search_object(ou_dn);
-            const QString gplink_old_string = parent_object.get_string(ATTRIBUTE_GPLINK);
-            const Gplink out = Gplink(gplink_old_string);
+    const AdObject parent_object = ad.search_object(ou_dn);
+    const QString gplink_old_string = parent_object.get_string(ATTRIBUTE_GPLINK);
+    Gplink gplink = Gplink(gplink_old_string);
 
-            return out;
-        }();
+    for (const QString &dn : dn_list) {
+        gplink.remove(dn);
+    }
 
-        for (const QString &dn : dn_list) {
-            gplink.remove(dn);
-        }
-
-        const QString out = gplink.to_string();
-
-        return out;
-    }();
+    const QString gplink_new_string = gplink.to_string();
 
     const bool replace_success = ad.attribute_replace_string(ou_dn, ATTRIBUTE_GPLINK, gplink_new_string);
 
@@ -546,23 +539,19 @@ void console_policy_delete(const QList<ConsoleWidget *> &console_list, PolicyRes
 
     show_busy_indicator();
 
-    const QList<QString> deleted_list = [&]() {
-        QList<QString> out;
-        for (const QString &dn : dn_list) {
-            bool gpc_is_deleted = false;
-            ad.gpo_delete(dn, &gpc_is_deleted);
+    QList<QString> deleted_list;
+    for (const QString &dn : dn_list) {
+        bool gpc_is_deleted = false;
+        ad.gpo_delete(dn, &gpc_is_deleted);
 
-            // NOTE: object may get deleted successfuly but
-            // deleting GPT fails which makes gpo_delete() fail
-            // as a whole, but we still want to remove gpo from
-            // the console in that case
-            if (gpc_is_deleted) {
-                out.append(dn);
-            }
+        // NOTE: object may get deleted successfuly but
+        // deleting GPT fails which makes gpo_delete() fail
+        // as a whole, but we still want to remove gpo from
+        // the console in that case
+        if (gpc_is_deleted) {
+            deleted_list.append(dn);
         }
-
-        return out;
-    }();
+    }
 
     auto apply_changes = [&deleted_list, policy_results](ConsoleWidget *target_console) {
         const QModelIndex policy_root = get_policy_tree_root(target_console);
@@ -693,18 +682,15 @@ void policy_add_links(const QList<ConsoleWidget *> &console_list, PolicyResultsW
 
     // TODO: serch for all policy objects once, then add
     // them to OU's
-    const QList<AdObject> gpo_object_list = [&]() {
-        const QString base = g_adconfig->policies_dn();
-        const SearchScope scope = SearchScope_Children;
-        const QString filter = filter_dn_list(policy_list);
-        const QList<QString> attributes = QList<QString>();
+    const QString base = g_adconfig->policies_dn();
+    const SearchScope scope = SearchScope_Children;
+    const QString filter = filter_dn_list(policy_list);
+    const QList<QString> attributes = QList<QString>();
 
-        const QHash<QString, AdObject> search_results = ad.search(base, scope, filter, attributes);
+    const QHash<QString, AdObject> search_results =
+        ad.search(base, scope, filter, attributes);
 
-        const QList<AdObject> out = search_results.values();
-
-        return out;
-    }();
+    const QList<AdObject> gpo_object_list = search_results.values();
 
     // NOTE: ok to not update dn after rename
     // because policy rename doesn't change dn,
@@ -805,27 +791,19 @@ void console_policy_edit(const QString &policy_dn, ConsoleWidget *console) {
 
     // TODO: remove this when gpui is able to load
     // policy name on their own
-    const QString policy_name = [&]() {
-        const AdObject object = ad.search_object(policy_dn);
-        return object.get_string(ATTRIBUTE_DISPLAY_NAME);
-    }();
+    const AdObject object = ad.search_object(policy_dn);
+    const QString policy_name = object.get_string(ATTRIBUTE_DISPLAY_NAME);
+    QString path = object.get_string(ATTRIBUTE_GPC_FILE_SYS_PATH);
 
-    const QString path = [&]() {
-        const AdObject object = ad.search_object(policy_dn);
-        QString filesys_path = object.get_string(ATTRIBUTE_GPC_FILE_SYS_PATH);
+    const QString current_dc = ad.get_dc();
 
-        const QString current_dc = ad.get_dc();
-
-        filesys_path.replace(QString("\\"), QString("/"));
-        auto contents = filesys_path.split("/", Qt::KeepEmptyParts);
-        if (contents.size() > 3 && !current_dc.isEmpty()) {
-            contents[2] = current_dc;
-        }
-        filesys_path = contents.join("/");
-        filesys_path.prepend(QString("smb:"));
-
-        return filesys_path;
-    }();
+    path.replace(QString("\\"), QString("/"));
+    auto contents = path.split("/", Qt::KeepEmptyParts);
+    if ((contents.size() > 3) && (! current_dc.isEmpty())) {
+        contents[2] = current_dc;
+    }
+    path = contents.join("/");
+    path.prepend(QString("smb:"));
 
     auto process = new QProcess(console);
     process->setProgram("gpui-main");
