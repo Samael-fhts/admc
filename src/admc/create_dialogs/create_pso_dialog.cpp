@@ -67,17 +67,15 @@ void CreatePSODialog::accept() {
         return;
     }
 
-    QHash<QString, QList<QString>> pso_string_settings = ui->pso_edit_widget->pso_settings_string_values();
-    QHash<QString, QList<QString>> attrs_map = {
-        {ATTRIBUTE_OBJECT_CLASS, {CLASS_PSO}},
-    };
-    for (const auto& attribute : pso_string_settings.keys()) {
-        attrs_map[attribute] = pso_string_settings[attribute];
+    QHash<QString, QList<QString>> settings =
+        ui->pso_edit_widget->pso_settings_string_values();
+    settings[ATTRIBUTE_OBJECT_CLASS] = {CLASS_PSO};
+    if (settings[ATTRIBUTE_PSO_APPLIES_TO].isEmpty()) {
+        settings.remove(ATTRIBUTE_PSO_APPLIES_TO);
     }
 
     const QString dn = get_created_dn();
-
-    const bool add_success = ad.object_add(dn, attrs_map);
+    const bool add_success = ad.object_add(dn, settings);
     g_status->display_ad_messages(ad, this);
     if (!add_success) {
         g_status->add_message(tr("Failed to create password settings object %1").arg(name), StatusType_Error);
