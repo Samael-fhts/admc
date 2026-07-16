@@ -1,4 +1,5 @@
 build/
+doc/
 output/
 *.ini
 *.qm
