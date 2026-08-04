@@ -71,6 +71,7 @@ set(ADMC_SOURCES
     core/utils.cpp
     ui/about_dialog.cpp
     ui/changelog_dialog.cpp
+    ui/connection_options_dialog.cpp
     ui/console_filter_dialog.cpp
     ui/error_log_dialog.cpp
     ui/password_dialog.cpp
@@ -134,7 +135,6 @@ set(ADMC_SOURCES
     find_widgets/find_widget.cpp
 
     security_sort_warning_dialog.cpp
-    connection_options_dialog.cpp
 
     fsmo/fsmo_dialog.cpp
     fsmo/fsmo_tab.cpp

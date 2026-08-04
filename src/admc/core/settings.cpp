@@ -22,7 +22,7 @@
 #include "core/settings.h"
 
 #include "core/config.h"
-#include "connection_options_dialog.h"
+#include "ui/connection_options_dialog.h"
 
 #include <QAction>
 #include <QDialog>
