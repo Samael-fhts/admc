@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ui/connection_options_dialog.h"
-#include "ui/ui_connection_options_dialog.h"
+#include "ui/dialog/connection_options.h"
+#include "ui/dialog/ui_connection_options.h"
 
 #include "adldap.h"
 #include "core/ad.h"

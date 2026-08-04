@@ -28,7 +28,7 @@
 #include <QTranslator>
 
 #include "adldap.h"
-#include "ui/connection_options_dialog.h"
+#include "ui/dialog/connection_options.h"
 #include "core/config.h"
 #include "core/globals.h"
 #include "core/settings.h"

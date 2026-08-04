@@ -25,7 +25,7 @@
 #include "console_impls/query_folder_impl.h"
 #include "ad_interface.h"
 #include "item_type.h"
-#include "ui/connection_options_dialog.h"
+#include "ui/dialog/connection_options.h"
 #include "fsmo/fsmo_dialog.h"
 #include "utils.h"
 #include "status.h"
