@@ -116,6 +116,7 @@ IconManager::IconManagerImpl::IconManagerImpl(IconManager *parent) : q(parent) {
         {ADMC_CATEGORY_GO_UP_ACTION, {"go-up", "go-up-symbolic"}},
         {ADMC_CATEGORY_REFRESH_ACTION, {"view-refresh", "view-refresh-symbolic"}},
         {ADMC_CATEGORY_MANUAL_ACTION, {"help", "help-about", "help-about-symbolic"}},
+        {ADMC_CATEGORY_PINNED_CONTAINER, {"Container", "help-about", "help-about-symbolic"}},
 
         // Icons for some system containers and objects
         {OBJECT_CATEGORY_BUILTIN, {"emblem-system", "emblem-system-symbolic"}},
