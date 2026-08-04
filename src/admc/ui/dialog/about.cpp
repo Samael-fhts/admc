@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ui/about_dialog.h"
-#include "ui/ui_about_dialog.h"
+#include "ui/dialog/about.h"
+#include "ui/dialog/ui_about.h"
 
 #include "core/config.h"
 

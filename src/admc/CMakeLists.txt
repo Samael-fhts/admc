@@ -69,7 +69,7 @@ set(ADMC_SOURCES
     core/search_thread.cpp
     core/settings.cpp
     core/utils.cpp
-    ui/about_dialog.cpp
+    ui/dialog/about.cpp
     ui/changelog_dialog.cpp
     ui/connection_options_dialog.cpp
     ui/console_filter_dialog.cpp
