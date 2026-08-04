@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "security_sort_warning_dialog.h"
-#include "ui_security_sort_warning_dialog.h"
+#include "ui/security_sort_warning_dialog.h"
+#include "ui/ui_security_sort_warning_dialog.h"
 
 SecuritySortWarningDialog::SecuritySortWarningDialog(QWidget *parent)
 : QDialog(parent) {
