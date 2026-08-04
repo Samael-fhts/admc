@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ui/changelog_dialog.h"
-#include "ui/ui_changelog_dialog.h"
+#include "ui/dialog/changelog.h"
+#include "ui/dialog/ui_changelog.h"
 
 #include "core/changelog.h"
 #include "core/config.h"

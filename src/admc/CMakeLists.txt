@@ -70,7 +70,7 @@ set(ADMC_SOURCES
     core/settings.cpp
     core/utils.cpp
     ui/dialog/about.cpp
-    ui/changelog_dialog.cpp
+    ui/dialog/changelog.cpp
     ui/connection_options_dialog.cpp
     ui/console_filter_dialog.cpp
     ui/error_log_dialog.cpp
