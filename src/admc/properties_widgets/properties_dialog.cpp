@@ -33,7 +33,7 @@
 #include "core/settings.h"
 #include "properties_dialog.h"
 #include "properties_warning_dialog.h"
-#include "ui/security_sort_warning_dialog.h"
+#include "ui/dialog/security_sort_warning.h"
 #include "status.h"
 #include "tab_widget.h"
 #include "tabs/account_tab.h"
