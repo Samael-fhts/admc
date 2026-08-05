@@ -50,7 +50,7 @@
 #include "fsmo/fsmo_dialog.h"
 #include "fsmo/fsmo_utils.h"
 #include "main_window.h"
-#include "status.h"
+#include "ui/status.h"
 #include "ui_main_window.h"
 #include "utils.h"
 

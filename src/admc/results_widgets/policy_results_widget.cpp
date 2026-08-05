@@ -30,7 +30,7 @@
 #include "core/globals.h"
 #include "core/settings.h"
 #include "core/utils.h"
-#include "status.h"
+#include "ui/status.h"
 #include "utils.h"
 #include "core/managers/icon_manager.h"
 #include "core/managers/gplink_manager.h"

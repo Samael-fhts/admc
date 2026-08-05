@@ -24,7 +24,7 @@
 #include "adldap.h"
 #include "core/ad.h"
 #include "core/globals.h"
-#include "status.h"
+#include "ui/status.h"
 #include "utils.h"
 #include "fsmo/fsmo_utils.h"
 

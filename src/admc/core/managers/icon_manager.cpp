@@ -26,7 +26,7 @@
 #include "ad_object.h"
 #include "core/settings.h"
 #include "core/globals.h"
-#include "status.h"
+#include "ui/status.h"
 
 #include <QPainter>
 #include <QIcon>

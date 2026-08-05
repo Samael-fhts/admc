@@ -30,7 +30,7 @@
 #include <QPushButton>
 #include "utils.h"
 #include "ad_utils.h"
-#include "status.h"
+#include "ui/status.h"
 
 CreateSubnetDialog::CreateSubnetDialog(AdInterface &ad, const QString &parent_dn_arg, QWidget *parent) :
     CreateObjectDialog(parent),

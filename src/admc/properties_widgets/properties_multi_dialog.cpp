@@ -32,7 +32,7 @@
 #include "multi_tabs/organization_multi_tab.h"
 #include "multi_tabs/profile_multi_tab.h"
 #include "core/settings.h"
-#include "status.h"
+#include "ui/status.h"
 #include "ui/widget/tab.h"
 #include "utils.h"
 

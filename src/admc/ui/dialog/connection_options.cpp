@@ -29,7 +29,7 @@
 #include "utils.h"
 #include "fsmo/fsmo_utils.h"
 #include "core/globals.h"
-#include "status.h"
+#include "ui/status.h"
 #include "krb5client.h"
 #include <stdexcept>
 

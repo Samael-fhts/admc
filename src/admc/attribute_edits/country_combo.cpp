@@ -26,7 +26,7 @@
 #include "adldap.h"
 #include "core/globals.h"
 #include "core/settings.h"
-#include "status.h"
+#include "ui/status.h"
 #include "utils.h"
 
 #include <QComboBox>

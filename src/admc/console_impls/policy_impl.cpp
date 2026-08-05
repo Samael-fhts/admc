@@ -42,7 +42,7 @@
 #include "rename_dialogs/rename_policy_dialog.h"
 #include "results_widgets/policy_results_widget.h"
 #include "select_dialogs/select_object_dialog.h"
-#include "status.h"
+#include "ui/status.h"
 #include "utils.h"
 
 void policy_add_links(const QList<ConsoleWidget *> &console_list, PolicyResultsWidget *policy_results, const QList<QString> &policy_list, const QList<QString> &ou_list);

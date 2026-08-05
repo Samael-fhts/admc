@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "status.h"
+#include "ui/status.h"
 
 #include "adldap.h"
 #include "ui/dialog/error_log.h"

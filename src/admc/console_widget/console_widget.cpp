@@ -29,7 +29,7 @@
 #include "console_widget/scope_proxy_model.h"
 #include "console_impls/item_type.h"
 #include "core/globals.h"
-#include "status.h"
+#include "ui/status.h"
 
 #include <QAction>
 #include <QApplication>

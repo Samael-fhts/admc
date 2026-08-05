@@ -38,7 +38,7 @@
 #include "select_dialogs/select_object_dialog.h"
 #include "find_widgets/find_object_dialog.h"
 #include "core/settings.h"
-#include "status.h"
+#include "ui/status.h"
 #include "utils.h"
 #include "tabs/general_user_tab.h"
 #include "tabs/general_group_tab.h"

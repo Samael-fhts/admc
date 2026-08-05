@@ -28,7 +28,7 @@
 #include "core/globals.h"
 #include "core/search_thread.h"
 #include "core/settings.h"
-#include "status.h"
+#include "ui/status.h"
 
 #include <QAbstractItemView>
 #include <QCursor>

@@ -6,7 +6,7 @@
 #include "core/ad.h"
 #include "core/fsmo.h"
 #include "core/managers/icon_manager.h"
-#include "status.h"
+#include "ui/status.h"
 #include "core/globals.h"
 #include "utils.h"
 #include "adldap.h"

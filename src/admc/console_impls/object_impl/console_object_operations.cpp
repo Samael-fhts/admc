@@ -58,7 +58,7 @@
 #include "rename_dialogs/rename_user_dialog.h"
 #include "select_dialogs/select_container_dialog.h"
 #include "select_dialogs/select_object_dialog.h"
-#include "status.h"
+#include "ui/status.h"
 #include "utils.h"
 
 void ConsoleObjectTreeOperations::console_object_move_and_rename(const QList<ConsoleWidget *> &console_list,

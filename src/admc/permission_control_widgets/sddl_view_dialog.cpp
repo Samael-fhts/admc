@@ -27,7 +27,7 @@
 #include "samba/dom_sid.h"
 #include "core/globals.h"
 #include "ad_config.h"
-#include "status.h"
+#include "ui/status.h"
 #include "ad_security.h"
 
 SDDLViewDialog::SDDLViewDialog(QWidget *parent) :

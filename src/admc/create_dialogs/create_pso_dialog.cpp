@@ -22,7 +22,7 @@
 #include "ad_interface.h"
 #include "utils.h"
 #include "ad_utils.h"
-#include "status.h"
+#include "ui/status.h"
 #include "core/globals.h"
 #include "attribute_edits/protect_deletion_edit.h"
 

@@ -23,7 +23,7 @@
 
 #include "adldap.h"
 #include "core/settings.h"
-#include "status.h"
+#include "ui/status.h"
 #include "core/managers/icon_manager.h"
 #include "core/managers/gplink_manager.h"
 

@@ -24,7 +24,7 @@
 #include "ad_utils.h"
 #include "select_dialogs/select_object_dialog.h"
 #include "core/managers/icon_manager.h"
-#include "status.h"
+#include "ui/status.h"
 #include "core/globals.h"
 
 #include <chrono>

@@ -28,7 +28,7 @@
 #include "console_widget/results_view.h"
 #include "core/globals.h"
 #include "gplink.h"
-#include "status.h"
+#include "ui/status.h"
 #include "utils.h"
 #include "core/managers/icon_manager.h"
 #include "core/managers/gplink_manager.h"

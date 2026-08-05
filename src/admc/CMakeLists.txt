@@ -77,8 +77,8 @@ set(ADMC_SOURCES
     ui/dialog/main_window_connection_error.cpp
     ui/dialog/password.cpp
     ui/dialog/security_sort_warning.cpp
+    ui/status.cpp
     ui/widget/tab.cpp
-    status.cpp
     utils.cpp
 
     main_window.cpp

@@ -25,7 +25,7 @@
 #include "adldap.h"
 #include "core/globals.h"
 #include "core/settings.h"
-#include "status.h"
+#include "ui/status.h"
 #include "utils.h"
 #include "core/managers/icon_manager.h"
 

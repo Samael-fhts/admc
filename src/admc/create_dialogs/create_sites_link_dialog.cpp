@@ -31,7 +31,7 @@
 #include "core/managers/icon_manager.h"
 #include "ad_utils.h"
 #include "utils.h"
-#include "status.h"
+#include "ui/status.h"
 
 CreateSitesLinkDialog::CreateSitesLinkDialog(AdInterface &ad,
                                              SitesLinkType type_arg,

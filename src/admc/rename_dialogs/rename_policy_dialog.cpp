@@ -26,7 +26,7 @@
 #include "core/globals.h"
 #include "rename_object_helper.h"
 #include "core/settings.h"
-#include "status.h"
+#include "ui/status.h"
 #include "utils.h"
 #include <QRegularExpression>
 

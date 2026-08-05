@@ -35,7 +35,7 @@
 #include "locale.h"
 #include "main_window.h"
 #include "ui/dialog/main_window_connection_error.h"
-#include "status.h"
+#include "ui/status.h"
 #include "utils.h"
 
 int main(int argc, char **argv) {
