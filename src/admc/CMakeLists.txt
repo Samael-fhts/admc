@@ -74,6 +74,7 @@ set(ADMC_SOURCES
     ui/dialog/connection_options.cpp
     ui/dialog/console_filter.cpp
     ui/dialog/error_log.cpp
+    ui/dialog/main_window_connection_error.cpp
     ui/dialog/password.cpp
     ui/dialog/security_sort_warning.cpp
     ui/widget/tab.cpp
@@ -83,7 +84,6 @@ set(ADMC_SOURCES
     main_window.cpp
     create_object_helper.cpp
     rename_object_helper.cpp
-    main_window_connection_error.cpp
 
     results_widgets/policy_ou_results_widget/policy_ou_results_widget.cpp
     results_widgets/policy_ou_results_widget/inherited_policies_widget.cpp

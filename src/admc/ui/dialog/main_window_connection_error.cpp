@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "main_window_connection_error.h"
-#include "ui_main_window_connection_error.h"
+#include "ui/dialog/main_window_connection_error.h"
+#include "ui/dialog/ui_main_window_connection_error.h"
 
 #include "adldap.h"
 #include "ui/dialog/connection_options.h"

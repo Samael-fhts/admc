@@ -34,7 +34,7 @@
 #include "core/settings.h"
 #include "locale.h"
 #include "main_window.h"
-#include "main_window_connection_error.h"
+#include "ui/dialog/main_window_connection_error.h"
 #include "status.h"
 #include "utils.h"
 
