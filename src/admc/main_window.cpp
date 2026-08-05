@@ -274,9 +274,6 @@ void MainWindow::retranslate_themes_menu() {
 
 void MainWindow::changeEvent(QEvent *event) {
     if ((event->type() == QEvent::LanguageChange) && is_language_changed) {
-        QLocale current_locale =
-            AdmcTranslator::get_instance().get_current_locale();
-
         const QObjectList widgets = this->children();
         for (auto* widget : widgets) {
             QEvent languageEvent(QEvent::LanguageChange);
