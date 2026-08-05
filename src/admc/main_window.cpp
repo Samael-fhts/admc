@@ -576,11 +576,10 @@ void MainWindow::init_on_connect(AdInterface &ad) {
 
     restore_console_widget_state();
 
-    if (! inited) {
-        // NOTE: "Action" menu actions need to be filled by the
-        // console
-        ui->console->setup_menubar_action_menu(ui->menu_action);
-    }
+    // NOTE: "Action" menu actions need to be filled by the
+    // console
+    ui->menu_action->clear();
+    ui->console->setup_menubar_action_menu(ui->menu_action);
 
     // Set current scope to object head to load it
     const QModelIndex object_tree_root =
