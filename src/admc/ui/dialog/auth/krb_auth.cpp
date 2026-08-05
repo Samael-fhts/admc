@@ -19,8 +19,8 @@
  */
 
 
-#include "krb_auth_dialog.h"
-#include "ui_krb_auth_dialog.h"
+#include "ui/dialog/auth/krb_auth.h"
+#include "ui/dialog/auth/ui_krb_auth.h"
 
 #include <stdexcept>
 #include "core/settings.h"

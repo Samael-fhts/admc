@@ -1,7 +1,8 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 #ifndef KRB_AUTH_DIALOG_H
 #define KRB_AUTH_DIALOG_H
 
-#include "auth_dialog_base.h"
+#include "ui/dialog/auth/base.h"
 
 namespace Ui {
 class KrbAuthDialog;
