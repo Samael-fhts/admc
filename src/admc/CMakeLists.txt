@@ -74,7 +74,7 @@ set(ADMC_SOURCES
     ui/dialog/connection_options.cpp
     ui/dialog/console_filter.cpp
     ui/dialog/error_log.cpp
-    ui/password_dialog.cpp
+    ui/dialog/password.cpp
     ui/security_sort_warning_dialog.cpp
     status.cpp
     utils.cpp

@@ -28,8 +28,8 @@
 #include "core/globals.h"
 #include "core/settings.h"
 #include "status.h"
-#include "ui/password_dialog.h"
-#include "ui/ui_password_dialog.h"
+#include "ui/dialog/password.h"
+#include "ui/dialog/ui_password.h"
 #include "utils.h"
 
 PasswordDialog::PasswordDialog(AdInterface &ad, const
