@@ -368,7 +368,7 @@ void MainWindow::setup_complex_settings(ObjectImpl *obj_impl) {
             action->setDisabled(false);
             connect(
                 action, &QAction::toggled,
-                this,
+                obj_impl,
                 [setting, obj_impl](bool checked) {
                     settings_set_variant(setting, checked);
 
