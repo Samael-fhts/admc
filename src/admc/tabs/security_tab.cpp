@@ -23,7 +23,7 @@
 #include "tabs/ui_security_tab.h"
 
 #include "adldap.h"
-#include "select_dialogs/select_object_dialog.h"
+#include "ui/dialog/select/object.h"
 #include "select_well_known_trustee_dialog.h"
 #include "utils.h"
 #include "permission_control_widgets/permissions_widget.h"

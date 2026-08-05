@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "select_object_advanced_dialog.h"
-#include "ui_select_object_advanced_dialog.h"
+#include "ui/dialog/select/object_advanced.h"
+#include "ui/dialog/select/ui_object_advanced.h"
 
 #include "adldap.h"
 #include "core/globals.h"

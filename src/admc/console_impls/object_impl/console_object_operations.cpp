@@ -56,8 +56,8 @@
 #include "rename_dialogs/rename_object_dialog.h"
 #include "rename_dialogs/rename_other_dialog.h"
 #include "rename_dialogs/rename_user_dialog.h"
-#include "select_dialogs/select_container_dialog.h"
-#include "select_dialogs/select_object_dialog.h"
+#include "ui/dialog/select/container.h"
+#include "ui/dialog/select/object.h"
 #include "ui/status.h"
 #include "utils.h"
 

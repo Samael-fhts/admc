@@ -41,7 +41,7 @@
 #include "properties_widgets/properties_dialog.h"
 #include "rename_dialogs/rename_policy_dialog.h"
 #include "results_widgets/policy_results_widget.h"
-#include "select_dialogs/select_object_dialog.h"
+#include "ui/dialog/select/object.h"
 #include "ui/status.h"
 #include "utils.h"
 

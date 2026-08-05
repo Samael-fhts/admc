@@ -32,7 +32,7 @@
 #include "core/globals.h"
 #include "gplink.h"
 #include "results_widgets/policy_ou_results_widget/policy_ou_results_widget.h"
-#include "select_dialogs/select_policy_dialog.h"
+#include "ui/dialog/select/policy.h"
 #include "ui/status.h"
 #include "utils.h"
 #include "core/managers/icon_manager.h"

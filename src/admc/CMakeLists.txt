@@ -78,6 +78,11 @@ set(ADMC_SOURCES
     ui/dialog/main_window_connection_error.cpp
     ui/dialog/password.cpp
     ui/dialog/security_sort_warning.cpp
+    ui/dialog/select/object.cpp
+    ui/dialog/select/object_match.cpp
+    ui/dialog/select/object_advanced.cpp
+    ui/dialog/select/container.cpp
+    ui/dialog/select/policy.cpp
     ui/status.cpp
     ui/widget/tab.cpp
     utils.cpp
@@ -117,12 +122,6 @@ set(ADMC_SOURCES
     rename_dialogs/rename_policy_dialog.cpp
     rename_dialogs/rename_user_dialog.cpp
     rename_dialogs/rename_group_dialog.cpp
-
-    select_dialogs/select_object_dialog.cpp
-    select_dialogs/select_object_match_dialog.cpp
-    select_dialogs/select_object_advanced_dialog.cpp
-    select_dialogs/select_container_dialog.cpp
-    select_dialogs/select_policy_dialog.cpp
 
     edit_query_widgets/edit_query_item_dialog.cpp
     edit_query_widgets/edit_query_folder_dialog.cpp

@@ -26,7 +26,7 @@
 #include "adldap.h"
 #include "attribute_edits/gpoptions_edit.h"
 #include "core/globals.h"
-#include "select_dialogs/select_policy_dialog.h"
+#include "ui/dialog/select/policy.h"
 #include "core/settings.h"
 #include "utils.h"
 #include "console_widget/console_widget.h"

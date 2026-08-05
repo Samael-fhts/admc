@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "select_container_dialog.h"
-#include "ui_select_container_dialog.h"
+#include "ui/dialog/select/container.h"
+#include "ui/dialog/select/ui_container.h"
 
 #include "adldap.h"
 #include "core/globals.h"

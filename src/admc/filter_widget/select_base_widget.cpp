@@ -24,7 +24,7 @@
 
 #include "adldap.h"
 #include "core/globals.h"
-#include "select_dialogs/select_container_dialog.h"
+#include "ui/dialog/select/container.h"
 #include "utils.h"
 
 SelectBaseWidget::SelectBaseWidget(QWidget *parent)

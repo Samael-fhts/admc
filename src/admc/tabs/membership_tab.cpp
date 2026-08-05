@@ -27,7 +27,7 @@
 #include "core/globals.h"
 #include "core/utils.h"
 #include "properties_widgets/properties_dialog.h"
-#include "select_dialogs/select_object_dialog.h"
+#include "ui/dialog/select/object.h"
 #include "core/settings.h"
 #include "utils.h"
 

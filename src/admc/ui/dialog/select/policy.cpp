@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "select_policy_dialog.h"
-#include "ui_select_policy_dialog.h"
+#include "ui/dialog/select/policy.h"
+#include "ui/dialog/select/ui_policy.h"
 
 #include "adldap.h"
 #include "console_impls/policy_impl.h"
