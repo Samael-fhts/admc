@@ -33,7 +33,7 @@
 #include "multi_tabs/profile_multi_tab.h"
 #include "core/settings.h"
 #include "status.h"
-#include "tab_widget.h"
+#include "ui/widget/tab.h"
 #include "utils.h"
 
 #include <QAction>

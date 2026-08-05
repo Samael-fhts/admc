@@ -148,7 +148,7 @@
   <customwidget>
    <class>TabWidget</class>
    <extends>QWidget</extends>
-   <header>tab_widget.h</header>
+   <header>ui/widget/tab.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

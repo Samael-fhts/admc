@@ -35,7 +35,7 @@
 #include "properties_warning_dialog.h"
 #include "ui/dialog/security_sort_warning.h"
 #include "status.h"
-#include "tab_widget.h"
+#include "ui/widget/tab.h"
 #include "tabs/account_tab.h"
 #include "tabs/address_tab.h"
 #include "tabs/attributes_tab.h"

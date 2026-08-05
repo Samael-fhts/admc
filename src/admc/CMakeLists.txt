@@ -76,11 +76,11 @@ set(ADMC_SOURCES
     ui/dialog/error_log.cpp
     ui/dialog/password.cpp
     ui/dialog/security_sort_warning.cpp
+    ui/widget/tab.cpp
     status.cpp
     utils.cpp
 
     main_window.cpp
-    tab_widget.cpp
     create_object_helper.cpp
     rename_object_helper.cpp
     main_window_connection_error.cpp
