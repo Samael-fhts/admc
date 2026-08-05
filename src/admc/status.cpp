@@ -22,7 +22,7 @@
 #include "status.h"
 
 #include "adldap.h"
-#include "ui/error_log_dialog.h"
+#include "ui/dialog/error_log.h"
 #include "core/globals.h"
 #include "core/settings.h"
 
