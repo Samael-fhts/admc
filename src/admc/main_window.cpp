@@ -278,8 +278,8 @@ void MainWindow::changeEvent(QEvent *event) {
         ui->retranslateUi(this);
         AdInterface ad;
         ui->console->hide_scope_and_results(true);
+        ui->console->clear_scope_tree();
         init_on_connect(ad);
-        reload_console_tree();
         ui->console->hide_scope_and_results(false);
         retranslate_themes_menu();
         hide_busy_indicator();
