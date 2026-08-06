@@ -274,7 +274,6 @@ void MainWindow::retranslate_themes_menu() {
 
 void MainWindow::changeEvent(QEvent *event) {
     if ((event->type() == QEvent::LanguageChange) && is_language_changed) {
-        const QObjectList widgets = this->children();
         show_busy_indicator();
         ui->retranslateUi(this);
         AdInterface ad;
