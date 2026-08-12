@@ -1,7 +1,7 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
  * Copyright (C) 2026 Artyom V. Poptsov
  *
@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "attribute_dialogs/attribute_dialog.h"
+#include "ui/dialog/attribute/attribute.h"
 
 #include "ad_config.h"
 #include "ad_utils.h"

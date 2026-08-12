@@ -20,7 +20,7 @@
 #ifndef HEX_NUMBER_ATTRIBUTE_DIALOG_H
 #define HEX_NUMBER_ATTRIBUTE_DIALOG_H
 
-#include "attribute_dialogs/attribute_dialog.h"
+#include "ui/dialog/attribute/attribute.h"
 
 namespace Ui {
 class HexNumberAttributeDialog;

@@ -70,6 +70,7 @@ set(ADMC_SOURCES
     core/settings.cpp
     core/utils.cpp
     ui/dialog/about.cpp
+    ui/dialog/attribute/attribute.cpp
     ui/dialog/auth/krb_auth.cpp
     ui/dialog/changelog.cpp
     ui/dialog/connection_options.cpp
@@ -226,7 +227,6 @@ set(ADMC_SOURCES
     attribute_edits/upn_multi_edit.cpp
     attribute_edits/account_option_multi_edit.cpp
 
-    attribute_dialogs/attribute_dialog.cpp
     attribute_dialogs/list_attribute_dialog.cpp
     attribute_dialogs/string_attribute_dialog.cpp
     attribute_dialogs/number_attribute_dialog.cpp

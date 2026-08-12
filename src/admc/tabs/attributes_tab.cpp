@@ -23,7 +23,7 @@
 #include "tabs/ui_attributes_tab.h"
 
 #include "adldap.h"
-#include "attribute_dialogs/attribute_dialog.h"
+#include "ui/dialog/attribute/attribute.h"
 #include "core/globals.h"
 #include "core/settings.h"
 #include "core/utils.h"

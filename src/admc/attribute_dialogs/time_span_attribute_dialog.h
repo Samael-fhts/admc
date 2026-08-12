@@ -22,7 +22,7 @@
 
 #include <QDialog>
 
-#include "attribute_dialogs/attribute_dialog.h"
+#include "ui/dialog/attribute/attribute.h"
 
 namespace Ui {
 class TimeSpanAttributeDialog;
