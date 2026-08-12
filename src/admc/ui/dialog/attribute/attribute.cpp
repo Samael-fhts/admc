@@ -33,7 +33,7 @@
 #include "attribute_dialogs/octet_attribute_dialog.h"
 #include "attribute_dialogs/string_attribute_dialog.h"
 #include "attribute_dialogs/number_attribute_dialog.h"
-#include "attribute_dialogs/hex_number_attribute_dialog.h"
+#include "ui/dialog/attribute/hex_number.h"
 #include "attribute_dialogs/time_span_attribute_dialog.h"
 
 
