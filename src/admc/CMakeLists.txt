@@ -71,6 +71,7 @@ set(ADMC_SOURCES
     core/utils.cpp
     ui/dialog/about.cpp
     ui/dialog/attribute/attribute.cpp
+    ui/dialog/attribute/bool.cpp
     ui/dialog/auth/krb_auth.cpp
     ui/dialog/changelog.cpp
     ui/dialog/connection_options.cpp
@@ -232,7 +233,6 @@ set(ADMC_SOURCES
     attribute_dialogs/number_attribute_dialog.cpp
     attribute_dialogs/hex_number_attribute_dialog.cpp
     attribute_dialogs/octet_attribute_dialog.cpp
-    attribute_dialogs/bool_attribute_dialog.cpp
     attribute_dialogs/datetime_attribute_dialog.cpp
     attribute_dialogs/time_span_attribute_dialog.cpp
 
