@@ -1,8 +1,9 @@
 /*
  * ADMC - AD Management Center
  *
- * Copyright (C) 2020-2025 BaseALT Ltd.
+ * Copyright (C) 2020-2026 BaseALT Ltd.
  * Copyright (C) 2020-2025 Dmitry Degtyarev
+ * Copyright (C) 2026 Artyom V. Poptsov
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +24,10 @@
 #include "admc_test_select_base_widget.h"
 #include "console_impls/object_impl/object_impl.h"
 #include "filter_widget/select_base_widget.h"
-#include "select_dialogs/select_object_dialog.h"
-#include "select_dialogs/select_object_match_dialog.h"
-#include "ui_select_object_dialog.h"
-#include "ui_select_object_match_dialog.h"
+#include "ui/dialog/select/object.h"
+#include "ui/dialog/select/object_match.h"
+#include "ui/dialog/select/ui_object.h"
+#include "ui/dialog/select/ui_object_match.h"
 
 #include <QLineEdit>
 #include <QPushButton>
