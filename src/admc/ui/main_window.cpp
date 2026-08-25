@@ -101,6 +101,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     settings_save_main_window_geometry(saveGeometry());
     settings_save_main_window_state(saveState());
     settings_save_console_state(ui->console->save_state());
+    ui->console->save_tree_state();
 
     krb5_client->logout(
         (! settings_are_creds_saved(krb5_client->current_principal())));
@@ -444,6 +445,7 @@ void MainWindow::restore_console_widget_state() {
     // NOTE: must restore state after everything is setup
     const QVariant console_widget_state = settings_load_console_state();
     ui->console->restore_state(console_widget_state);
+    ui->console->restore_tree_state();
 }
 
 void MainWindow::restore_main_window_state() {

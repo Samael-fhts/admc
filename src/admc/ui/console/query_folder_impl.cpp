@@ -43,7 +43,7 @@
 #include <QStandardItem>
 #include <QStandardPaths>
 
-#define QUERY_ROOT "QUERY_ROOT"
+const QString QueryFolderImpl::QUERY_ROOT = "QUERY_ROOT";
 
 void console_query_move(ConsoleWidget *console, const QList<QPersistentModelIndex> &index_list, const QModelIndex &new_parent_index, const bool delete_old_branch = true);
 
@@ -359,47 +359,105 @@ bool QueryFolderImpl::event(QEvent *event) {
 }
 
 void console_query_tree_init(ConsoleWidget *console) {
-    const QList<QStandardItem *> root_row = console->add_scope_item(ItemType_QueryFolder, console->domain_info_index());
+    const QList<QStandardItem *> root_row =
+        console->add_scope_item(
+            ItemType_QueryFolder,
+            console->domain_info_index());
+
     auto root = root_row[0];
-    root->setText(QCoreApplication::translate("query", "Saved Queries"));
-    root->setIcon(g_icon_manager->category_icon(ADMC_CATEGORY_QUERY_FOLDER));
+
+    root->setText(
+        QCoreApplication::translate(
+            "query",
+            "Saved Queries"));
+
+    root->setIcon(
+        g_icon_manager->category_icon(
+            ADMC_CATEGORY_QUERY_FOLDER));
+
     root->setDragEnabled(false);
     root->setData(true, QueryItemRole_IsRoot);
-    console->set_item_sort_index(root_row[0]->index(), 2);
 
-    // Add rest of tree
+    console->set_item_sort_index(
+        root_row[0]->index(),
+        2);
+
     const QHash<QString, QVariant> folder_list =
         settings_get_hash(SETTING_query_folders);
+
     const QHash<QString, QVariant> item_list =
         settings_get_hash(SETTING_query_items);
 
     QStack<QPersistentModelIndex> folder_stack;
     folder_stack.append(root->index());
+
     while (!folder_stack.isEmpty()) {
-        const QPersistentModelIndex folder_index = folder_stack.pop();
+        const QPersistentModelIndex folder_index =
+            folder_stack.pop();
 
-        const QString folder_path = console_query_folder_path(folder_index, console);
+        const QString folder_path =
+            console_query_folder_path(
+                folder_index,
+                console);
+
+        qInfo() << "[Query TREE INIT]"
+                << "folder=" << folder_path
+                << "exists=" << folder_list.contains(folder_path);
+
+        if (!folder_list.contains(folder_path)) {
+            continue;
+        }
+
         const QHash<QString, QVariant> folder_data =
-            folder_list[folder_path].toHash();
-        const QList<QString> child_list =
-            folder_data["child_list"].toStringList();
+            folder_list.value(folder_path).toHash();
 
-        // Go through children and add them as folders or
-        // query items
+        const QStringList child_list =
+            folder_data.value("child_list").toStringList();
+
+        qInfo() << "[Query TREE INIT]"
+                << "children=" << child_list;
+
         for (const QString &path : child_list) {
             if (item_list.contains(path)) {
-                // Query item
-                const QHash<QString, QVariant> data = item_list[path].toHash();
-                console_query_item_load_hash(console, data, folder_index);
-            } else if (folder_list.contains(path)) {
-                // Query folder
-                const QHash<QString, QVariant> data = folder_list[path].toHash();
+                qInfo() << "[Query TREE INIT]"
+                        << "load item=" << path;
 
-                const QString name = data["name"].toString();
-                const QString description = data["description"].toString();
-                const QPersistentModelIndex child_index = console_query_folder_create(console, name, description, folder_index);
+                const QHash<QString, QVariant> data =
+                    item_list.value(path).toHash();
+
+                console_query_item_load_hash(
+                    console,
+                    data,
+                    folder_index);
+            }
+            else if (folder_list.contains(path)) {
+                const QHash<QString, QVariant> data =
+                    folder_list.value(path).toHash();
+
+                const QString name =
+                    data.value("name").toString();
+
+                const QString description =
+                    data.value("description").toString();
+
+                qInfo() << "[Query TREE INIT]"
+                        << "create folder=" << path
+                        << "name=" << name
+                        << "parent=" << folder_path;
+
+                const QPersistentModelIndex child_index =
+                    console_query_folder_create(
+                        console,
+                        name,
+                        description,
+                        folder_index);
 
                 folder_stack.append(child_index);
+            }
+            else {
+                qInfo() << "[Query TREE INIT]"
+                        << "missing child=" << path
+                        << "parent=" << folder_path;
             }
         }
     }
@@ -408,6 +466,7 @@ void console_query_tree_init(ConsoleWidget *console) {
 // Saves current state of queries tree to settings. Should
 // be called after every modication to queries tree
 void console_query_tree_save(ConsoleWidget *console) {
+
     const QModelIndex root = get_query_tree_root(console);
     if (!root.isValid()) {
         return;
@@ -424,53 +483,66 @@ void console_query_tree_save(ConsoleWidget *console) {
     while (!stack.isEmpty()) {
         const QModelIndex index = stack.pop();
 
-        // Add children to stack
-        for (int i = 0; i < model->rowCount(index); i++) {
-            const QModelIndex child = model->index(i, 0, index);
-
-            stack.append(child);
+        for (int i = 0; i < model->rowCount(index); ++i) {
+            stack.append(model->index(i, 0, index));
         }
 
-        const QString path = console_query_folder_path(index, console);
-        const ItemType type = (ItemType) console_item_get_type(index);
+        const QString path =
+            console_query_folder_path(index, console);
 
-        QList<QString> child_list;
-        for (int i = 0; i < model->rowCount(index); i++) {
-            const QModelIndex child = model->index(i, 0, index);
-            const QString child_path = console_query_folder_path(child, console);
+        const ItemType type =
+            static_cast<ItemType>(console_item_get_type(index));
+
+        QStringList child_list;
+
+        for (int i = 0; i < model->rowCount(index); ++i) {
+            const QModelIndex child =
+                model->index(i, 0, index);
+
+            const QString child_path =
+                console_query_folder_path(child, console);
+
             child_list.append(child_path);
         }
 
         if (type == ItemType_QueryFolder) {
-            const bool is_root = !index.parent().isValid();
-            if (is_root) {
-                QHash<QString, QVariant> data;
-                data["child_list"] = QVariant(child_list);
+            const bool is_root =
+                index.parent() == console->domain_info_index();
 
-                folder_list[path] = data;
-            } else {
-                const QString name = index.data(Qt::DisplayRole).toString();
-                const QString description = index.data(QueryItemRole_Description).toString();
+            QHash<QString, QVariant> data;
 
-                QHash<QString, QVariant> data;
-                data["name"] = name;
-                data["description"] = description;
-                data["child_list"] = QVariant(child_list);
+            if (!is_root) {
+                data["name"] =
+                    index.data(Qt::DisplayRole).toString();
 
-                folder_list[path] = data;
+                data["description"] =
+                    index.data(QueryItemRole_Description).toString();
             }
-        } else if (type == ItemType_QueryItem) {
-            const QHash<QString, QVariant> data = console_query_item_save_hash(index);
 
-            item_list[path] = data;
+            data["child_list"] = child_list;
+
+            folder_list[path] = data;
+
+            qInfo() << "[Query TREE SAVE]"
+                    << "folder=" << path
+                    << "children=" << child_list;
+        }
+        else if (type == ItemType_QueryItem) {
+            item_list[path] =
+                console_query_item_save_hash(index);
+
+            qInfo() << "[Query TREE SAVE]"
+                    << "item=" << path;
         }
     }
 
-    const QVariant folder_variant = QVariant(folder_list);
-    const QVariant item_variant = QVariant(item_list);
+    settings_set_variant(
+        SETTING_query_folders,
+        QVariant(folder_list));
 
-    settings_set_variant(SETTING_query_folders, folder_variant);
-    settings_set_variant(SETTING_query_items, item_variant);
+    settings_set_variant(
+        SETTING_query_items,
+        QVariant(item_list));
 }
 
 QModelIndex get_query_tree_root(ConsoleWidget *console) {
@@ -496,33 +568,28 @@ QList<int> QueryFolderImpl::default_columns() const {
 // "QUERY_ROOT", while all other paths start with
 // "QUERY_ROOT/a/b/c..."
 QString console_query_folder_path(const QModelIndex &index, ConsoleWidget *console) {
-    const bool is_query_root = index.parent() == console->domain_info_index();
+    const bool is_query_root =
+        index.parent() == console->domain_info_index();
+
     if (is_query_root) {
-        return QString(QUERY_ROOT);
+        return QueryFolderImpl::QUERY_ROOT;
     }
 
-    QList<QString> path_split;
+    QStringList path_split;
     QModelIndex current = index;
-    while (current != console->domain_info_index()) {
-        const QString name = current.data(Qt::DisplayRole).toString();
+
+    while (current.parent() != console->domain_info_index()) {
+        const QString name =
+            current.data(Qt::DisplayRole).toString();
+
         path_split.prepend(name);
         current = current.parent();
     }
 
-    // NOTE: remove root
-    path_split.removeAt(0);
+    QString path = QueryFolderImpl::QUERY_ROOT;
 
-    QString path;
-    for (int i = 0; i < path_split.size(); i++) {
-        const QString part = path_split[i];
-
-        if (i == 0) {
-            path += QString(QUERY_ROOT) + "/";
-        } else {
-            path += "/";
-        }
-
-        path += part;
+    for (const QString &part : path_split) {
+        path += "/" + part;
     }
 
     return path;

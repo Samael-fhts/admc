@@ -30,6 +30,7 @@
 #include "core/console_item_type.h"
 #include "core/globals.h"
 #include "ui/status.h"
+#include "ad_config.h"
 
 #include <QAction>
 #include <QApplication>
@@ -233,6 +234,9 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
             d->scope_view->expand(index_proxy);
         }
     });
+
+    d->tree_state_manager = new TreeStateManager(this, d->scope_view,
+        g_adconfig->domain().toLower(), g_adconfig->user(), this);
 }
 
 void ConsoleWidget::register_impl(const int type, ConsoleImpl *impl) {
@@ -622,6 +626,16 @@ void ConsoleWidget::hide_scope_and_results(bool hide) {
     d->results_stacked_widget->setVisible(!hide);
     d->scope_view->setColumnHidden(0, hide);
     d->description_bar->setVisible(!hide);
+}
+
+void ConsoleWidget::save_tree_state() {
+    d->tree_state_manager->save();
+}
+
+void ConsoleWidget::restore_tree_state() {
+    d->tree_state_manager->set_context(g_adconfig->domain().toLower(),
+        g_adconfig->user());
+    d->tree_state_manager->restore();
 }
 
 void ConsoleWidget::resizeEvent(QResizeEvent *event) {

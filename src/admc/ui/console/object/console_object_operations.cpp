@@ -1063,11 +1063,9 @@ QModelIndex ConsoleObjectTreeOperations::get_object_tree_root(
                 return index;
             }
         }
-
-        return QModelIndex();
-    } else {
-        return QModelIndex();
     }
+
+    return QModelIndex();
 }
 
 QModelIndex ConsoleObjectTreeOperations::get_sites_container_tree_root(
