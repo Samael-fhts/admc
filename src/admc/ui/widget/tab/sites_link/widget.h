@@ -21,6 +21,7 @@ public:
     SitesLinkCommonWidget *common_widget();
     SitesLinkPartWidget *sites_link_part_widget();
     SitesLinkType get_type();
+    void set_read_only(bool read_only);
 
     void retranslate_ui();
     bool event(QEvent *event) override;

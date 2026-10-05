@@ -24,6 +24,12 @@ QPushButton *SitesLinkPartWidget::schedule_button() {
     return ui->schedule_button;
 }
 
+void SitesLinkPartWidget::set_read_only(bool read_only) {
+    ui->cost_spbox->setReadOnly(read_only);
+    ui->replicate_spbox->setReadOnly(read_only);
+    ui->schedule_button->setDisabled(read_only);
+}
+
 void SitesLinkPartWidget::retranslate_ui() {
     ui->retranslateUi(this);
     for (auto* widget : children()) {

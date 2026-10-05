@@ -57,8 +57,12 @@
 #include "ui/widget/console/results_view.h"
 #include "ui/widget/result/pso/pso.h"
 #include "ui/widget/result/subnet/subnet.h"
-#include "ui/widget/tab/general_group.h"
-#include "ui/widget/tab/general_user.h"
+#include "ui/widget/result/group/group.h"
+#include "ui/widget/result/user/user.h"
+#include "ui/widget/result/computer/computer.h"
+#include "ui/widget/result/site_link/site_link.h"
+#include "ui/widget/tab/sites_link/type.h"
+
 
 ObjectImpl::ObjectImpl(ConsoleWidget *console_arg)
 : ConsoleImpl(console_arg) {
@@ -495,11 +499,19 @@ void ObjectImpl::selected_as_scope(const QModelIndex &index)
     }
     else if (object.is_class(CLASS_PSO)) {
         stacked_widget->setCurrentWidget(pso_results_widget);
-        pso_results_widget->update(object);
+        pso_results_widget->update(ad, object);
     }
     else if (object.is_class(CLASS_SUBNET)) {
         stacked_widget->setCurrentWidget(subnet_results_widget);
-        subnet_results_widget->update(object);
+        subnet_results_widget->update(ad, object);
+    }
+    else if (object.is_class(CLASS_SITE_LINK)) {
+        stacked_widget->setCurrentWidget(site_link_results_widget);
+        site_link_results_widget->update(ad, object);
+    }
+    else if (object.is_class(CLASS_SITE_LINK_BRIDGE)) {
+        stacked_widget->setCurrentWidget(site_link_bridge_results_widget);
+        site_link_bridge_results_widget->update(ad, object);
     }
     else {
         stacked_widget->setCurrentWidget(view());
@@ -510,13 +522,14 @@ void ObjectImpl::update_results_widget(const QModelIndex &index) const {
     const QStringList index_data_classes =
         index.data(ObjectRole_ObjectClasses).toStringList();
 
-    if (!(index_data_classes.contains(CLASS_GROUP) ||
-          index_data_classes.contains(CLASS_CONTACT) ||
-          index_data_classes.contains(CLASS_USER) ||
-          index_data_classes.contains(CLASS_INET_ORG_PERSON) ||
-          index_data_classes.contains(CLASS_PSO) ||
-          index_data_classes.contains(CLASS_SUBNET))) {
-            return;
+    const auto class_it = std::find_if(
+        index_data_classes.cbegin(),
+        index_data_classes.cend(),
+        [this](const QString &object_class) {
+            return obj_class_results_wget_map.contains(object_class);
+    });
+    if (class_it == index_data_classes.cend()) {
+        return;
     }
 
     AdInterface ad;
@@ -527,26 +540,9 @@ void ObjectImpl::update_results_widget(const QModelIndex &index) const {
     const QString dn = index.data(ObjectRole_DN).toString();
     const AdObject object = ad.search_object(dn);
 
-    if (object.is_class(CLASS_GROUP)) {
-        group_results_widget->update(ad, object);
-        return;
-    }
-
-    if (object.is_class(CLASS_CONTACT) ||
-             object.is_class(CLASS_USER) ||
-             object.is_class(CLASS_INET_ORG_PERSON)) {
-        user_results_widget->update(ad, object);
-        return;
-    }
-
-    if (object.is_class(CLASS_PSO)) {
-        pso_results_widget->update(object);
-        return;
-    }
-
-    if (object.is_class(CLASS_SUBNET)) {
-        subnet_results_widget->update(object);
-        return;
+    ResultsWidgetBase *res_wget = obj_class_results_wget_map.value(*class_it, nullptr);
+    if (res_wget) {
+        res_wget->update(ad, object);
     }
 }
 
@@ -989,14 +985,31 @@ bool ObjectImpl::can_create_class_at_parent(const QString &create_class,
 void ObjectImpl::setup_widgets() {
     stacked_widget = new QStackedWidget(console);
     set_results_view(new ResultsView(console));
-    group_results_widget = new GeneralGroupTab();
-    user_results_widget = new GeneralUserTab();
+    group_results_widget = new GroupResultsWidget();
+    user_results_widget = new UserResultsWidget();
+    computer_results_widget = new ComputerResultsWidget();
     pso_results_widget = new PSOResultsWidget();
     subnet_results_widget = new SubnetResultsWidget();
+    site_link_results_widget = new SiteLinkResultsWidget(nullptr, SitesLinkType::Link);
+    site_link_bridge_results_widget = new SiteLinkResultsWidget(nullptr, SitesLinkType::Bridge);
+    obj_class_results_wget_map = {
+        {CLASS_GROUP, group_results_widget},
+        {CLASS_CONTACT, user_results_widget},
+        {CLASS_USER, user_results_widget},
+        {CLASS_INET_ORG_PERSON, user_results_widget},
+        {CLASS_PSO, pso_results_widget},
+        {CLASS_SUBNET, subnet_results_widget},
+        {CLASS_SITE_LINK, site_link_results_widget},
+        {CLASS_SITE_LINK_BRIDGE, site_link_bridge_results_widget},
+        {CLASS_COMPUTER, computer_results_widget}
+    };
+
     stacked_widget->addWidget(group_results_widget);
     stacked_widget->addWidget(user_results_widget);
     stacked_widget->addWidget(pso_results_widget);
     stacked_widget->addWidget(subnet_results_widget);
+    stacked_widget->addWidget(site_link_results_widget);
+    stacked_widget->addWidget(site_link_bridge_results_widget);
     stacked_widget->addWidget(view());
     set_results_widget(stacked_widget);
 }

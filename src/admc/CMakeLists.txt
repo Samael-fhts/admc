@@ -187,6 +187,13 @@ set(ADMC_SOURCES
     ui/widget/result/pso/pso_edit.cpp
     ui/widget/result/subnet/subnet.cpp
     ui/widget/result/subnet/subnet_edit.cpp
+    ui/widget/result/site_link/site_link.cpp
+    ui/widget/result/user/user.cpp
+    ui/widget/result/user/user_edit.cpp
+    ui/widget/result/group/group.cpp
+    ui/widget/result/group/group_edit.cpp
+    ui/widget/result/computer/computer.cpp
+    ui/widget/result/computer/computer_edit.cpp
     ui/widget/tab.cpp
     ui/widget/tab/general_user.cpp
     ui/widget/tab/general_group.cpp

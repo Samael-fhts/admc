@@ -43,11 +43,14 @@ template <typename T>
 class QList;
 class ConsoleWidget;
 class ConsoleFilterDialog;
-class GeneralUserTab;
-class GeneralGroupTab;
+class UserResultsWidget;
+class GroupResultsWidget;
 class QStackedWidget;
 class PSOResultsWidget;
 class SubnetResultsWidget;
+class SiteLinkResultsWidget;
+class ResultsWidgetBase;
+class ComputerResultsWidget;
 
 class ObjectImpl final : public ConsoleImpl {
     Q_OBJECT
@@ -137,11 +140,14 @@ private:
     QMenu *new_menu;
 
     QStackedWidget *stacked_widget;
-    GeneralGroupTab *group_results_widget;
-    GeneralUserTab *user_results_widget;
+    GroupResultsWidget *group_results_widget;
+    UserResultsWidget *user_results_widget;
     PSOResultsWidget *pso_results_widget;
     SubnetResultsWidget *subnet_results_widget;
-
+    SiteLinkResultsWidget *site_link_results_widget;
+    SiteLinkResultsWidget *site_link_bridge_results_widget;
+    ComputerResultsWidget *computer_results_widget;
+    QHash<QString, ResultsWidgetBase*> obj_class_results_wget_map;
 
     bool find_action_enabled;
     bool refresh_action_enabled;

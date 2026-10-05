@@ -15,11 +15,8 @@ ResultsWidgetBase::~ResultsWidgetBase() {
     delete ui;
 }
 
-void ResultsWidgetBase::update(const QModelIndex &index) {
-    Q_UNUSED(index)
-}
-
-void ResultsWidgetBase::update(const AdObject &obj) {
+void ResultsWidgetBase::update(AdInterface &ad, const AdObject &obj) {
+    Q_UNUSED(ad)
     Q_UNUSED(obj)
     ui->edit_button->setDisabled(false);
     ui->cancel_button->setDisabled(true);
@@ -44,7 +41,7 @@ void ResultsWidgetBase::set_editable(bool is_editable) {
     ui->apply_button->setDisabled(!is_editable);
 }
 
-QStringList ResultsWidgetBase::changed_attrs() {
+QStringList ResultsWidgetBase::changed_attrs() const {
     return QStringList();
 }
 

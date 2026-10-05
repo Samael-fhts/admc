@@ -31,8 +31,7 @@ public:
     explicit PSOResultsWidget(QWidget *parent = nullptr);
     virtual ~PSOResultsWidget() = default;
 
-    virtual void update(const QModelIndex &index) override;
-    virtual void update(const AdObject &pso) override;
+    virtual void update(AdInterface &ad, const AdObject &pso) override;
 
 private:
     PSOEditWidget *pso_edit_widget;
@@ -42,7 +41,7 @@ private:
     virtual void on_cancel_edit() override;
     virtual void set_editable(bool is_editable) override;
 
-    virtual QStringList changed_attrs() override;
+    virtual QStringList changed_attrs() const override;
 };
 
 #endif // PSO_RESULTS_WIDGET_H

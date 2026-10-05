@@ -38,18 +38,8 @@ PSOResultsWidget::PSOResultsWidget(QWidget *parent) :
     pso_edit_widget->set_read_only(true);
 }
 
-void PSOResultsWidget::update(const QModelIndex &index) {
-    AdInterface ad;
-    if (ad_failed(ad, this)) {
-        return;
-    }
-
-    AdObject pso = ad.search_object(index.data(ObjectRole_DN).toString());
-    update(pso);
-}
-
-void PSOResultsWidget::update(const AdObject &pso) {
-    ResultsWidgetBase::update(pso);
+void PSOResultsWidget::update(AdInterface &ad, const AdObject &pso) {
+    ResultsWidgetBase::update(ad, pso);
     saved_object = pso;
     pso_edit_widget->update(pso);
     pso_edit_widget->set_read_only(true);
@@ -88,7 +78,7 @@ void PSOResultsWidget::on_cancel_edit() {
     set_editable(false);
 }
 
-QStringList PSOResultsWidget::changed_attrs() {
+QStringList PSOResultsWidget::changed_attrs() const {
     QStringList attrs;
     auto new_values = pso_edit_widget->pso_settings_values();
     for (const QString &attribute : new_values.keys()) {

@@ -35,6 +35,13 @@ SitesLinkType SitesLinkWidget::get_type() {
     return type;
 }
 
+void SitesLinkWidget::set_read_only(bool read_only) {
+    common_wget->set_read_only(read_only);
+    if (sites_link_part_wget) {
+        sites_link_part_wget->set_read_only(read_only);
+    }
+}
+
 void SitesLinkWidget::retranslate_ui() {
     ui->retranslateUi(this);
     for (auto* widget : children()) {

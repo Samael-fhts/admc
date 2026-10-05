@@ -26,6 +26,9 @@
 
 class QPushButton;
 
+// TODO: Split that class on two: one for user logon schedule and
+// another for site links schedule
+
 class ScheduleHoursEdit final : public AttributeEdit {
     Q_OBJECT
 public:
@@ -33,6 +36,8 @@ public:
 
     void load(AdInterface &ad, const AdObject &object) override;
     bool apply(AdInterface &ad, const QString &dn) const override;
+    QByteArray get_value() const;
+    QString ad_attribute() const;
 
 private:
     QPushButton *button;

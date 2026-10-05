@@ -62,17 +62,17 @@ void PasswordSettingsImpl::fetch(const QModelIndex &index) {
         return;
     }
 
-    //TODO:(kozyrevid) refactor this cast and other like it
-    dynamic_cast<PSOResultsWidget *>(widget())->update(
-        global_password_settings());
+    PSOResultsWidget *pso_res_wget = dynamic_cast<PSOResultsWidget *>(widget());
+    if (pso_res_wget) {
+        pso_res_wget->update(ad, global_password_settings());
+    }
 
+    const QString filter = filter_CONDITION(Condition_Equals, ATTRIBUTE_OBJECT_CLASS,
+        CLASS_PSO);
     QHash<QString, AdObject> results = ad.search(
-        g_adconfig->pso_container_dn(), SearchScope_All, "", QStringList());
+        g_adconfig->pso_container_dn(), SearchScope_All, filter, QStringList());
+
     is_PSO_container_available = !results.isEmpty();
-    results.removeIf([](QHash<QString, AdObject>::iterator object) {
-        return object.value().get_string(ATTRIBUTE_OBJECT_CLASS) ==
-               CLASS_PSO_CONTAINER;
-    });
 
     ConsoleObjectTreeOperations::add_objects_to_console(
         console, results.values(), index);

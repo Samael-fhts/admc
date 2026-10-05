@@ -13,13 +13,7 @@ SubnetResultsWidget::SubnetResultsWidget(QWidget *parent) :
     ui->verticalLayout->addWidget(subnet_edit_wget);
 }
 
-void SubnetResultsWidget::update(const AdObject &obj) {
-    AdInterface ad;
-    if (ad_failed(ad, this)) {
-        on_cancel_edit();
-        return;
-    }
-
+void SubnetResultsWidget::update(AdInterface &ad, const AdObject &obj) {
     const QString sites_container_dn = "CN=Sites,CN=Configuration," + g_adconfig->root_domain_dn();
     const QString site_filter = filter_CONDITION(Condition_Equals, ATTRIBUTE_OBJECT_CLASS, CLASS_SITE);
     const QHash<QString, AdObject> site_objects = ad.search(sites_container_dn, SearchScope_Children,
@@ -69,7 +63,7 @@ void SubnetResultsWidget::set_editable(bool is_editable) {
     subnet_edit_wget->set_read_only(!is_editable);
 }
 
-QStringList SubnetResultsWidget::changed_attrs() {
+QStringList SubnetResultsWidget::changed_attrs() const {
     QStringList changed_attr_list;
     auto current_values_hash = subnet_edit_wget->attr_string_values();
     for (const QString &attr : current_values_hash.keys()) {

@@ -29,6 +29,7 @@ public:
     QPushButton *add_button();
     QPushButton *remove_button();
     void set_lists_labels(SitesLinkType type);
+    void set_read_only(bool read_only);
 
     void retranslate_ui();
     bool event(QEvent *event) override;

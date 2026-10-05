@@ -52,6 +52,12 @@ void SitesLinkCommonWidget::set_lists_labels(SitesLinkType type) {
     }
 }
 
+void SitesLinkCommonWidget::set_read_only(bool read_only) {
+    ui->add_button->setDisabled(read_only);
+    ui->remove_button->setDisabled(read_only);
+    ui->description_edit->setReadOnly(read_only);
+}
+
 void SitesLinkCommonWidget::on_add_button() {
     move_selected_list_items(ui->left_list_wget, ui->right_list_wget);
 }

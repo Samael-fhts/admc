@@ -60,6 +60,14 @@ bool ScheduleHoursEdit::apply(AdInterface &ad, const QString &dn) const {
     return success;
 }
 
+QByteArray ScheduleHoursEdit::get_value() const {
+    return current_value;
+}
+
+QString ScheduleHoursEdit::ad_attribute() const {
+    return schedule_attribute;
+}
+
 void ScheduleHoursEdit::open_dialog() {
     ScheduleHoursDialog::ScheduleType type = schedule_attribute == ATTRIBUTE_LINK_SCHEDULE ?
                 ScheduleHoursDialog::ScheduleType_SiteLink :

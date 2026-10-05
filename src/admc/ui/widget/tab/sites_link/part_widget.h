@@ -18,9 +18,10 @@ public:
     explicit SitesLinkPartWidget(QWidget *parent = nullptr);
     ~SitesLinkPartWidget();
 
-     QSpinBox *cost_spinbox();
-     QSpinBox *replicate_spinbox();
-     QPushButton *schedule_button();
+    QSpinBox *cost_spinbox();
+    QSpinBox *replicate_spinbox();
+    QPushButton *schedule_button();
+    void set_read_only(bool read_only);
 
     void retranslate_ui();
     bool event(QEvent *event) override;
